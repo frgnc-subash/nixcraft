@@ -13,6 +13,7 @@
     ../../modules/system/services
     ../../modules/system/gpu
     ../../modules/system/gnome
+    ../../modules/system/storage
   ];
   config = {
 
@@ -41,7 +42,7 @@
       shell = pkgs.zsh;
       packages = with pkgs; [ ];
     };
-
+    
     nixpkgs.config.allowUnfree = true;
 
     services.displayManager.ly.enable = true;
