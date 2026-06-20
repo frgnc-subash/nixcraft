@@ -22,7 +22,7 @@
     systemSettings.services.enable = true;
     systemSettings.gpu.enable = true;
     systemSettings.gnome.enable = false;
-    systemSettings.storage.enable = false;
+    systemSettings.storage.enable = true;
 
 
     boot.loader.systemd-boot.enable = true;
