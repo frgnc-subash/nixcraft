@@ -1,14 +1,14 @@
 { lib, config, ... }:
 let
-  cfg = config.systemSettings.dataSSD;
+  cfg = config.systemSettings.storage;
 in {
   options = {
-    systemSettings.dataSSD = {
+    systemSettings.storage = {
       enable = lib.mkEnableOption "Mount the DataSSD drive";
     };
   };
   config = lib.mkIf cfg.enable {
-    fileSystems."/mnt/DataSSD" = {
+    fileSystems."/home/axosis/DataSSD" = {
       device = "/dev/disk/by-uuid/3f9e646d-90e9-45b7-875b-f715d705689d";
       fsType = "ext4";
       options = [ "defaults" ];
