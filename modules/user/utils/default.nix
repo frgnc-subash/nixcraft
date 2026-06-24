@@ -7,16 +7,25 @@ in {
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      neovim  
+      neovim
       vim
+      bat
+      tree
       tmux
-      
+      ripgrep
+      dust
+
       wget
       curl
 
       rustc
       cargo
       gcc
+      python3
+      vips
+      util-linux
+      libsecret  # provides secret-tool
+      python3.withPackages (ps: [ ps.pygobject3 ])
 
       eww
       quickshell

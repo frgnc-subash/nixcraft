@@ -8,11 +8,14 @@ in {
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       waybar
-      swaynotificationcenter
+      # swaynotificationcenter
+      brightnessctl
       rofi
       hypridle
       hyprlock
       hyprsunset
+      # hyprshader
+      # hyprdvd
       swayosd
       cliphist
       wl-clipboard
@@ -21,6 +24,10 @@ in {
       polkit_gnome
       awww
       wiremix
+      grim
+      slurp
+      hyprpicker
+      libnotify
     ];
     xdg.portal = {
       enable = true;
@@ -48,7 +55,7 @@ in {
       QT_QPA_PLATFORMTHEME = "qt6ct";
       XCURSOR_SIZE         = "20";
       HYPRCURSOR_SIZE      = "20";
-      XCURSOR_THEME        = "Mocu-Black-Right";
+      XCURSOR_THEME        = "Bibata-Modern-Ice";
       TERMINAL             = "kitty";
     };
   };

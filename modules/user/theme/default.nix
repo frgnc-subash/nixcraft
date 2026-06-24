@@ -13,8 +13,20 @@ in {
       nerd-fonts.jetbrains-mono
       nerd-fonts.departure-mono
       nerd-fonts.geist-mono
-      inter
       noto-fonts-color-emoji
+      material-symbols
+      inter
+      mononoki
+      monaspace
+      corefonts
     ];
+
+    home.pointerCursor = {
+      gtk.enable = true;
+      x11.enable = true;
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Modern-Ice";
+      size = 20;
+    };
   };
 }

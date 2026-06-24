@@ -15,15 +15,14 @@ in {
         name = "JetBrainsMono Nerd Font";
         size = 12;
       };
+
       settings = {
         window_padding_width = 15;
 
         background_opacity = 0.95;
 
         cursor_shape = "block";
-        cursor_trail = 1;
-        cursor_trail_decay = "0.1 0.4";
-        cursor_trail_start_threshold = 0;
+        cursor_blink_interval = 0;
 
         allow_remote_control = true;
 
@@ -34,8 +33,6 @@ in {
         shell = "zsh";
         url_style = "curly";
         remember_window_size = false;
-
-        shell_integration = "no-cursor";
 
         sync_to_monitor = false;
       };

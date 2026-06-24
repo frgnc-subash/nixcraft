@@ -35,10 +35,5 @@ in {
 
     programs.eza.enable = true;
 
-    home.packages = with pkgs; [
-      bat
-      tmux
-      tree
-    ];
   };
 }

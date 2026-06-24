@@ -1,9 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   options.systemSettings = {
     users = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [];
+      default = [ ];
       description = "Users to configure via home-manager.";
     };
   };
@@ -24,6 +29,8 @@
     systemSettings.gnome.enable = false;
     systemSettings.storage.enable = true;
 
+    services.gnome.gnome-keyring.enable = true;
+    security.pam.services.ly.enableGnomeKeyring = true;
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
@@ -40,14 +47,18 @@
     users.users.axosis = {
       isNormalUser = true;
       description = "axosis incon";
-      extraGroups = [ "networkmanager" "wheel" ];
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+      ];
       shell = pkgs.zsh;
       packages = with pkgs; [ ];
     };
-    
+
     nixpkgs.config.allowUnfree = true;
 
     services.displayManager.ly.enable = true;
+    services.flatpak.enable = true;
 
     nix.settings.experimental-features = [
       "nix-command"
@@ -59,9 +70,15 @@
       xwayland.enable = true;
       # withUWSM = true;
     };
+    xdg.portal.enable = true;
+    xdg.portal.extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-hyprland
+    ];
 
     # programs.enable.uwsm = true;
     programs.zsh.enable = true;
     system.stateVersion = "26.05";
+    programs.nix-ld.enable = true;
   };
 }
