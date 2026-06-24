@@ -14,6 +14,7 @@ in {
       mpv
       ffmpeg
       swappy
+      pulseaudio
     ];
 
   };

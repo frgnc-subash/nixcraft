@@ -9,6 +9,7 @@ in {
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
+      spotify
       vesktop
       proton-authenticator
       inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
