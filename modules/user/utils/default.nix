@@ -1,7 +1,13 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.userSettings.utils;
-in {
+in
+{
   options.userSettings.utils = {
     enable = lib.mkEnableOption "utils utilities";
   };
@@ -24,8 +30,9 @@ in {
       python3
       vips
       util-linux
-      libsecret  # provides secret-tool
-      python3.withPackages (ps: [ ps.pygobject3 ])
+      libsecret # provides secret-tool
+      # python3.withPackages (ps: [ ps.pygobject3 ])
+      gnome-disk-utility
 
       eww
       quickshell

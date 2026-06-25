@@ -16,7 +16,7 @@ in {
       hyprsunset
       # hyprshader
       # hyprdvd
-      swayosd
+      # swayosd
       cliphist
       wl-clipboard
       grimblast
