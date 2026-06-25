@@ -15,6 +15,7 @@ in {
       ffmpeg
       swappy
       pulseaudio
+      loupe
     ];
 
   };
