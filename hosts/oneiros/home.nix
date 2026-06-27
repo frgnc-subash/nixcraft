@@ -12,9 +12,9 @@
   userSettings.utils.enable = true;
   userSettings.desktop.enable = true;
   userSettings.editor.enable = true;
-  userSettings.shell.enable = true;
-  userSettings.terminal.enable = true;
   userSettings.git.enable = true;
+  
+  userSettings.shell.enable = true;
   userSettings.media.enable = true;
   userSettings.hyprland.enable = true;
   userSettings.games.enable = true;

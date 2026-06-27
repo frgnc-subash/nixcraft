@@ -4,12 +4,11 @@
   imports = [
     ./desktop
     ./editor
-    ./shell
-    ./terminal
     ./git
     ./media
     ./games
     ./theme 
+    ./shell
     ./utils
     ./applications
     ./extra
