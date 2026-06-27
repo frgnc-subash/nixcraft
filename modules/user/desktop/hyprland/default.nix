@@ -1,7 +1,13 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.userSettings.hyprland;
-in {
+in
+{
   options.userSettings.hyprland = {
     enable = lib.mkEnableOption "Hyprland window manager";
   };
@@ -10,6 +16,7 @@ in {
       waybar
       # swaynotificationcenter
       brightnessctl
+      kitty
       rofi
       hypridle
       hyprlock
@@ -48,15 +55,15 @@ in {
       };
     };
     home.sessionVariables = {
-      XDG_CURRENT_DESKTOP  = "Hyprland";
-      XDG_SESSION_TYPE     = "wayland";
-      XDG_SESSION_DESKTOP  = "Hyprland";
-      QT_QPA_PLATFORM      = "wayland";
+      XDG_CURRENT_DESKTOP = "Hyprland";
+      XDG_SESSION_TYPE = "wayland";
+      XDG_SESSION_DESKTOP = "Hyprland";
+      QT_QPA_PLATFORM = "wayland";
       QT_QPA_PLATFORMTHEME = "qt6ct";
-      XCURSOR_SIZE         = "20";
-      HYPRCURSOR_SIZE      = "20";
-      XCURSOR_THEME        = "Bibata-Modern-Ice";
-      TERMINAL             = "kitty";
+      XCURSOR_SIZE = "20";
+      HYPRCURSOR_SIZE = "20";
+      XCURSOR_THEME = "Bibata-Modern-Ice";
+      TERMINAL = "kitty";
     };
   };
 }

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 let
   cfg = config.userSettings.theme;
 in {
@@ -19,7 +19,12 @@ in {
       mononoki
       monaspace
       corefonts
+      inputs.apple-fonts.packages.${pkgs.stdenv.hostPlatform.system}.sf-pro
+      inputs.apple-fonts.packages.${pkgs.stdenv.hostPlatform.system}.sf-mono
+      inputs.apple-fonts.packages.${pkgs.stdenv.hostPlatform.system}.ny
     ];
+
+    fonts.fontconfig.enable = true;
 
     home.pointerCursor = {
       gtk.enable = true;

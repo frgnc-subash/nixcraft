@@ -1,39 +1,40 @@
-{ config, lib, pkgs, ... }:
-
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.userSettings.shell;
-in {
-  imports = [ ./settings.nix ./starship.nix ];
+in
+{
+  imports = [
+    ./shell.nix
+    ./starship.nix
+  ];
 
-  options.userSettings.shell = {
-    enable = lib.mkEnableOption "shell configuration";
+  options = {
+    userSettings.shell = {
+      enable = lib.mkEnableOption "shell";
+    };
   };
-
   config = lib.mkIf cfg.enable {
-    programs.zsh = {
-      enable                    = true;
-      enableCompletion          = true;
-      autosuggestion.enable     = true;
-      syntaxHighlighting.enable = true;
-    };
-
-    programs.fzf = {
-      enable               = true;
-      enableZshIntegration = true;
-    };
-
-    programs.zoxide = {
-      enable               = true;
-      enableZshIntegration = true;
-      options              = [ "--cmd" "cd" ];
-    };
-
-    programs.starship = {
-      enable               = true;
-      enableZshIntegration = true;
-    };
-
-    programs.eza.enable = true;
-
+    home.packages = with pkgs; [
+      zsh
+      zsh-autosuggestions
+      zsh-fast-syntax-highlighting
+      starship
+      fzf
+      zsh-forgit
+      zsh-fzf-history-search
+      zsh-fzf-tab
+      zoxide
+      eza
+      dust
+      bat
+      tree
+      tmux
+      ripgrep
+    ];
   };
 }
