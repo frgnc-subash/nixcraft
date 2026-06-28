@@ -19,6 +19,7 @@
     ../../modules/system/gpu
     ../../modules/system/gnome
     ../../modules/system/storage
+    ../../modules/system/virtualization
   ];
   config = {
     boot.kernelPackages = pkgs.linuxKernel.packages.linux_7_1;
@@ -29,6 +30,7 @@
     systemSettings.gpu.enable = true;
     systemSettings.gnome.enable = false;
     systemSettings.storage.enable = true;
+    systemSettings.virtualization.enable = true;
 
     services.gnome.gnome-keyring.enable = true;
     security.pam.services.ly.enableGnomeKeyring = true;
