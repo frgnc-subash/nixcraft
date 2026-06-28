@@ -1,9 +1,16 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
-  cfg = config.userSettings.theme;
-in {
-  options.userSettings.theme = {
-    enable = lib.mkEnableOption "adw-gtk3 theme";
+  cfg = config.userSettings.looks;
+in
+{
+  options.userSettings.looks = {
+    enable = lib.mkEnableOption "system looks";
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [

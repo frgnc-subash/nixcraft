@@ -36,6 +36,8 @@ in
       };
 
       shellAliases = {
+        build = "sudo nixos-rebuild switch --flake ~/nixcraft";
+        clean = "sudo nix-collect-garbage -d";
         ping = "ping -c 5";
         ls = "eza --icons";
         cat = "bat --paging=never";

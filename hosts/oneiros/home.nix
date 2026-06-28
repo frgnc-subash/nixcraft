@@ -18,7 +18,7 @@
   userSettings.media.enable = true;
   userSettings.hyprland.enable = true;
   userSettings.games.enable = true;
-  userSettings.theme.enable = true;
+  userSettings.looks.enable = true;
   userSettings.extra.enable = true;
   home.stateVersion = "26.05";
 }

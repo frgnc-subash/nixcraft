@@ -7,7 +7,7 @@
     ./git
     ./media
     ./games
-    ./theme 
+    ./looks
     ./shell
     ./utils
     ./applications
