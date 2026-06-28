@@ -17,6 +17,11 @@ in {
       fastfetch
       htop
       pokeget-rs
-      ];
+      pipes-rs
+      # momoi
+      nitch
+      peaclock
+      cbonsai
+    ];
   };
 }
