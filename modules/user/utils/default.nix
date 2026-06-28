@@ -28,6 +28,9 @@ in
 
       eww
       quickshell
+
+      nodejs_22
+      bun
     ];
   };
 }

@@ -12,6 +12,9 @@ in {
       spotify
       vesktop
       proton-authenticator
+      proton-vpn
+      wireguard-tools
+      
       inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
       libreoffice-still
       errands
