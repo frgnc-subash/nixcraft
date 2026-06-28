@@ -31,6 +31,7 @@ in
 
       nodejs_22
       bun
+      uv
     ];
   };
 }
