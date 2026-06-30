@@ -15,14 +15,13 @@
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    prismalauncher = {
-      url = "github:PrismLauncher/PrismLauncher";
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
   outputs =
     inputs@{
-      self,
       nixpkgs,
       home-manager,
       ...

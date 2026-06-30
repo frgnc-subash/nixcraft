@@ -1,7 +1,13 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.userSettings.games;
-in {
+in
+{
   options.userSettings.games = {
     enable = lib.mkEnableOption "gaming tools";
   };

@@ -16,7 +16,7 @@ in {
       swappy
       pulseaudio
       loupe
+      satty
     ];
-
   };
 }

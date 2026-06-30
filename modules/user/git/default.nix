@@ -1,8 +1,9 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 let
   cfg = config.userSettings.git;
-in {
+in
+{
   options.userSettings.git = {
     enable = lib.mkEnableOption "git configuration";
   };
@@ -17,9 +18,9 @@ in {
           AddKeysToAgent = "yes";
         };
         "github.com" = {
-          Hostname      = "github.com";
-          User          = "git";
-          IdentityFile  = "~/.ssh/github";
+          Hostname = "github.com";
+          User = "git";
+          IdentityFile = "~/.ssh/github";
           IdentitiesOnly = true;
         };
       };
@@ -30,7 +31,7 @@ in {
       enable = true;
 
       settings = {
-        user.name  = "axosis";
+        user.name = "axosis";
         user.email = "axosis.social357@gmail.com";
         init.defaultBranch = "main";
 

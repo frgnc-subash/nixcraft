@@ -15,6 +15,8 @@ in {
     home.packages = with pkgs; [
       nautilus
       nwg-look
+      yazi
+      # kvan
     ];
   };
 }
