@@ -18,6 +18,7 @@ in
       vim
       neovim
       zed-editor
+      jetbrains.idea
       jdk21
       (pkgs.dotnetCorePackages.combinePackages [
         pkgs.dotnetCorePackages.sdk_9_0

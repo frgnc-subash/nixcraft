@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   ...
@@ -23,7 +22,7 @@
   ];
   config = {
     boot.kernelPackages = pkgs.linuxKernel.packages.linux_7_1;
-    
+
     systemSettings.users = [ "axosis" ];
     systemSettings.bluetooth.enable = true;
     systemSettings.services.enable = true;
@@ -39,7 +38,7 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
     boot.loader.efi.efiSysMountPoint = "/boot";
-    
+
     networking.hostName = "oneiros";
     networking.networkmanager.enable = true;
     time.timeZone = "Asia/Kathmandu";
