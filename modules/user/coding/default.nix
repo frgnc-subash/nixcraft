@@ -8,14 +8,11 @@ let
   cfg = config.userSettings.coding;
 in
 {
-  imports = [ ./claude.nix ];
-
   options.userSettings.coding = {
     enable = lib.mkEnableOption "coding";
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      claude-code
       vim
       neovim
       zed-editor
@@ -29,8 +26,5 @@ in
       nixd
       nil
     ];
-
-
- 
   };
 }

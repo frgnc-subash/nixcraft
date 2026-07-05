@@ -31,9 +31,10 @@
     systemSettings.gnome.enable = false;
     systemSettings.storage.enable = true;
     systemSettings.virtualization.enable = true;
-    systemSettings.sddm.enable = false;
+    systemSettings.sddm.enable = true;
 
     services.gnome.gnome-keyring.enable = true;
+    services.displayManager.ly.enable = false;
     security.pam.services.ly.enableGnomeKeyring = true;
     security.polkit.enable = true;
 
@@ -58,7 +59,6 @@
         "wheel"
       ];
       shell = pkgs.zsh;
-      packages = with pkgs; [ ];
     };
 
     nixpkgs.config = {
@@ -69,7 +69,6 @@
       ];
     };
 
-    services.displayManager.ly.enable = true;
     services.flatpak.enable = true;
 
     nix.settings.experimental-features = [

@@ -15,7 +15,6 @@
   userSettings.desktop.enable = true;
   userSettings.coding.enable = true;
   userSettings.git.enable = true;
-  userSettings.claude.enable = true;
 
   userSettings.shell.enable = true;
   userSettings.media.enable = true;
