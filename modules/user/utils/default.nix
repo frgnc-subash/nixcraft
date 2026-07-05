@@ -29,7 +29,7 @@ in
       eww
       quickshell
 
-      nodejs_22
+      nodejs_24
       bun
       uv
     ];

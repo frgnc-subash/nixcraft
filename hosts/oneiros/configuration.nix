@@ -19,6 +19,7 @@
     ../../modules/system/gnome
     ../../modules/system/storage
     ../../modules/system/virtualization
+     ../../modules/system/sddm
   ];
   config = {
     boot.kernelPackages = pkgs.linuxKernel.packages.linux_7_1;
@@ -30,6 +31,7 @@
     systemSettings.gnome.enable = false;
     systemSettings.storage.enable = true;
     systemSettings.virtualization.enable = true;
+    systemSettings.sddm.enable = false;
 
     services.gnome.gnome-keyring.enable = true;
     security.pam.services.ly.enableGnomeKeyring = true;
@@ -59,7 +61,13 @@
       packages = with pkgs; [ ];
     };
 
-    nixpkgs.config.allowUnfree = true;
+    nixpkgs.config = {
+      allowUnfree = true;
+
+      permittedInsecurePackages = [
+        "pnpm-10.29.2"
+      ];
+    };
 
     services.displayManager.ly.enable = true;
     services.flatpak.enable = true;
@@ -68,11 +76,12 @@
       "nix-command"
       "flakes"
     ];
+    nix.settings.auto-optimise-store = true;
 
     programs.hyprland = {
       enable = true;
       xwayland.enable = true;
-      # withUWSM = true;
+      withUWSM = true;
     };
     xdg.portal.enable = true;
     xdg.portal.extraPortals = [

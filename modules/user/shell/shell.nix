@@ -39,6 +39,8 @@ in
         build = "sudo nixos-rebuild switch --flake ~/nixcraft";
         clean = "sudo nix-collect-garbage -d";
         ping = "ping -c 5";
+        zed = "zeditor";
+        docx2pdf = "libreoffice --headless --convert-to pdf 2>/dev/null";
         ls = "eza --icons";
         cat = "bat --paging=never";
         ll = "eza -l --icons";

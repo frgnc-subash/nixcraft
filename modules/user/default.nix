@@ -3,7 +3,7 @@
 {
   imports = [
     ./desktop
-    ./editor
+    ./coding
     ./git
     ./media
     ./games

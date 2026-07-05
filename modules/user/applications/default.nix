@@ -29,6 +29,7 @@ in
       errands
       zathura
       zathuraPkgs.zathura_pdf_poppler
+      obsidian
     ];
   };
 }
