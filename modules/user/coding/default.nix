@@ -18,10 +18,6 @@ in
       zed-editor
       vscode
       jdk21
-      (pkgs.dotnetCorePackages.combinePackages [
-        pkgs.dotnetCorePackages.sdk_9_0
-      ])
-      pkgs.csharp-ls
       qt6.qtdeclarative
       nixd
       nil

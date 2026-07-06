@@ -19,7 +19,7 @@
     ../../modules/system/gnome
     ../../modules/system/storage
     ../../modules/system/virtualization
-     ../../modules/system/sddm
+    ../../modules/system/sddm
   ];
   config = {
     boot.kernelPackages = pkgs.linuxKernel.packages.linux_7_1;
@@ -31,7 +31,11 @@
     systemSettings.gnome.enable = false;
     systemSettings.storage.enable = true;
     systemSettings.virtualization.enable = true;
-    systemSettings.sddm.enable = true;
+    systemSettings.sddm = {
+      enable = true;
+      theme = "rei";
+      avatar = ../../assets/pfp.png; 
+    };
 
     services.gnome.gnome-keyring.enable = true;
     services.displayManager.ly.enable = false;

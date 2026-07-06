@@ -43,7 +43,7 @@ in
         docx2pdf = "libreoffice --headless --convert-to pdf 2>/dev/null";
         ls = "eza --icons";
         cat = "bat --paging=never";
-        ll = "eza -l --icons";
+        ll = "eza -lh --icons --git";
         la = "eza -lah --color=always --group-directories-first";
         lah = "eza -lah --icons --group-directories-first";
         "l." = ''eza -la --icons | grep "^\."'';
@@ -52,6 +52,7 @@ in
         lt = "eza --tree -L 2 --icons";
         ld = "eza -lD --icons";
         tm = "new_tmux";
+        tree = "eza --tree --icons";
         tl = "tmux list-sessions";
         tk = "tmux kill-server";
       };
@@ -66,7 +67,13 @@ in
         export TERMINAL='kitty'
         export EDITOR='nvim'
         export VISUAL='nvim'
+
+        export PATH="$HOME/.local/bin:$PATH"
+        export XDG_CACHE_HOME="$HOME/.cache"
+        export XDG_DATA_HOME="$HOME/.local/share"
+        export XDG_STATE_HOME="$HOME/.local/state"
         export PATH=$PATH:~/.spicetify
+        export GPG_TTY=$(tty)
 
         new_tmux() {
           session_dir=$(zoxide query --list | fzf --preview 'ls -la {}') || return
@@ -90,7 +97,7 @@ in
 
         zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
         zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
-        zstyle ':completion:*' menu no
+        zstyle ':completion:*' menu select
         zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
         zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
