@@ -29,6 +29,8 @@ in
       inputs.apple-fonts.packages.${pkgs.stdenv.hostPlatform.system}.sf-pro
       inputs.apple-fonts.packages.${pkgs.stdenv.hostPlatform.system}.sf-mono
       inputs.apple-fonts.packages.${pkgs.stdenv.hostPlatform.system}.ny
+      libsForQt5.qtstyleplugin-kvantum
+      qt6Packages.qtstyleplugin-kvantum
     ];
 
     fonts.fontconfig.enable = true;
@@ -40,5 +42,18 @@ in
       name = "Bibata-Modern-Ice";
       size = 20;
     };
+
+    # Make Qt apps actually use Kvantum
+    qt = {
+      enable = true;
+      platformTheme.name = "kvantum";
+      style.name = "kvantum";
+    };
+
+    # Tell Kvantum which theme to load
+    xdg.configFile."Kvantum/kvantum.kvconfig".text = ''
+      [General]
+      theme=KvMojave
+    '';
   };
 }
