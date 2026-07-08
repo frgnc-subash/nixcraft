@@ -42,7 +42,7 @@ in
         zed = "zeditor";
         docx2pdf = "libreoffice --headless --convert-to pdf 2>/dev/null";
         ls = "eza --icons";
-        cat = "bat --paging=never";
+        cat = "bat --paging=never --style=plain";
         ll = "eza -lh --icons --git";
         la = "eza -lah --color=always --group-directories-first";
         lah = "eza -lah --icons --group-directories-first";

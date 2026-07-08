@@ -21,6 +21,9 @@ in
       qt6.qtdeclarative
       nixd
       nil
+      nodejs_24
+      bun
+      uv
     ];
   };
 }

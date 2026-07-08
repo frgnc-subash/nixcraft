@@ -24,14 +24,8 @@ in
       util-linux
       libsecret # provides secret-tool
       # python3.withPackages (ps: [ ps.pygobject3 ])
-      gnome-disk-utility
-
       eww
       quickshell
-
-      nodejs_24
-      bun
-      uv
     ];
   };
 }

@@ -23,7 +23,7 @@ in
       proton-authenticator
       proton-vpn
       wireguard-tools
-
+      brave
       inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
       libreoffice-still
       errands

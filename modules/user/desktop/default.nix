@@ -1,8 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.desktop;
-in {
+in
+{
   imports = [
     ./hyprland
   ];
@@ -15,6 +21,9 @@ in {
     home.packages = with pkgs; [
       nautilus
       nwg-look
+      gnome-disk-utility
+      gnome-clocks
+      gnome-calendar
       yazi
       # kvan
     ];
