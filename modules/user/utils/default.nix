@@ -16,14 +16,9 @@ in
       wget
       curl
 
-      rustc
-      cargo
-      gcc
-      python3
       vips
       util-linux
       libsecret # provides secret-tool
-      # python3.withPackages (ps: [ ps.pygobject3 ])
       eww
       quickshell
     ];

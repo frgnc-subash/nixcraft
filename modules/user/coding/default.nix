@@ -13,17 +13,39 @@ in
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
+
+      # editors
       vim
       neovim
       zed-editor
-      vscode
+      emacs-gtk
+
+      # languages & runtimes
       jdk21
-      qt6.qtdeclarative
-      nixd
-      nil
       nodejs_24
       bun
+      python3
+
+      # rust
+      rustup
+
+      # build tools / compilers
+      gcc
+
+      # nix tooling (LSP + linter)
+      nixd
+      nil
+
+      # go lang
+      pkgs.go
+      pkgs.gopls
+      pkgs.gotools
+
+      # python package manager
       uv
+
+      # Qt / GUI dev
+      qt6.qtdeclarative
     ];
   };
 }

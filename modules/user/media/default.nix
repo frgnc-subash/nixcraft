@@ -21,6 +21,7 @@ in
       pulseaudio
       loupe
       satty
+      kooha
     ];
   };
 }
