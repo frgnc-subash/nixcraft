@@ -30,6 +30,12 @@ in
       zathura
       zathuraPkgs.zathura_pdf_poppler
       obsidian
+      blanket
+      nautilus
+      nwg-look
+      gnome-disk-utility
+      gnome-clocks
+      gnome-calendar
     ];
   };
 }

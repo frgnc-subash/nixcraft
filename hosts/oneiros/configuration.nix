@@ -16,7 +16,6 @@
     ../../modules/system/bluetooth
     ../../modules/system/services
     ../../modules/system/gpu
-    ../../modules/system/gnome
     ../../modules/system/storage
     ../../modules/system/virtualization
     ../../modules/system/sddm
@@ -28,9 +27,9 @@
     systemSettings.bluetooth.enable = true;
     systemSettings.services.enable = true;
     systemSettings.gpu.enable = true;
-    systemSettings.gnome.enable = false;
     systemSettings.storage.enable = true;
     systemSettings.virtualization.enable = true;
+    
     systemSettings.sddm = {
       enable = true;
       theme = "rei";

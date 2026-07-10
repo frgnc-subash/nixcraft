@@ -2,7 +2,6 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.userSettings.extra;
-  momoisay = pkgs.callPackage ./momoisay.nix {};
 in {
   options.userSettings.extra = {
     enable = lib.mkEnableOption "extra utilities";
@@ -22,6 +21,7 @@ in {
       nitch
       peaclock
       cbonsai
+      yazi
     ];
   };
 }
