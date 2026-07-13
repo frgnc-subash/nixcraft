@@ -14,9 +14,7 @@ in
       enable = lib.mkEnableOption "Enable applications apps";
     };
   };
-
   imports = [ ./spicetify.nix ];
-
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       vesktop
