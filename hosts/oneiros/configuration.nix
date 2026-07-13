@@ -32,7 +32,7 @@
     
     systemSettings.sddm = {
       enable = true;
-      theme = "rei";
+      theme = "ken";
       avatar = ../../assets/pfp.png; 
     };
 
@@ -91,7 +91,6 @@
       pkgs.xdg-desktop-portal-hyprland
     ];
     environment.systemPackages = [ pkgs.polkit_gnome ];
-    # programs.enable.uwsm = true;
     programs.zsh.enable = true;
     system.stateVersion = "26.05";
     programs.nix-ld.enable = true;

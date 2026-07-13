@@ -25,6 +25,7 @@ in
       nodejs_24
       bun
       python3
+      mariadb
 
       # rust
       rustup

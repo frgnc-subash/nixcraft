@@ -35,6 +35,7 @@ in
       tree
       tmux
       ripgrep
+      herdr
     ];
   };
 }

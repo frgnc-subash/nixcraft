@@ -24,7 +24,7 @@ in
       ];
 
       # theme = spicePkgs.themes.text;
-      # colorScheme = "Spicetify";
+      # colorScheme = "StarryNight";
     };
   };
 }
