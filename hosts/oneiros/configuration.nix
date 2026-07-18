@@ -29,11 +29,11 @@
     systemSettings.gpu.enable = true;
     systemSettings.storage.enable = true;
     systemSettings.virtualization.enable = true;
-    
+
     systemSettings.sddm = {
       enable = true;
       theme = "ken";
-      avatar = ../../assets/pfp.png; 
+      avatar = ../../assets/pfp.png;
     };
 
     services.gnome.gnome-keyring.enable = true;
@@ -69,6 +69,7 @@
 
       permittedInsecurePackages = [
         "pnpm-10.29.2"
+        "electron-40.10.5"
       ];
     };
 

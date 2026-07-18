@@ -18,7 +18,6 @@ in
       vim
       neovim
       zed-editor
-      emacs-gtk
 
       # languages & runtimes
       jdk21
@@ -32,6 +31,7 @@ in
 
       # build tools / compilers
       gcc
+      cmake
 
       # nix tooling (LSP + linter)
       nixd

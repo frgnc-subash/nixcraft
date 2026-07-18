@@ -50,7 +50,14 @@ in
       platformTheme.name = "kvantum";
       style.name = "kvantum";
     };
-
+    gtk = {
+      enable = true;
+      cursorTheme = {
+        name = "Bibata-Modern-Ice";
+        size = 20;
+        package = pkgs.bibata-cursors;
+      };
+    };
     # Tell Kvantum which theme to load
     xdg.configFile."Kvantum/kvantum.kvconfig".text = ''
       [General]

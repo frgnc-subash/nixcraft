@@ -14,10 +14,12 @@ in
       enable = lib.mkEnableOption "Enable applications apps";
     };
   };
-  imports = [ ./spicetify.nix ];
+  # imports = [ ./spicetify.nix ];
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       vesktop
+      spotify
+      mission-center
       proton-authenticator
       proton-vpn
       wireguard-tools
@@ -34,6 +36,7 @@ in
       gnome-disk-utility
       gnome-clocks
       gnome-calendar
+      zotero
     ];
   };
 }
