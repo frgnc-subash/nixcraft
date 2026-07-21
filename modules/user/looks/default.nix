@@ -24,6 +24,7 @@ in
       material-symbols
       inter
       mononoki
+      iosevka
       monaspace
       corefonts
       inputs.apple-fonts.packages.${pkgs.stdenv.hostPlatform.system}.sf-pro

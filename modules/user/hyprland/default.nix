@@ -64,7 +64,6 @@ in
       HYPRCURSOR_SIZE = "20";
       XCURSOR_THEME = "Bibata-Modern-Ice";
       TERMINAL = "kitty";
-      NIXOS_OZONE_WL = "1";
-    };
+      NIXOS_OZONE_WL = "1";    };
   };
 }

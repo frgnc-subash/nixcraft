@@ -14,11 +14,11 @@ in
       enable = lib.mkEnableOption "Enable applications apps";
     };
   };
-  # imports = [ ./spicetify.nix ];
+  imports = [ ./spicetify.nix ];
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       vesktop
-      spotify
+      # spotify
       mission-center
       proton-authenticator
       proton-vpn
