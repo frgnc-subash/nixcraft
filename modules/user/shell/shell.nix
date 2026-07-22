@@ -41,6 +41,7 @@ in
         ping = "ping -c 5";
         zed = "zeditor";
         docx2pdf = "libreoffice --headless --convert-to pdf 2>/dev/null";
+        pdf2docx = "libreoffice --headless --convert-to docx 2>/dev/null"
         ls = "eza --icons";
         cat = "bat --paging=never --style=plain";
         ll = "eza -lh --icons --git";
