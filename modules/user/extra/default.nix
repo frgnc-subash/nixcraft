@@ -21,7 +21,6 @@ in {
       nitch
       peaclock
       cbonsai
-      yazi
     ];
   };
 }

@@ -35,6 +35,8 @@ in
       tree
       tmux
       ripgrep
+      yazi
+      superfile
       herdr
     ];
   };
