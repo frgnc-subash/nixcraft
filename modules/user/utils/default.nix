@@ -19,8 +19,6 @@ in
       vips
       util-linux
       libsecret # provides secret-tool
-      eww
-      quickshell
-    ];
+         ];
   };
 }

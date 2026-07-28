@@ -25,6 +25,10 @@ in
       bun
       python3
       mariadb
+ 
+      eww
+      quickshell
+
 
       # rust
       rustup

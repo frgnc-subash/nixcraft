@@ -35,6 +35,8 @@ in
       slurp
       hyprpicker
       libnotify
+      zenity
+      wallust
     ];
     xdg.portal = {
       enable = true;

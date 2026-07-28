@@ -38,6 +38,7 @@ in
       yazi
       superfile
       herdr
+      fetch
     ];
   };
 }
