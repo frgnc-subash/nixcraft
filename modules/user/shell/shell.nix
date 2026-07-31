@@ -40,8 +40,8 @@ in
         clean = "sudo nix-collect-garbage -d";
         ping = "ping -c 5";
         zed = "zeditor";
-        docx2pdf = "libreoffice --headless --convert-to pdf 2>/dev/null";
-        pdf2docx = "libreoffice --headless --convert-to docx 2>/dev/null";
+        topdf = "libreoffice --headless --convert-to pdf 2>/dev/null";
+        todocx = "libreoffice --headless --convert-to docx 2>/dev/null";
         ls = "eza --icons";
         cat = "bat --paging=never --style=plain";
         ll = "eza -lh --icons --git";
@@ -56,6 +56,7 @@ in
         tree = "eza --tree --icons";
         tl = "tmux list-sessions";
         tk = "tmux kill-server";
+        ta = "tmux a";
       };
 
       initContent = ''
