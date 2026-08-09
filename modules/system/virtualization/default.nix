@@ -29,11 +29,13 @@ in
       (bottles.override { removeWarningPopup = true; })
       wineWow64Packages.stable
       winetricks
-      virt-manager  
+      virt-manager
+      pkgs.wl-clipboard
     ];
     hardware.graphics.enable32Bit = true;
     virtualisation.libvirtd.enable = true;
     virtualisation.waydroid.enable = true;
+    virtualisation.waydroid.package = pkgs.waydroid-nftables;
     programs.virt-manager.enable = true;
     users.users.axosis.extraGroups = [ "libvirtd" ];
   };

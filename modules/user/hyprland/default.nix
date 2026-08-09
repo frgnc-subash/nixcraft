@@ -17,6 +17,7 @@ in
       # swaynotificationcenter
       brightnessctl
       kitty
+      ghostty
       rofi
       hypridle
       hyprlock
