@@ -6,7 +6,7 @@ in
   config = lib.mkIf cfg.enable {
     programs.starship.settings = {
       add_newline = false;
-      format = "[󰫣](fg:purple) $directory $git_branch $git_status  [](fg:yellow) $fill $lua $nodejs $rust $python $docker_context $jobs $cmd_duration $line_break $character";
+      format = "[󰫣](fg:purple) $directory $git_branch $git_status [](fg:yellow) $fill $lua $nodejs $rust $python $docker_context $jobs $cmd_duration $line_break$character";
       fill.symbol = " ";
       character = {
         success_symbol = "[󰁕](bold blue)";
@@ -20,10 +20,11 @@ in
         substitutions = {
           "Desktop" = "󰍹 ";
           "Documents" = "󰈙 ";
-          "Downloads" = "󰇚 ";
+          "Downloads" = " ";
           "Music" = "󰝚 ";
           "Pictures" = "󰋹 ";
           "Projects" = "󱓞 ";
+          "Videos" = " ";
           "nixcraft" = "󱄅 ";
         };
       };
@@ -35,7 +36,7 @@ in
       git_branch = {
         symbol = "󰘬";
         style = "fg:cyan";
-        format = "'[ $branch $symbol ]($style)'";
+        format = "[ $branch $symbol ]($style)";
       };
       git_status = {
         conflicted = " 󰀦 ";

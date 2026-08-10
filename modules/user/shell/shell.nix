@@ -64,7 +64,6 @@ in
         bindkey '^p' history-search-backward
         bindkey '^n' history-search-forward
 
-        export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
         export PATH=$HOME/.config/hypr/scripts:$PATH
         export TERMINAL='kitty'
         export EDITOR='nvim'

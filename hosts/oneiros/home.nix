@@ -15,6 +15,7 @@
   userSettings.coding.enable = true;
   userSettings.git.enable = true;
   userSettings.shell.enable = true;
+  programs.starship.enable = true;
   userSettings.media.enable = true;
   userSettings.hyprland.enable = true;
   userSettings.games.enable = true;
