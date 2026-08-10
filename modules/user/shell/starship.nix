@@ -72,6 +72,15 @@ in
       python.symbol = "󰌠";
       rust.symbol = "󱘗";
       lua.symbol = "󰢱";
+      golang.symbol = "";
+      c.symbol = "";
+      cpp.symbol = "";
+      java.symbol = "󰬷";
+      kotlin.symbol = "󱈙";
+      php.symbol = "󰌟";
+      csharp.symbol = "󰌛";
+      gradle.symbol = "";
+      cmake.symbol = "";
     };
   };
 }
