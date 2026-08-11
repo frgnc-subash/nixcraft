@@ -78,7 +78,6 @@ in
       java.symbol = "󰬷";
       kotlin.symbol = "󱈙";
       php.symbol = "󰌟";
-      csharp.symbol = "󰌛";
       gradle.symbol = "";
       cmake.symbol = "";
     };

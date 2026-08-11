@@ -18,6 +18,7 @@ in
       vim
       neovim
       zed-editor
+      antigravity-ide
 
       # languages & runtimes
       jdk21
