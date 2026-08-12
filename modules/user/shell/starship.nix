@@ -27,6 +27,7 @@ in
           "Projects" = "󱓞";
           "Videos" = "";
           "nixcraft" = "";
+          ".config" = "";
         };
       };
       username = {
