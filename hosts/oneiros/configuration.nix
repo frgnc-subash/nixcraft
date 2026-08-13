@@ -29,6 +29,7 @@
     systemSettings.gpu.enable = true;
     systemSettings.storage.enable = true;
     systemSettings.virtualization.enable = true;
+    services.journald.extraConfig = "Storage=persistent";
 
     systemSettings.sddm = {
       enable = true;
