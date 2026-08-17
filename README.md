@@ -1,5 +1,7 @@
 ## nixcraft
 
+Curiosity brought me here. These is nixcraft, a NixOS configuration for my personal desktop with hyprland.
+
 ## Showcase
 
 <img src='/assets/showcase/fastfetch.png' alt='showcase' width='100%'>
