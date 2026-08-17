@@ -34,8 +34,6 @@ in
       nautilus
       nwg-look
       gnome-disk-utility
-      gnome-clocks
-      gnome-calendar
       zotero
     ];
   };

@@ -838,6 +838,10 @@ Item {
 
                             QuickTile {
                                 Layout.fillWidth: true
+                                Layout.minimumHeight: 76
+                                Layout.preferredHeight: 76
+                                Layout.maximumHeight: 76
+                                compact: true
                                 accentColor: Palette.Theme.info
                                 iconGlyph: root.networkIcon()
                                 title: "Network"
@@ -849,6 +853,10 @@ Item {
 
                             QuickTile {
                                 Layout.fillWidth: true
+                                Layout.minimumHeight: 76
+                                Layout.preferredHeight: 76
+                                Layout.maximumHeight: 76
+                                compact: true
                                 accentColor: Palette.Theme.info
                                 iconGlyph: root.bluetoothIcon()
                                 title: "Bluetooth"

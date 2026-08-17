@@ -43,6 +43,12 @@
     "dark": "Material Icon Theme"
   },
   "agent_servers": {
+    "claude-acp": {
+      "default_config_options": {
+        "fast": true
+      },
+      "type": "registry"
+    },
     "codex-acp": {
       "default_config_options": {
         "reasoning_effort": "medium"
