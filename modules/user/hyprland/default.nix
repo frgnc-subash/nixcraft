@@ -13,18 +13,11 @@ in
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      waybar
-      # swaynotificationcenter
       brightnessctl
       kitty
-      ghostty
-      rofi
       hypridle
       hyprlock
       hyprsunset
-      # hyprshader
-      # hyprdvd
-      # swayosd
       cliphist
       wl-clipboard
       grimblast

@@ -9,7 +9,7 @@ let
 in
 {
   imports = [
-    ./shell.nix
+    ./zsh.nix
     ./starship.nix
   ];
 
@@ -20,10 +20,8 @@ in
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      zsh
       zsh-autosuggestions
       zsh-fast-syntax-highlighting
-      starship
       fzf
       zsh-forgit
       zsh-fzf-history-search

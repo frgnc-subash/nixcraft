@@ -8,6 +8,9 @@ let
   cfg = config.userSettings.media;
 in
 {
+ imports = [
+    ./mpv.nix
+  ];
   options = {
     userSettings.media = {
       enable = lib.mkEnableOption "Enable media playback apps";
@@ -15,7 +18,6 @@ in
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      mpv
       ffmpeg
       swappy
       pulseaudio
