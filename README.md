@@ -1,17 +1,23 @@
-# nixcraft
+## nixcraft
 
-My personal NixOS + home-manager flake configuration.
+## Showcase
 
-## Apply changes
+<img src='/assets/showcase/fastfetch.png' alt='showcase' width='100%'>
+<p align="center">
+  <table>
+    <tr>
+      <td><img src='/assets/showcase/pickers.png' alt='showcase' width='100%'></td>
+      <td><img src='/assets/showcase/mediaplayer.png' alt='showcase' width='100%'></td>
+    </tr>
+    <tr>
+      <td><img src='/assets/showcase/panel.png' alt='showcase' width='100%'></td>
+      <td><img src='/assets/showcase/powermenu.png' alt='showcase' width='100%'></td>
+    </tr>
+  </table>
+</p>
+<img src='/assets/showcase/mocha.png' alt='showcase' width='100%'>
 
-```bash
-git add -A
-sudo nixos-rebuild switch --flake ~/nixcraft
-```
-
-Stage new files before rebuilding — flakes only see what Git tracks.
-
-## Fresh NixOS setup
+## Installation
 
 This configuration is currently for the `oneiros` host and the `axosis`
 user. It contains machine-specific hardware, user, display, and theme
