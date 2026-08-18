@@ -6,7 +6,10 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("awww-daemon & awww img ~/Pictures/wallpapers/night.png")
     hl.exec_cmd("nm-applet &")
     hl.exec_cmd("hyprsunset")
-    hl.exec_cmd("hypridle")
+    -- Lock screen + idle handling now live in Quickshell (modules/lockscreen,
+    -- modules/idle). hypridle/hyprlock stay installed as a fallback but must
+    -- not run alongside the Quickshell idle daemon, or timers would race.
+    -- hl.exec_cmd("hypridle")
     hl.exec_cmd("qs & disown")
     hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")

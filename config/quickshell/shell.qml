@@ -7,6 +7,8 @@ import "modules/overlay"
 import "modules/notification"
 import "modules/osd"
 import "modules/wallpicker"
+import "modules/lockscreen"
+import "modules/idle"
 
 ShellRoot {
     id: root
@@ -23,6 +25,13 @@ ShellRoot {
     }
     Osd {
         id: mainOsd
+    }
+    LockScreen {
+        id: lockScreen
+    }
+    IdleService {
+        id: idleService
+        lockScreen: lockScreen
     }
     IpcHandler {
         target: "controlcenter"

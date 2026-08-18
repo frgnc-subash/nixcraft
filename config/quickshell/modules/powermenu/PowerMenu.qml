@@ -27,7 +27,7 @@ Item {
         {
             name: "Lock",
             icon: "\ue897",
-            command: ["sh", "-c", "command -v hyprlock >/dev/null && exec hyprlock || exec loginctl lock-session"]
+            command: ["qs", "ipc", "call", "lockscreen", "lock"]
         },
         {
             name: "Sleep",
