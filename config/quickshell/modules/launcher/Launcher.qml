@@ -16,8 +16,18 @@ Item {
     anchors.fill: parent
     visible: false
 
+    property real maxWidth: 4000
     property var controlCenter: null
     property var serviceManager: null
+
+    readonly property int itemH: 56
+
+    implicitWidth: Math.max(360, Math.min(maxWidth - 32, 430))
+    // Fixed height (always room for maxVisible rows) rather than sizing to the
+    // current result count — a count that changes on every keystroke would
+    // otherwise retrigger the shared stage's grow/shrink animation constantly
+    // while typing.
+    implicitHeight: searchRow.height + divider.height + maxVisible * itemH + 8
 
     // ── IPC ───────────────────────────────────────────────────────
     signal aboutToOpen
@@ -218,32 +228,27 @@ Item {
 
                 ColumnLayout {
                     Layout.fillWidth: true
+                    spacing: 2
                     Layout.alignment: Qt.AlignVCenter
-                    spacing: 1
 
                     Text {
-                        text: modelData.name
+                        Layout.fillWidth: true
+                        text: modelData.name || ""
                         color: Palette.Theme.textPrimary
                         font.family: Palette.Theme.fontMono
                         font.pixelSize: 13
-                        font.weight: absoluteIndex === root.selected ? Font.Medium : Font.Normal
+                        font.weight: Font.Medium
                         elide: Text.ElideRight
-                        Layout.fillWidth: true
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 100
-                            }
-                        }
                     }
 
                     Text {
-                        text: modelData.comment || modelData.genericName || ""
+                        Layout.fillWidth: true
+                        text: modelData.comment || ""
+                        visible: text !== ""
                         color: Palette.Theme.textMuted
                         font.family: Palette.Theme.fontMono
-                        font.pixelSize: 10
+                        font.pixelSize: 11
                         elide: Text.ElideRight
-                        Layout.fillWidth: true
-                        visible: text !== ""
                     }
                 }
             }
@@ -282,7 +287,6 @@ Item {
         query = "";
         selected = 0;
         visible = true;
-        openAnim.restart();
         searchInput.forceActiveFocus();
     }
 
@@ -291,114 +295,22 @@ Item {
             return;
         aboutToClose();
         if (immediate) {
-            openAnim.stop();
-            closeAnim.stop();
-            card.opacity = 0;
-            card.scale = 0.95;
+            closeTimer.stop();
             root.visible = false;
             return;
         }
-        closeAnim.restart();
+        closeTimer.restart();
     }
 
-    // ── enter animation ───────────────────────────────────────────
-    SequentialAnimation {
-        id: openAnim
-        PropertyAction {
-            target: card
-            property: "opacity"
-            value: 0
-        }
-        PropertyAction {
-            target: card
-            property: "scale"
-            value: 0.95
-        }
-        ParallelAnimation {
-            NumberAnimation {
-                target: card
-                property: "opacity"
-                to: 1
-                duration: 200
-                easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                target: card
-                property: "scale"
-                to: 1
-                duration: 240
-                easing.type: Easing.OutCubic
-            }
-        }
+    Timer {
+        id: closeTimer
+        interval: 180
+        onTriggered: root.visible = false
     }
 
-    // ── exit animation ────────────────────────────────────────────
-    SequentialAnimation {
-        id: closeAnim
-        ParallelAnimation {
-            NumberAnimation {
-                target: card
-                property: "opacity"
-                to: 0
-                duration: 150
-                easing.type: Easing.InCubic
-            }
-            NumberAnimation {
-                target: card
-                property: "scale"
-                to: 0.95
-                duration: 150
-                easing.type: Easing.InCubic
-            }
-        }
-        ScriptAction {
-            script: root.visible = false
-        }
-    }
-
-    // ── dim overlay ───────────────────────────────────────────────
-    Rectangle {
+    ColumnLayout {
         anchors.fill: parent
-        color: "transparent"
-
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 200
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.closeLauncher()
-        }
-    }
-
-    // ── M3 card ───────────────────────────────────────────────────
-    Surface {
-        id: card
-        width: Math.max(360, Math.min(parent.width - 32, 430))
-        radius: Palette.Theme.radiusLarge
-        tintOpacity: 0.06
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 3
-
-        readonly property int itemH: 56
-        readonly property int listH: root.visibleCount * itemH
-        height: searchRow.height + divider.height + Math.max(listH, itemH) + 8
-
-        Behavior on height {
-            NumberAnimation {
-                duration: 160
-                easing.type: Easing.OutCubic
-            }
-        }
-
-        clip: true
-
-        ColumnLayout {
-            anchors.fill: parent
-            spacing: 0
+        spacing: 0
 
             // ── search bar ────────────────────────────────────────
             Item {
@@ -552,5 +464,4 @@ Item {
                 }
             }
         }
-    }
 }

@@ -2,7 +2,6 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
-import "../../components/overlay"
 import "../../config/Ui.js" as Ui
 import "../../theme" as Palette
 
@@ -13,13 +12,17 @@ Item {
     focus: visible
 
     required property var service
+    property real maxWidth: 4000
+    property real maxHeight: 4000
     property var launcher: null
     property var controlCenter: null
     property var powerMenu: null
     property string query: ""
     property int selected: 0
-    property bool presented: false
     readonly property var themes: service ? service.themes.filter(name => name.toLowerCase().indexOf(query.toLowerCase()) !== -1) : []
+
+    implicitWidth: Math.min(maxWidth - 20, Ui.themeOverlayWidth)
+    implicitHeight: Math.min(maxHeight - 12, content.implicitHeight + 24)
 
     signal aboutToOpen
     signal aboutToClose
@@ -49,7 +52,6 @@ Item {
         aboutToOpen();
         visible = true;
         service.refresh();
-        appear.restart();
         forceActiveFocus();
     }
 
@@ -57,14 +59,12 @@ Item {
         if (!visible)
             return;
         aboutToClose();
-        presented = false;
         if (immediate) {
-            appear.stop();
-            hide.stop();
+            closeTimer.stop();
             visible = false;
             return;
         }
-        hide.restart();
+        closeTimer.restart();
     }
 
     function apply(index) {
@@ -114,33 +114,11 @@ Item {
         }
     }
 
-    Rectangle {
+    ColumnLayout {
+        id: content
         anchors.fill: parent
-        color: "#000"
-        opacity: root.presented ? 0.30 : 0
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 180
-            }
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.close()
-        }
-    }
-
-    CenterOverlayCard {
-        id: card
-        presented: root.presented
-        radius: Palette.Theme.radiusLarge
-        width: Math.min(parent.width - 20, Ui.themeOverlayWidth)
-        height: Math.min(parent.height - Ui.overlayTop - 12, content.implicitHeight + 24)
-
-        ColumnLayout {
-            id: content
-            anchors.fill: parent
-            anchors.margins: 12
-            spacing: 4
+        anchors.margins: 12
+        spacing: 4
 
             RowLayout {
                 Layout.fillWidth: true
@@ -242,34 +220,10 @@ Item {
                 }
             }
         }
-    }
-
-    SequentialAnimation {
-        id: appear
-        PropertyAction {
-            target: root
-            property: "presented"
-            value: false
-        }
-        PauseAnimation {
-            duration: 1
-        }
-        PropertyAction {
-            target: root
-            property: "presented"
-            value: true
-        }
-    }
-    SequentialAnimation {
-        id: hide
-        PauseAnimation {
-            duration: 180
-        }
-        PropertyAction {
-            target: root
-            property: "visible"
-            value: false
-        }
+    Timer {
+        id: closeTimer
+        interval: 180
+        onTriggered: root.visible = false
     }
     Keys.onPressed: function (event) {
         root.handleKey(event);

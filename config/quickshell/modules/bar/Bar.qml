@@ -35,6 +35,10 @@ PanelWindow {
     property string osdLabel: "0%"
     property var osd: null
 
+    // Exposed so CenterOverlay can seed its stage from the bar notch's
+    // current collapsed width, creating a seamless expand transition.
+    readonly property real centerCapsuleSlabWidth: centerCapsule ? centerCapsule.slabWidth : 120
+
     readonly property real minLevel: 0.05
 
     property real currentVolume: 0.5
@@ -278,6 +282,10 @@ PanelWindow {
     }
 
     Process {
+        id: hyprpickerAction
+    }
+
+    Process {
         id: volumeRead
         command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
 
@@ -349,11 +357,14 @@ PanelWindow {
     }
 
     Item {
+        id: barRow
         anchors {
-            fill: parent
+            top: parent.top
+            left: parent.left
+            right: parent.right
             topMargin: 4
-            bottomMargin: 0
         }
+        height: 30
 
         LauncherIsland {
             id: launcherIsland
@@ -376,221 +387,6 @@ PanelWindow {
             }
         }
 
-        Item {
-            id: activeWindowInfo
-            anchors.left: workspacesCapsule.right
-            anchors.leftMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-            height: 34
-
-            RowLayout {
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 8
-
-                IconImage {
-                    implicitSize: 14
-                    // Resolve the path first: image://icon emits a warning for
-                    // apps whose WM class is not an installed icon name.
-                    source: bar.appClass !== "" ? Quickshell.iconPath(bar.appClass, true) : ""
-                    visible: source !== ""
-                    smooth: true
-                    mipmap: true
-                    Layout.alignment: Qt.AlignVCenter
-                }
-
-                Text {
-                    text: bar.appTitle
-                    color: Palette.Theme.textTitle
-                    font.family: Palette.Theme.fontMono
-                    font.pixelSize: 12
-                    elide: Text.ElideRight
-                    Layout.maximumWidth: 240
-                    Layout.alignment: Qt.AlignVCenter
-                }
-            }
-        }
-
-        BarSection {
-            id: centerCapsule
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            implicitWidth: centerContentWidth + 24
-
-            readonly property real centerContentWidth: {
-                if (bar.mediaPlaying)
-                    return cavaContent.implicitWidth;
-                return clockContent.implicitWidth + 40;
-            }
-            transformOrigin: Item.Top
-            scale: 1
-            opacity: mediaPopup.visible ? 0 : 1
-
-            Behavior on implicitWidth {
-                NumberAnimation {
-                    duration: 280
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            Behavior on opacity {
-                enabled: !morphAnim.running && !unmorphAnim.running
-                NumberAnimation {
-                    duration: 120
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            Cava {
-                id: cavaContent
-                anchors.centerIn: parent
-                active: bar.mediaPlaying && visible
-                visible: bar.mediaPlaying
-                opacity: bar.centerMode === "normal" && bar.mediaPlaying && !morphAnim.running && !(launcher && launcher.visible) ? 1 : 0
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 100
-                    }
-                }
-            }
-
-            RowLayout {
-                id: clockContent
-                anchors.centerIn: parent
-                spacing: 8
-                visible: !bar.mediaPlaying
-                opacity: bar.centerMode === "normal" && !bar.mediaPlaying && !morphAnim.running && !(launcher && launcher.visible) ? 1 : 0
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 100
-                    }
-                }
-
-                Clock {}
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                cursorShape: Qt.PointingHandCursor
-                onClicked: mouse => {
-                    if (mouse.button === Qt.RightButton) {
-                        bar.closeControlCenter();
-
-                        if (mediaPopup.isOpen)
-                            mediaPopup.forceClose();
-                        else if (Mpris.players.values.length > 0)
-                            mediaPopup.open();
-                        return;
-                    }
-
-                    if (mediaPopup.isOpen)
-                        mediaPopup.forceClose();
-
-                    bar.toggleControlCenter();
-                }
-            }
-
-            ParallelAnimation {
-                id: morphAnim
-                NumberAnimation {
-                    target: centerCapsule
-                    property: "scale"
-                    to: 0.92
-                    duration: 140
-                    easing.type: Easing.OutCubic
-                }
-                NumberAnimation {
-                    target: centerCapsule
-                    property: "opacity"
-                    to: 0
-                    duration: 120
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            ParallelAnimation {
-                id: unmorphAnim
-                NumberAnimation {
-                    target: centerCapsule
-                    property: "scale"
-                    to: 1
-                    duration: 200
-                    easing.type: Easing.OutCubic
-                }
-                NumberAnimation {
-                    target: centerCapsule
-                    property: "opacity"
-                    to: mediaPopup.visible ? 0 : 1
-                    duration: 160
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            Connections {
-                target: launcher
-                enabled: launcher !== null
-                function onAboutToOpen() {
-                    bar.centerMode = "launcher";
-                    morphAnim.restart();
-                }
-                function onAboutToClose() {
-                    bar.centerMode = "normal";
-                    unmorphAnim.restart();
-                }
-            }
-
-            Connections {
-                target: bar.controlCenter
-                enabled: bar.controlCenter !== null
-                function onAboutToOpen() {
-                    bar.centerMode = "controlCenter";
-                    morphAnim.restart();
-                }
-                function onAboutToClose() {
-                    bar.centerMode = "normal";
-                    unmorphAnim.restart();
-                }
-            }
-
-            Connections {
-                target: bar.themePicker
-                enabled: bar.themePicker !== null
-                function onAboutToOpen() {
-                    bar.centerMode = "theme";
-                    morphAnim.restart();
-                }
-                function onAboutToClose() {
-                    bar.centerMode = "normal";
-                    unmorphAnim.restart();
-                }
-            }
-
-            Connections {
-                target: bar.clipboard
-                enabled: bar.clipboard !== null
-                function onAboutToOpen() {
-                    bar.centerMode = "clipboard";
-                    morphAnim.restart();
-                }
-                function onAboutToClose() {
-                    bar.centerMode = "normal";
-                    unmorphAnim.restart();
-                }
-            }
-
-            Connections {
-                target: bar.powerMenu
-                enabled: bar.powerMenu !== null
-                function onAboutToOpen() {
-                    bar.centerMode = "powerMenu";
-                    morphAnim.restart();
-                }
-                function onAboutToClose() {
-                    bar.centerMode = "normal";
-                    unmorphAnim.restart();
-                }
-            }
-        }
 
         BarSection {
             id: batteryCapsule
@@ -631,11 +427,11 @@ PanelWindow {
                 }
 
                 IconButton {
-                    icon: "\ue7f4"
+                    icon: "\ue3b8"
                     implicitWidth: 26
                     implicitHeight: 34
                     Layout.alignment: Qt.AlignVCenter
-                    onClicked: bar.toggleControlCenter()
+                    onClicked: hyprpickerAction.exec(["hyprpicker", "-a"])
                 }
             }
         }
@@ -664,6 +460,144 @@ PanelWindow {
                         bar.powerMenu.togglePowerMenu();
                 }
             }
+        }
+    }
+
+    Notch {
+        id: centerCapsule
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        slabWidth: centerContentWidth + 24
+        slabRadius: 10
+        wingSize: 14
+
+        readonly property real centerContentWidth: {
+            if (bar.mediaPlaying)
+                return cavaContent.implicitWidth;
+            return clockContent.implicitWidth;
+        }
+        opacity: mediaPopup.visible ? 0 : 1
+
+        // Sits flush against the screen edge (no top gap) while the rest of the
+        // bar keeps its small top margin — so matching barRow's *height* would
+        // leave the notch's bottom edge sitting above barRow's (whose top
+        // margin eats into the same window height). Matching the window's
+        // height instead lines up both bottom edges flush with each other,
+        // giving the notch and barRow an equal (zero) bottom gap even though
+        // their top offsets differ. Grows down out of the edge with a gentle
+        // overshoot the first time the shell starts; animating the height
+        // rather than sliding the whole notch down keeps the wings welded to
+        // the edge for the entire drop.
+        readonly property real restHeight: bar.height
+        slabHeight: 0
+
+        Component.onCompleted: dropInAnim.start()
+
+        NumberAnimation {
+            id: dropInAnim
+            target: centerCapsule
+            property: "slabHeight"
+            to: centerCapsule.restHeight
+            duration: 480
+            easing.type: Easing.OutBack
+            // Kept modest so the bounce peak stays inside the window's height.
+            easing.overshoot: 1.0
+        }
+
+        Behavior on slabWidth {
+            NumberAnimation {
+                duration: 280
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 120
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        Cava {
+            id: cavaContent
+            anchors.centerIn: parent
+            active: bar.mediaPlaying && visible
+            visible: bar.mediaPlaying
+            opacity: bar.centerMode === "normal" && bar.mediaPlaying && !(launcher && launcher.visible) ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation { duration: 100 }
+            }
+        }
+
+        RowLayout {
+            id: clockContent
+            anchors.centerIn: parent
+            spacing: 8
+            visible: !bar.mediaPlaying
+            opacity: bar.centerMode === "normal" && !bar.mediaPlaying && !(launcher && launcher.visible) ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation { duration: 100 }
+            }
+
+            Clock {}
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            cursorShape: Qt.PointingHandCursor
+            onClicked: mouse => {
+                if (mouse.button === Qt.RightButton) {
+                    bar.closeControlCenter();
+
+                    if (mediaPopup.isOpen)
+                        mediaPopup.forceClose();
+                    else if (Mpris.players.values.length > 0)
+                        mediaPopup.open();
+                    return;
+                }
+
+                if (mediaPopup.isOpen)
+                    mediaPopup.forceClose();
+
+                bar.toggleControlCenter();
+            }
+        }
+
+
+        Connections {
+            target: launcher
+            enabled: launcher !== null
+            function onAboutToOpen() { bar.centerMode = "launcher"; }
+            function onAboutToClose() { bar.centerMode = "normal"; }
+        }
+
+        Connections {
+            target: bar.controlCenter
+            enabled: bar.controlCenter !== null
+            function onAboutToOpen() { bar.centerMode = "controlCenter"; }
+            function onAboutToClose() { bar.centerMode = "normal"; }
+        }
+
+        Connections {
+            target: bar.themePicker
+            enabled: bar.themePicker !== null
+            function onAboutToOpen() { bar.centerMode = "theme"; }
+            function onAboutToClose() { bar.centerMode = "normal"; }
+        }
+
+        Connections {
+            target: bar.clipboard
+            enabled: bar.clipboard !== null
+            function onAboutToOpen() { bar.centerMode = "clipboard"; }
+            function onAboutToClose() { bar.centerMode = "normal"; }
+        }
+
+        Connections {
+            target: bar.powerMenu
+            enabled: bar.powerMenu !== null
+            function onAboutToOpen() { bar.centerMode = "powerMenu"; }
+            function onAboutToClose() { bar.centerMode = "normal"; }
         }
     }
 }

@@ -2,8 +2,6 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
-import "../../components/material"
-import "../../components/overlay"
 import "../../theme" as Palette
 
 Item {
@@ -12,13 +10,16 @@ Item {
     anchors.fill: parent
     visible: false
     focus: visible
-    property bool presented: false
 
+    property real maxWidth: 4000
     property var launcher: null
     property var controlCenter: null
     property int selectedIndex: 0
     property string confirmAction: ""
     property bool confirmChoiceSelected: false
+
+    implicitWidth: Math.min(maxWidth - 24, confirmAction === "" ? 288 : 220)
+    implicitHeight: content.implicitHeight + 16
 
     signal aboutToOpen
     signal aboutToClose
@@ -78,7 +79,6 @@ Item {
         confirmChoiceSelected = false;
         aboutToOpen();
         visible = true;
-        appear.restart();
         forceActiveFocus();
     }
 
@@ -88,14 +88,11 @@ Item {
         confirmAction = "";
         aboutToClose();
         if (immediate) {
-            appear.stop();
-            hide.stop();
-            presented = false;
+            closeTimer.stop();
             visible = false;
             return;
         }
-        presented = false;
-        hide.restart();
+        closeTimer.restart();
     }
 
     function togglePowerMenu() {
@@ -162,203 +159,159 @@ Item {
         id: actionProcess
     }
 
-    Rectangle {
+    ColumnLayout {
+        id: content
         anchors.fill: parent
-        color: "#000000"
-        opacity: root.presented ? 0.30 : 0
+        anchors.margins: 8
+        spacing: 6
 
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 180
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 8
+            visible: confirmAction === ""
+
+            Repeater {
+                model: root.actions
+
+                delegate: Rectangle {
+                    required property var modelData
+                    required property int index
+
+                    Layout.minimumWidth: 48
+                    Layout.preferredWidth: 48
+                    Layout.maximumWidth: 48
+                    implicitHeight: 48
+                    radius: 14
+                    color: {
+                        if (index === root.selectedIndex)
+                            return modelData.dangerous ? "#ff5252" : Palette.Theme.accent;
+                        return modelData.dangerous ? "#3d1515" : Palette.Theme.surfaceContainerLow;
+                    }
+                    border.width: 0
+
+                    Behavior on color { ColorAnimation { duration: 120 } }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: modelData.icon
+                        color: index === root.selectedIndex
+                            ? (modelData.dangerous ? "#ffffff" : Palette.Theme.accentText)
+                            : (modelData.dangerous ? "#ff8a80" : Palette.Theme.textPrimary)
+                        font.family: Palette.Theme.fontIcons
+                        font.pixelSize: 20
+                    }
+
+                    MouseArea {
+                        id: actionMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered: root.selectedIndex = index
+                        onClicked: root.choose(index)
+                    }
+                }
             }
         }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.closePowerMenu()
-        }
-    }
-
-    CenterOverlayCard {
-        id: card
-        presented: root.presented
-        width: Math.min(parent.width - 24, confirmAction === "" ? 262 : 220)
-        height: content.implicitHeight + 16
-        radius: 16
 
         ColumnLayout {
-            id: content
-            anchors.fill: parent
-            anchors.margins: 8
-            spacing: 6
+            Layout.fillWidth: true
+            visible: confirmAction !== ""
+            spacing: 10
 
             RowLayout {
-                Layout.alignment: Qt.AlignHCenter
-                spacing: 6
-                visible: confirmAction === ""
-
-                Repeater {
-                    model: root.actions
-
-                    delegate: Rectangle {
-                        required property var modelData
-                        required property int index
-
-                        Layout.minimumWidth: 44
-                        Layout.preferredWidth: 44
-                        Layout.maximumWidth: 44
-                        implicitHeight: 44
-                        radius: 8
-                        color: index === root.selectedIndex ? Palette.Theme.accent : Palette.Theme.surfaceContainerLow
-                        border.width: 0
-
-                        Item {
-                            anchors.fill: parent
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: modelData.icon
-                                color: index === root.selectedIndex ? "#000000" : (modelData.dangerous ? "#ff8a80" : Palette.Theme.textPrimary)
-                                font.family: Palette.Theme.fontIcons
-                                font.pixelSize: 18
-                            }
-                        }
-
-                        MouseArea {
-                            id: actionMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered: root.selectedIndex = index
-                            onClicked: root.choose(index)
-                        }
-                    }
-                }
-            }
-
-            ColumnLayout {
                 Layout.fillWidth: true
-                visible: confirmAction !== ""
-                spacing: 10
+                spacing: 6
 
-                RowLayout {
+                Rectangle {
                     Layout.fillWidth: true
-                    spacing: 6
+                    implicitHeight: 44
+                    radius: 8
+                    color: root.confirmChoiceSelected ? Palette.Theme.accent : Palette.Theme.surfaceContainerLow
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        implicitHeight: 44
-                        radius: 8
-                        color: root.confirmChoiceSelected ? Palette.Theme.accent : Palette.Theme.surfaceContainerLow
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 120
-                            }
-                        }
-
-                        ColumnLayout {
-                            anchors.centerIn: parent
-                            spacing: 2
-                            Text {
-                                Layout.alignment: Qt.AlignHCenter
-                                text: "\ue5ca"
-                                color: root.confirmChoiceSelected ? Palette.Theme.accentText : Palette.Theme.textPrimary
-                                font.family: Palette.Theme.fontIcons
-                                font.pixelSize: 16
-                            }
-                            Text {
-                                Layout.alignment: Qt.AlignHCenter
-                                text: confirmAction
-                                color: root.confirmChoiceSelected ? Palette.Theme.accentText : Palette.Theme.textPrimary
-                                font.family: Palette.Theme.fontMono
-                                font.pixelSize: 9
-                            }
-                        }
-
-                        MouseArea {
-                            id: confirmMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered: root.confirmChoiceSelected = true
-                            onClicked: root.confirm()
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 120
                         }
                     }
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        implicitHeight: 44
-                        radius: 8
-                        // The primary background follows keyboard/mouse focus,
-                        // including the X/Cancel choice.
-                        color: !root.confirmChoiceSelected ? Palette.Theme.accent : Palette.Theme.surfaceContainerLow
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 120
-                            }
+                    ColumnLayout {
+                        anchors.centerIn: parent
+                        spacing: 2
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: "\ue5ca"
+                            color: root.confirmChoiceSelected ? Palette.Theme.accentText : Palette.Theme.textPrimary
+                            font.family: Palette.Theme.fontIcons
+                            font.pixelSize: 16
                         }
-
-                        ColumnLayout {
-                            anchors.centerIn: parent
-                            spacing: 2
-                            Text {
-                                Layout.alignment: Qt.AlignHCenter
-                                text: "\ue5cd"
-                                color: !root.confirmChoiceSelected ? Palette.Theme.accentText : Palette.Theme.textPrimary
-                                font.family: Palette.Theme.fontIcons
-                                font.pixelSize: 16
-                            }
-                            Text {
-                                Layout.alignment: Qt.AlignHCenter
-                                text: "Cancel"
-                                color: !root.confirmChoiceSelected ? Palette.Theme.accentText : Palette.Theme.textPrimary
-                                font.family: Palette.Theme.fontMono
-                                font.pixelSize: 9
-                            }
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: confirmAction
+                            color: root.confirmChoiceSelected ? Palette.Theme.accentText : Palette.Theme.textPrimary
+                            font.family: Palette.Theme.fontMono
+                            font.pixelSize: 9
                         }
+                    }
 
-                        MouseArea {
-                            id: cancelMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onEntered: root.confirmChoiceSelected = false
-                            onClicked: root.confirmAction = ""
+                    MouseArea {
+                        id: confirmMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered: root.confirmChoiceSelected = true
+                        onClicked: root.confirm()
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: 44
+                    radius: 8
+                    // The primary background follows keyboard/mouse focus,
+                    // including the X/Cancel choice.
+                    color: !root.confirmChoiceSelected ? Palette.Theme.accent : Palette.Theme.surfaceContainerLow
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 120
                         }
+                    }
+
+                    ColumnLayout {
+                        anchors.centerIn: parent
+                        spacing: 2
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: "\ue5cd"
+                            color: !root.confirmChoiceSelected ? Palette.Theme.accentText : Palette.Theme.textPrimary
+                            font.family: Palette.Theme.fontIcons
+                            font.pixelSize: 16
+                        }
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: "Cancel"
+                            color: !root.confirmChoiceSelected ? Palette.Theme.accentText : Palette.Theme.textPrimary
+                            font.family: Palette.Theme.fontMono
+                            font.pixelSize: 9
+                        }
+                    }
+
+                    MouseArea {
+                        id: cancelMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onEntered: root.confirmChoiceSelected = false
+                        onClicked: root.confirmAction = ""
                     }
                 }
             }
         }
     }
 
-    SequentialAnimation {
-        id: appear
-        PropertyAction {
-            target: root
-            property: "presented"
-            value: false
-        }
-        PauseAnimation {
-            duration: 1
-        }
-        PropertyAction {
-            target: root
-            property: "presented"
-            value: true
-        }
-    }
-
-    SequentialAnimation {
-        id: hide
-        PauseAnimation {
-            duration: 180
-        }
-        PropertyAction {
-            target: root
-            property: "visible"
-            value: false
-        }
+    Timer {
+        id: closeTimer
+        interval: 180
+        onTriggered: root.visible = false
     }
 }

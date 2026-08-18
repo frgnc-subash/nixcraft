@@ -1,9 +1,8 @@
 .pragma library
 
-// Shared geometry for the center-origin overlay family.
-// Matches the bar's 4px top inset, so overlays visibly grow from the pill.
-const overlayTop = 4
+// Max content widths for panels hosted in the shared notch stage
+// (components/overlay/CenterOverlay.qml) — the stage itself owns shape,
+// position, and radius.
 const themeOverlayWidth = 560
 const clipboardOverlayWidth = 468
-const overlayRadius = 2
 const gridSpacing = 8

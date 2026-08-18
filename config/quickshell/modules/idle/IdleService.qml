@@ -9,7 +9,7 @@ Item {
 
     // Stage 1 (150s): dim the display.
     IdleMonitor {
-        timeout: 150
+        timeout: 350
         onIsIdleChanged: {
             if (isIdle)
                 dimOn.exec(["brightnessctl", "-s", "set", "10"]);
@@ -20,7 +20,7 @@ Item {
 
     // Stage 2 (150s): turn off keyboard backlight.
     IdleMonitor {
-        timeout: 150
+        timeout: 350
         onIsIdleChanged: {
             if (isIdle)
                 kbdOn.exec(["brightnessctl", "-sd", "rgb:kbd_backlight", "set", "0"]);
@@ -29,20 +29,20 @@ Item {
         }
     }
 
-    // Stage 3 (100s): hyprdvd screensaver.
-    IdleMonitor {
-        timeout: 100
-        onIsIdleChanged: {
-            if (isIdle)
-                dvdOn.exec(["sh", "-c", "brightnessctl -r; hyprctl dispatch exec 'hyprdvd -s'"]);
-            else
-                dvdOff.exec(["pkill", "hyprdvd"]);
-        }
-    }
+    // // Stage 3 (100s): hyprdvd screensaver.
+    // IdleMonitor {
+    //     timeout: 100
+    //     onIsIdleChanged: {
+    //         if (isIdle)
+    //             dvdOn.exec(["sh", "-c", "brightnessctl -r; hyprctl dispatch exec 'hyprdvd -s'"]);
+    //         else
+    //             dvdOff.exec(["pkill", "hyprdvd"]);
+    //     }
+    // }
 
     // Stage 4 (300s): lock the session.
     IdleMonitor {
-        timeout: 300
+        timeout: 400
         onIsIdleChanged: {
             if (isIdle)
                 root.lockScreen.lock();
@@ -51,7 +51,7 @@ Item {
 
     // Stage 5 (330s): DPMS off.
     IdleMonitor {
-        timeout: 330
+        timeout: 500
         onIsIdleChanged: {
             if (isIdle)
                 dpmsOn.exec(["hyprctl", "dispatch", "dpms", "off"]);

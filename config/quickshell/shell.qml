@@ -3,7 +3,7 @@ import Quickshell.Io
 import QtQuick
 import "ThemeWatcher.qml" as ThemeWatch
 import "modules/bar"
-import "modules/overlay"
+import "components/overlay"
 import "modules/notification"
 import "modules/osd"
 import "modules/wallpicker"

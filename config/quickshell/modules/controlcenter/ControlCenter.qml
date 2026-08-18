@@ -12,6 +12,8 @@ Item {
     anchors.fill: parent
     visible: false
 
+    property real maxWidth: 4000
+    property real maxHeight: 4000
     property var notificationCenter
     property var bar
     property bool wifiEnabled: true
@@ -40,6 +42,9 @@ Item {
     readonly property var notifications: notificationCenter ? notificationCenter.notifications : []
     readonly property int notificationCount: notificationCenter ? notificationCenter.count : 0
     readonly property bool showingDetail: detailMode !== "none"
+
+    implicitWidth: Math.max(360, Math.min(maxWidth - 2, 520))
+    implicitHeight: showingDetail ? Math.max(320, Math.min(maxHeight - 4, 400)) : notificationCount > 0 ? Math.max(500, Math.min(maxHeight - 4, 600)) : Math.max(420, Math.min(maxHeight - 4, 440))
 
     signal aboutToOpen
     signal aboutToClose
@@ -83,7 +88,6 @@ Item {
         syncFromBar();
         refreshAll();
         visible = true;
-        openAnim.restart();
     }
 
     function closeControlCenter(immediate) {
@@ -92,14 +96,11 @@ Item {
         aboutToClose();
         detailMode = "none";
         if (immediate) {
-            openAnim.stop();
-            closeAnim.stop();
-            panel.opacity = 0;
-            panel.scale = 0.96;
+            closeTimer.stop();
             visible = false;
             return;
         }
-        closeAnim.restart();
+        closeTimer.restart();
     }
 
     function toggleControlCenter() {
@@ -465,57 +466,10 @@ Item {
         id: bluetoothDeviceModel
     }
 
-    SequentialAnimation {
-        id: openAnim
-        PropertyAction {
-            target: panel
-            property: "opacity"
-            value: 0
-        }
-        PropertyAction {
-            target: panel
-            property: "scale"
-            value: 0.96
-        }
-        ParallelAnimation {
-            NumberAnimation {
-                target: panel
-                property: "opacity"
-                to: 1
-                duration: 180
-                easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                target: panel
-                property: "scale"
-                to: 1
-                duration: 220
-                easing.type: Easing.OutCubic
-            }
-        }
-    }
-
-    SequentialAnimation {
-        id: closeAnim
-        ParallelAnimation {
-            NumberAnimation {
-                target: panel
-                property: "opacity"
-                to: 0
-                duration: 140
-                easing.type: Easing.InCubic
-            }
-            NumberAnimation {
-                target: panel
-                property: "scale"
-                to: 0.96
-                duration: 140
-                easing.type: Easing.InCubic
-            }
-        }
-        ScriptAction {
-            script: root.visible = false
-        }
+    Timer {
+        id: closeTimer
+        interval: 180
+        onTriggered: root.visible = false
     }
 
     Process {
@@ -707,51 +661,6 @@ Item {
         id: keepAwakeDisable
         command: ["sh", "-c", "pkill -f 'systemd-inhibit.*Keep Awake'"]
     }
-
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.closeControlCenter()
-        }
-    }
-
-    Surface {
-        id: panel
-        width: Math.max(360, Math.min(parent.width - 2, 520))
-        height: root.showingDetail ? Math.max(320, Math.min(parent.height - 4, 400)) : root.notificationCount > 0 ? Math.max(500, Math.min(parent.height - 4, 600)) : Math.max(420, Math.min(parent.height - 4, 440))
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 2
-        radius: Palette.Theme.radiusLarge
-        tintOpacity: 0.06
-        clip: true
-        transformOrigin: Item.Top
-        opacity: 0
-        scale: 0.96
-
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 180
-                easing.type: Easing.OutCubic
-            }
-        }
-
-        Behavior on scale {
-            NumberAnimation {
-                duration: 220
-                easing.type: Easing.OutCubic
-            }
-        }
-
-        Behavior on height {
-            NumberAnimation {
-                duration: 320
-                easing.type: Easing.OutCubic
-            }
-        }
 
         Item {
             id: normalView
@@ -1154,5 +1063,4 @@ Item {
                 }
             }
         }
-    }
 }

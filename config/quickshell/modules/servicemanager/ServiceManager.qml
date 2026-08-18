@@ -3,7 +3,6 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import "../../components/material"
-import "../../components/overlay"
 import "../../config/Ui.js" as Ui
 import "../../theme" as Palette
 
@@ -13,11 +12,15 @@ Item {
     visible: false
     focus: visible
 
+    property real maxWidth: 4000
+    property real maxHeight: 4000
     property var entries: []
     property string query: ""
     property int selected: 0
-    property bool presented: false
     readonly property var filtered: entries.filter(entry => entry.unit.toLowerCase().indexOf(query.toLowerCase()) !== -1 || entry.description.toLowerCase().indexOf(query.toLowerCase()) !== -1)
+
+    implicitWidth: Math.min(maxWidth - 20, 450)
+    implicitHeight: Math.min(maxHeight - 12, 470)
 
     signal aboutToOpen
     signal aboutToClose
@@ -40,7 +43,6 @@ Item {
         selected = 0;
         aboutToOpen();
         visible = true;
-        presented = true;
         refresh();
         search.forceActiveFocus();
     }
@@ -49,8 +51,8 @@ Item {
         if (!visible)
             return;
         aboutToClose();
-        presented = false;
         if (immediate) {
+            closeTimer.stop();
             visible = false;
             return;
         }
@@ -112,26 +114,6 @@ Item {
         }
     }
 
-    Rectangle {
-        anchors.fill: parent
-        color: "#000"
-        opacity: root.presented ? 0.30 : 0
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 180
-            }
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.close()
-        }
-    }
-
-    CenterOverlayCard {
-        presented: root.presented
-        radius: Palette.Theme.radiusLarge
-        width: Math.min(parent.width - 20, 450)
-        height: Math.min(parent.height - Ui.overlayTop - 12, 470)
 
         ColumnLayout {
             anchors.fill: parent
@@ -283,7 +265,6 @@ Item {
             }
 
         }
-    }
 
     Timer {
         id: closeTimer

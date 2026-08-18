@@ -3,7 +3,6 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import "../../components/material"
-import "../../components/overlay"
 import "../../config/Ui.js" as Ui
 import "../../theme" as Palette
 
@@ -14,10 +13,14 @@ Item {
     focus: visible
 
     required property var service
+    property real maxWidth: 4000
+    property real maxHeight: 4000
     property string query: ""
     property int selected: 0
-    property bool presented: false
     readonly property var entries: service ? service.entries.filter(entry => entry.text.toLowerCase().indexOf(query.toLowerCase()) !== -1) : []
+
+    implicitWidth: Math.min(maxWidth - 20, Ui.clipboardOverlayWidth)
+    implicitHeight: Math.min(maxHeight - 12, 390)
 
     signal aboutToOpen
     signal aboutToClose
@@ -41,21 +44,18 @@ Item {
         aboutToOpen();
         visible = true;
         service.refresh();
-        appear.restart();
         search.forceActiveFocus();
     }
     function close(immediate) {
         if (!visible)
             return;
         aboutToClose();
-        presented = false;
         if (immediate) {
-            appear.stop();
-            hide.stop();
+            closeTimer.stop();
             visible = false;
             return;
         }
-        hide.restart();
+        closeTimer.restart();
     }
     function copy(index) {
         if (index >= 0 && index < entries.length) {
@@ -92,28 +92,12 @@ Item {
         }
     }
 
-    Rectangle {
+    ColumnLayout {
         anchors.fill: parent
-        color: "#000"
-        opacity: root.presented ? 0.30 : 0
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 180
-            }
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.close()
-        }
-    }
-    CenterOverlayCard {
-        presented: root.presented
-        radius: Palette.Theme.radiusLarge
-        width: Math.min(parent.width - 20, Ui.clipboardOverlayWidth)
-        height: Math.min(parent.height - Ui.overlayTop - 12, 390)
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 14
+            anchors.topMargin: 14
+            anchors.leftMargin: 14
+            anchors.rightMargin: 14
+            anchors.bottomMargin: 22
             spacing: 10
             RowLayout {
                 Layout.fillWidth: true
@@ -262,33 +246,10 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
             }
         }
-    }
-    SequentialAnimation {
-        id: appear
-        PropertyAction {
-            target: root
-            property: "presented"
-            value: false
-        }
-        PauseAnimation {
-            duration: 1
-        }
-        PropertyAction {
-            target: root
-            property: "presented"
-            value: true
-        }
-    }
-    SequentialAnimation {
-        id: hide
-        PauseAnimation {
-            duration: 180
-        }
-        PropertyAction {
-            target: root
-            property: "visible"
-            value: false
-        }
+    Timer {
+        id: closeTimer
+        interval: 180
+        onTriggered: root.visible = false
     }
     Keys.onPressed: function (event) {
         root.handleKey(event);
