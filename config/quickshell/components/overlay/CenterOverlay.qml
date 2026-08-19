@@ -149,7 +149,7 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         wingSize: 9
-        slabRadius: 24
+        slabRadius: 20
 
         readonly property var panel: root.activePanel
 

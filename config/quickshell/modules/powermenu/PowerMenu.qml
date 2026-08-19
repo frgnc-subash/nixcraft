@@ -220,7 +220,7 @@ Item {
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 6
+                spacing: 4
 
                 Rectangle {
                     Layout.fillWidth: true

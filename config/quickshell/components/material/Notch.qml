@@ -16,7 +16,7 @@ Item {
     // Width of the flat slab only; the wings add `wingSize` on either side.
     property real slabWidth: 200
     property real slabHeight: 44
-    property real slabRadius: 18
+    property real slabRadius: 16
     property real wingSize: 14
     // Extra inset at the bottom of contentHolder so child content
     // never paints over the rounded bottom corners.
