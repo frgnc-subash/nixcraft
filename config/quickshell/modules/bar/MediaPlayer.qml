@@ -72,7 +72,7 @@ PopupWindow {
 
     Timer {
         interval: 500
-        running: popup.hasPlayer && popup.player.isPlaying
+        running: popup.visible && popup.hasPlayer && popup.player.isPlaying
         repeat: true
         onTriggered: if (popup.player)
             popup.player.positionChanged()

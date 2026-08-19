@@ -31,7 +31,8 @@ hl.bind(mainMod .. " + D", app("vesktop"))
 hl.bind(mainMod .. " + O", app("obsidian"))
 hl.bind(mainMod .. " + N", app("kitty -e nvim"))
 hl.bind(mainMod .. " + Y", app("kitty -e yazi"))
-hl.bind(mainMod .. " + M", app("spotify"))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("quickshell ipc call mediapanel toggle"))
+hl.bind(mainMod .. " + S", app("spotify"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
 
 hl.bind(mainMod .. " + Z", app(browser))
@@ -130,8 +131,8 @@ end
 -- -------------------
 -- Special Workspaces
 -- -------------------
-hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+hl.bind(mainMod .. " + K", hl.dsp.workspace.toggle_special("magic"))
+hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- -------------------
 -- Workspace Scrolling
@@ -183,9 +184,9 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true 
 -- -------------------
 -- Window Controls
 -- -------------------
-hl.bind(mainMod .. " + SHIFT + A", hl.dsp.window.move({ workspace = "special:minimized" }))
+hl.bind(mainMod .. " + SHIFT + H", hl.dsp.window.move({ workspace = "special:minimized" }))
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.window.move({ workspace = "+1" }))
-hl.bind(mainMod .. " + A", hl.dsp.workspace.toggle_special("minimized"))
+hl.bind(mainMod .. " + H", hl.dsp.workspace.toggle_special("minimized"))
 hl.bind(mainMod .. " + minus", hl.dsp.window.move({ workspace = "special" }))
 hl.bind(mainMod .. " + equal", hl.dsp.workspace.toggle_special())
 

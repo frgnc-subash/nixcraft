@@ -75,7 +75,7 @@ Item {
 
     Timer {
         id: fallbackPulse
-        interval: 80
+        interval: 120
         repeat: true
         running: root.shouldRun && root.levels.length === 0
         onTriggered: canvas.requestPaint()

@@ -30,6 +30,7 @@ PanelWindow {
     property var powerMenu: null
     property var themePicker: null
     property var clipboard: null
+    property var mediaPanel: null
     property var ensureControlCenter: null
     property real osdValue: 0
     property string osdLabel: "0%"
@@ -408,7 +409,7 @@ PanelWindow {
             anchors.right: powerCapsule.left
             anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            implicitWidth: rightRow.implicitWidth + 24
+            implicitWidth: rightRow.implicitWidth + 14
 
             RowLayout {
                 id: rightRow
@@ -443,6 +444,7 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
             implicitWidth: 30
             implicitHeight: 30
+            radius: 10
 
             Text {
                 anchors.centerIn: parent
@@ -468,8 +470,9 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         slabWidth: centerContentWidth + 24
-        slabRadius: 10
-        wingSize: 14
+        slabRadius: 13
+        wingSize: 9
+        clipContent: false
 
         readonly property real centerContentWidth: {
             if (bar.mediaPlaying)
@@ -552,6 +555,8 @@ PanelWindow {
 
                     if (mediaPopup.isOpen)
                         mediaPopup.forceClose();
+                    if (bar.mediaPanel)
+                        bar.mediaPanel.toggleMediaPanel();
                     else if (Mpris.players.values.length > 0)
                         mediaPopup.open();
                     return;
@@ -597,6 +602,13 @@ PanelWindow {
             target: bar.powerMenu
             enabled: bar.powerMenu !== null
             function onAboutToOpen() { bar.centerMode = "powerMenu"; }
+            function onAboutToClose() { bar.centerMode = "normal"; }
+        }
+
+        Connections {
+            target: bar.mediaPanel
+            enabled: bar.mediaPanel !== null
+            function onAboutToOpen() { bar.centerMode = "mediaPanel"; }
             function onAboutToClose() { bar.centerMode = "normal"; }
         }
     }

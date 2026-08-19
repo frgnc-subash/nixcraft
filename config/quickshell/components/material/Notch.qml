@@ -21,6 +21,9 @@ Item {
     // Extra inset at the bottom of contentHolder so child content
     // never paints over the rounded bottom corners.
     property real contentBottomPadding: 0
+    // Set false when content is guaranteed not to overflow (e.g. static bar
+    // notch) to skip the stencil-buffer pass.
+    property bool clipContent: true
 
     property color color: Palette.Theme.surfaceContainer
     property color tint: Palette.Theme.surfaceTint
@@ -103,6 +106,6 @@ Item {
         y: 0
         width: root.slabWidth
         height: Math.max(0, root.slabHeight - root.contentBottomPadding)
-        clip: true
+        clip: root.clipContent
     }
 }

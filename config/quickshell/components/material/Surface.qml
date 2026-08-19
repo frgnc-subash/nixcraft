@@ -11,7 +11,6 @@ Rectangle {
 
     radius: Palette.Theme.radiusLarge
     color: Palette.Theme.surfaceContainer
-    clip: true
     border.color: root.outlineColor
     border.width: root.outlineWidth
 
@@ -21,5 +20,6 @@ Rectangle {
         radius: parent.radius
         color: root.tint
         opacity: root.tintOpacity
+        visible: root.tintOpacity > 0
     }
 }

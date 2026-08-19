@@ -57,6 +57,16 @@ ShellRoot {
         if (overlay.controlCenter)
             overlay.controlCenter.toggleControlCenter();
     }
+    IpcHandler {
+        target: "mediapanel"
+        function toggle(): void {
+            root.toggleMediaPanel();
+        }
+    }
+    function toggleMediaPanel() {
+        if (overlay.mediaPanel)
+            overlay.mediaPanel.toggleMediaPanel();
+    }
     Bar {
         id: mainBar
         osd: mainOsd
@@ -65,6 +75,7 @@ ShellRoot {
         powerMenu: overlay.powerMenu
         themePicker: overlay.themePicker
         clipboard: overlay.clipboard
+        mediaPanel: overlay.mediaPanel
         ensureControlCenter: function () {
             return overlay.controlCenter;
         }

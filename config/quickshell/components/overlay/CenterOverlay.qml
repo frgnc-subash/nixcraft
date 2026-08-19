@@ -8,6 +8,7 @@ import "../../modules/powermenu"
 import "../../modules/theme"
 import "../../modules/clipboard"
 import "../../modules/servicemanager"
+import "../../modules/bar"
 import "../../services"
 
 PanelWindow {
@@ -32,7 +33,7 @@ PanelWindow {
 
     property var bar: null
     property var notificationCenter: null
-    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || clipboardItem.visible || serviceManagerItem.visible
+    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
 
     property alias launcher: launcherItem
     property alias controlCenter: controlCenterItem
@@ -40,6 +41,7 @@ PanelWindow {
     property alias themePicker: themePickerItem
     property alias clipboard: clipboardItem
     property alias serviceManager: serviceManagerItem
+    property alias mediaPanel: mediaPanelItem
 
     visible: true
 
@@ -61,13 +63,15 @@ PanelWindow {
             return clipboardItem;
         if (serviceManagerItem.visible)
             return serviceManagerItem;
+        if (mediaPanelItem.visible)
+            return mediaPanelItem;
         return null;
     }
 
     // The launcher and control center are meant to feel like an extension of
     // the desktop, so they don't dim it; the rest are more like modal
     // utilities and darken the backdrop behind them.
-    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || clipboardItem.visible || serviceManagerItem.visible
+    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
 
     // All center-origin panels share this layer surface. Closing every other
     // panel before a new one appears prevents stacked backdrops and focus.
@@ -84,6 +88,8 @@ PanelWindow {
             clipboardItem.close(true);
         if (panel !== serviceManagerItem && serviceManagerItem.visible)
             serviceManagerItem.close(true);
+        if (panel !== mediaPanelItem && mediaPanelItem.visible)
+            mediaPanelItem.close(true);
     }
 
     function closeActive() {
@@ -99,6 +105,8 @@ PanelWindow {
             clipboardItem.close();
         else if (serviceManagerItem.visible)
             serviceManagerItem.close();
+        else if (mediaPanelItem.visible)
+            mediaPanelItem.close();
     }
 
     ThemeService {
@@ -140,7 +148,7 @@ PanelWindow {
         id: stage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        wingSize: 14
+        wingSize: 9
         slabRadius: 24
 
         readonly property var panel: root.activePanel
@@ -214,6 +222,10 @@ PanelWindow {
             maxWidth: root.width
             maxHeight: root.height
         }
+
+        MediaPanel {
+            id: mediaPanelItem
+        }
     }
 
     Connections {
@@ -239,5 +251,9 @@ PanelWindow {
     Connections {
         target: serviceManagerItem
         function onAboutToOpen() { root.presentOnly(serviceManagerItem); }
+    }
+    Connections {
+        target: mediaPanelItem
+        function onAboutToOpen() { root.presentOnly(mediaPanelItem); }
     }
 }

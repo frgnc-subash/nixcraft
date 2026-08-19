@@ -702,7 +702,7 @@ Item {
 
                         SystemClock {
                             id: ccClock
-                            precision: SystemClock.Seconds
+                            precision: SystemClock.Minutes
                         }
 
                         Text {
