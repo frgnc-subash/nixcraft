@@ -92,11 +92,7 @@
       pkgs.xdg-desktop-portal-gtk
       pkgs.xdg-desktop-portal-hyprland
     ];
-    environment.systemPackages = [
-      pkgs.polkit_gnome
-      pkgs.glib # provides the `gsettings` CLI
-      pkgs.gsettings-desktop-schemas # provides org.gnome.desktop.interface, etc.
-    ];
+
     programs.zsh.enable = true;
     programs.dconf.enable = true;
     system.stateVersion = "26.05";

@@ -15,10 +15,12 @@ in
     home.packages = with pkgs; [
       wget
       curl
-
+      glib
+      polkit_gnome
+      gsettings-desktop-schemas
       vips
       util-linux
       libsecret # provides secret-tool
-         ];
+    ];
   };
 }
