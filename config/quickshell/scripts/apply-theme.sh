@@ -35,13 +35,29 @@ install_if_present "$theme_dir/gtk-3.css" "$HOME/.config/gtk-3.0/gtk.css"
 install_if_present "$theme_dir/gtk-4.css" "$HOME/.config/gtk-4.0/gtk.css"
 command -v gsettings >/dev/null && gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark || true
 
-case "$theme_name" in mocha) btop_theme=catppuccin.theme ;; *) btop_theme="$theme_name.theme" ;; esac
-if [ -f "$HOME/.config/btop/btop.conf" ]; then
-    sed -i "s|^color_theme =.*|color_theme = \"$HOME/.config/btop/themes/$btop_theme\"|" "$HOME/.config/btop/btop.conf"
+if [ -f "$theme_dir/btop.theme" ] && [ -f "$HOME/.config/btop/btop.conf" ]; then
+    sed -i "s|^color_theme =.*|color_theme = \"$theme_dir/btop.theme\"|" "$HOME/.config/btop/btop.conf"
 fi
 
 install_if_present "$theme_dir/tmux.conf" "$HOME/.config/tmux/theme.conf"
-printf 'dofile("%s")\n' "$theme_dir/hyprland.lua" > "$HOME/.config/hypr/theme.lua"
+install_if_present "$theme_dir/yazi-flavor.toml" "$HOME/.config/yazi/flavors/nixcraft.yazi/flavor.toml"
+printf 'return dofile("%s")\n' "$theme_dir/hyprland.lua" > "$HOME/.config/hypr/theme.lua"
+
+case "$theme_name" in
+    gruvbox)    zed_theme="Gruvbox Dark" ;;
+    mocha)      zed_theme="Catppuccin Mocha" ;;
+    tokyonight) zed_theme="Aura Dark" ;;
+    monochrome) zed_theme="Nord Darker" ;;
+    moonfly)    zed_theme="One Dark Pro Max" ;;
+    ryo)        zed_theme="One Dark Pro Max" ;;
+    *)          zed_theme="" ;;
+esac
+if [ -n "$zed_theme" ] && [ -f "$HOME/.config/zed/settings.json" ]; then
+    sed -i '/"theme": {/,/}/{
+        s/"light": *"[^"]*"/"light": "'"$zed_theme"'"/
+        s/"dark": *"[^"]*"/"dark": "'"$zed_theme"'"/
+    }' "$HOME/.config/zed/settings.json"
+fi
 
 "$HOME/.config/quickshell/scripts/build-theme.sh" || true
 hyprctl reload >/dev/null || true

@@ -18,7 +18,6 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       vesktop
-      # spotify
       mission-center
       proton-authenticator
       proton-vpn

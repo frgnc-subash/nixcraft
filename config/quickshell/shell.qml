@@ -19,6 +19,7 @@ ShellRoot {
         id: overlay
         notificationCenter: notificationCenter
         bar: mainBar
+        idleService: idleService
     }
     WallpaperPicker {
         id: wallpicker

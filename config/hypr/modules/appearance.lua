@@ -3,7 +3,7 @@
 -- ┴ ┴┴  ┴  └─┘┴ ┴┴└─┴ ┴┘└┘└─┘└─┘
 
 -- dofile(os.getenv("HOME") .. "/.config/matugen/generated/hypr-colors.lua")
-dofile(os.getenv("HOME") .. "/.config/hypr/theme.lua")
+local theme = dofile(os.getenv("HOME") .. "/.config/hypr/theme.lua")
 
 hl.config({
     -- -------------------
@@ -12,9 +12,9 @@ hl.config({
     general = {
         gaps_in = 3,
         gaps_out = 4,
-        border_size = 0,
-        ["col.active_border"] = "rgb(bb9af7)",
-        ["col.inactive_border"] = "rgba(cba6f766)",
+        border_size = 1,
+        ["col.active_border"] = theme.outline,
+        ["col.inactive_border"] = theme.outline_variant,
         resize_on_border = true,
         allow_tearing = false,
     },
@@ -27,12 +27,13 @@ hl.config({
         rounding_power = 6,
         active_opacity = 0.97,
         inactive_opacity = 0.95,
+        screen_shader = os.getenv("HOME") .. "/.config/hypr/shaders/rounded_corners.glsl",
 
         shadow = {
             enabled = false,
             range = 2,
             render_power = 2,
-            color = primary,
+            color = theme.primary,
         },
 
         blur = {

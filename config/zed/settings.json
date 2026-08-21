@@ -1,68 +1,60 @@
-// Zed settings
-//
-// For information on how to configure Zed, see the Zed
-// documentation: https://zed.dev/docs/configuring-zed
-//
-// To see all of Zed's default settings without changing your
-// custom settings, run `zed: open default settings` from the
-// command palette (cmd-shift-p / ctrl-shift-p)
 {
   "cli_default_open_behavior": "new_window",
   "ui_font_weight": 400.0,
   "markdown_preview_font_size": 16.0,
   "autosave": {
     "after_delay": {
-      "milliseconds": 1000
-    }
+      "milliseconds": 1000,
+    },
   },
   "cursor_blink": true,
   "cursor_shape": "block",
-  "buffer_font_weight": 350.0,
+  "buffer_font_weight": 500.0,
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "terminal": {
     "font_weight": 500.0,
-    "font_size": 14.0
+    "font_size": 14.0,
   },
   "agent": {
     "sidebar_side": "right",
     "dock": "right",
     "favorite_models": [],
-    "model_parameters": []
+    "model_parameters": [],
   },
   "project_panel": {
-    "dock": "left"
+    "dock": "left",
   },
   "telemetry": {
     "diagnostics": false,
     "metrics": false,
-    "anthropic_retention": false
+    "anthropic_retention": false,
   },
   "icon_theme": {
     "mode": "dark",
-    "light": "Zed (Default)",
-    "dark": "Material Icon Theme"
+    "light": "Material Icon Theme",
+    "dark": "Material Icon Theme",
   },
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
         "model": "sonnet",
-        "effort": "medium",
-        "fast": false
+        "effort": "high",
+        "fast": false,
       },
-      "type": "registry"
+      "type": "registry",
     },
     "codex-acp": {
       "default_config_options": {
-        "reasoning_effort": "medium"
+        "reasoning_effort": "medium",
       },
-      "type": "registry"
-    }
+      "type": "registry",
+    },
   },
   "ui_font_size": 16,
   "buffer_font_size": 16.0,
   "theme": {
     "mode": "dark",
-    "light": "Gruvbox Dark",
-    "dark": "Aura Dark",
+    "light": "One Dark Pro Max",
+    "dark": "One Dark Pro Max",
   },
 }

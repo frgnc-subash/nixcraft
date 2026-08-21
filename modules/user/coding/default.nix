@@ -18,6 +18,7 @@ in
       vim
       neovim
       zed-editor
+      claude-code
       antigravity-ide
 
       # languages & runtimes

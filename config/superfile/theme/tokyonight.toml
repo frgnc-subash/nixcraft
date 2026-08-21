@@ -10,9 +10,9 @@
 code_syntax_highlight = "catppuccin-macchiato"
 
 # ========= Border =========
-file_panel_border = "#414868"
-sidebar_border = "#24283b"
-footer_border = "#414868"
+file_panel_border = "#373d58"
+sidebar_border = "#1d202f"
+footer_border = "#373d58"
 
 # ========= Border Active =========
 file_panel_border_active = "#b4befe"
@@ -21,11 +21,11 @@ footer_border_active = "#73daca"
 modal_border_active = "#73daca"
 
 # ========= Background (bg) =========
-full_screen_bg = "#1a1b26"
-file_panel_bg = "#1a1b26"
-sidebar_bg = "#1a1b26"
-footer_bg = "#1a1b26"
-modal_bg = "#1a1b26"
+full_screen_bg = "#13141c"
+file_panel_bg = "#13141c"
+sidebar_bg = "#13141c"
+footer_bg = "#13141c"
+modal_bg = "#13141c"
 
 # ========= Foreground (fg) =========
 full_screen_fg = "#a9b1d6"
@@ -47,19 +47,19 @@ gradient_color = ["#7aa2f7", "#bb9af7"]
 file_panel_top_directory_icon = "#73daca"
 file_panel_top_path = "#7aa2f7"
 file_panel_item_selected_fg = "#2ac3de"
-file_panel_item_selected_bg = "#1a1b26"
+file_panel_item_selected_bg = "#13141c"
 
 # ========= Sidebar Special Items =========
 sidebar_title = "#73daca"
 sidebar_item_selected_fg = "#7dcfff"
-sidebar_item_selected_bg = "#1a1b26"
+sidebar_item_selected_bg = "#13141c"
 sidebar_divider = "#565f89"
 
 # ========= Modal Special Items =========
 modal_cancel_fg = "#24383b"
 modal_cancel_bg = "#e0af68"
 
-modal_confirm_fg = "#24283b"
+modal_confirm_fg = "#1d202f"
 modal_confirm_bg = "#9ece6a"
 
 # ========= Help Menu =========

@@ -9,10 +9,10 @@ Item {
 
     property bool active: true
     property bool cavaEnabled: true
-    property int barCount: 24
+    property int barCount: 14
     property var levels: []
     property string configPath: String(Qt.resolvedUrl("cava.conf")).replace("file://", "")
-    implicitWidth: 180
+    implicitWidth: 110
     implicitHeight: 18
 
     // True if ANY mpris player is currently playing — not just whichever

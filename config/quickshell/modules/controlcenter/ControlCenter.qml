@@ -16,6 +16,7 @@ Item {
     property real maxHeight: 4000
     property var notificationCenter
     property var bar
+    property var idleService: null
     property bool wifiEnabled: true
     property string powerProfile: "balanced"
     property bool powerProfileLoaded: false
@@ -36,7 +37,7 @@ Item {
     property bool showMicOsdOnRead: false
     property bool dndEnabled: false
     property string powerProfilePending: ""
-    property bool keepAwake: false
+    readonly property bool keepAwake: idleService ? idleService.keepAwake : false
 
     readonly property real minLevel: 0.05
     readonly property var notifications: notificationCenter ? notificationCenter.notifications : []
@@ -430,11 +431,8 @@ Item {
     }
 
     function toggleKeepAwake() {
-        root.keepAwake = !root.keepAwake;
-        if (root.keepAwake)
-            keepAwakeEnable.running = true;
-        else
-            keepAwakeDisable.running = true;
+        if (root.idleService)
+            root.idleService.toggleKeepAwake();
     }
 
     function keepAwakeIcon() {
@@ -650,16 +648,6 @@ Item {
     Process {
         id: brightnessSet
         onExited: root.readBrightness()
-    }
-
-    Process {
-        id: keepAwakeEnable
-        command: ["sh", "-c", "systemd-inhibit --what=idle:sleep --who='Keep Awake' --why='User requested' sleep infinity &"]
-    }
-
-    Process {
-        id: keepAwakeDisable
-        command: ["sh", "-c", "pkill -f 'systemd-inhibit.*Keep Awake'"]
     }
 
         Item {

@@ -5,7 +5,7 @@
 -- -------------------
 -- Windows and Rules
 -- -------------------
-dofile(os.getenv("HOME") .. "/.config/hypr/theme.lua")
+local theme = dofile(os.getenv("HOME") .. "/.config/hypr/theme.lua")
 
 hl.window_rule({
     name = "browser-ws3",
@@ -48,7 +48,7 @@ hl.window_rule({
     match = {
         title = ".*frgnc-subash.*",
     },
-    border_color = tertiary,
+    border_color = theme.tertiary,
 })
 
 hl.window_rule({

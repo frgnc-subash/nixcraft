@@ -1,7 +1,7 @@
--- Ryo Transparent Blur Theme - Mocha (Catppuccin Mocha)
+-- Ryo Transparent Blur Theme
 return {
-    outline = "rgb(b3ff1a) rgb(f5c2e7) 45deg",
-    outline_variant = "rgba(cba6f766)",
-    primary = "rgb(cba6f7)",
-    tertiary = "rgb(89b4fa)",
+    outline = { colors = { "rgb(8bd5ff)", "rgb(bb9af7)" }, angle = 45 },
+    outline_variant = "rgba(56667866)",
+    primary = "rgb(8bd5ff)",
+    tertiary = "rgb(8ff0c7)",
 }

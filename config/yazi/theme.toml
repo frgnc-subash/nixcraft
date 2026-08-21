@@ -10,7 +10,7 @@
 # : Flavor {{{
 
 [flavor]
-dark  = ""
+dark  = "nixcraft"
 light = ""
 
 # : }}}

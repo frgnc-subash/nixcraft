@@ -6,14 +6,23 @@ Item {
     id: root
 
     required property var lockScreen
+    // When true, none of the idle stages below act on an idle transition —
+    // the compositor's idle-notify timers keep running underneath, but
+    // dim/lock/dpms/suspend are suppressed until this is turned off again.
+    property bool keepAwake: false
+
+    function toggleKeepAwake() {
+        root.keepAwake = !root.keepAwake;
+    }
 
     // Stage 1 (150s): dim the display.
     IdleMonitor {
         timeout: 350
         onIsIdleChanged: {
-            if (isIdle)
-                dimOn.exec(["brightnessctl", "-s", "set", "10"]);
-            else
+            if (isIdle) {
+                if (!root.keepAwake)
+                    dimOn.exec(["brightnessctl", "-s", "set", "10"]);
+            } else
                 dimOff.exec(["brightnessctl", "-r"]);
         }
     }
@@ -22,9 +31,10 @@ Item {
     IdleMonitor {
         timeout: 350
         onIsIdleChanged: {
-            if (isIdle)
-                kbdOn.exec(["brightnessctl", "-sd", "rgb:kbd_backlight", "set", "0"]);
-            else
+            if (isIdle) {
+                if (!root.keepAwake)
+                    kbdOn.exec(["brightnessctl", "-sd", "rgb:kbd_backlight", "set", "0"]);
+            } else
                 kbdOff.exec(["brightnessctl", "-rd", "rgb:kbd_backlight"]);
         }
     }
@@ -44,7 +54,7 @@ Item {
     IdleMonitor {
         timeout: 400
         onIsIdleChanged: {
-            if (isIdle)
+            if (isIdle && !root.keepAwake)
                 root.lockScreen.lock();
         }
     }
@@ -53,9 +63,10 @@ Item {
     IdleMonitor {
         timeout: 500
         onIsIdleChanged: {
-            if (isIdle)
-                dpmsOn.exec(["hyprctl", "dispatch", "dpms", "off"]);
-            else
+            if (isIdle) {
+                if (!root.keepAwake)
+                    dpmsOn.exec(["hyprctl", "dispatch", "dpms", "off"]);
+            } else
                 dpmsOff.exec(["sh", "-c", "hyprctl dispatch dpms on; brightnessctl -r"]);
         }
     }
@@ -64,7 +75,7 @@ Item {
     IdleMonitor {
         timeout: 1800
         onIsIdleChanged: {
-            if (isIdle)
+            if (isIdle && !root.keepAwake)
                 suspendProc.exec(["systemctl", "suspend"]);
         }
     }

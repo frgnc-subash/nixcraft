@@ -33,6 +33,7 @@ PanelWindow {
 
     property var bar: null
     property var notificationCenter: null
+    property var idleService: null
     readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
 
     property alias launcher: launcherItem
@@ -161,20 +162,20 @@ PanelWindow {
 
         Behavior on slabWidth {
             NumberAnimation {
-                duration: 200
-                easing.type: Easing.OutCubic
+                duration: 260
+                easing.type: Easing.OutExpo
             }
         }
         Behavior on slabHeight {
             NumberAnimation {
-                duration: 200
-                easing.type: Easing.OutCubic
+                duration: 260
+                easing.type: Easing.OutExpo
             }
         }
         Behavior on opacity {
             NumberAnimation {
-                duration: 100
-                easing.type: Easing.OutQuad
+                duration: 260
+                easing.type: Easing.OutCubic
             }
         }
 
@@ -191,6 +192,7 @@ PanelWindow {
             maxHeight: root.height
             notificationCenter: root.notificationCenter
             bar: root.bar
+            idleService: root.idleService
         }
 
         PowerMenu {
