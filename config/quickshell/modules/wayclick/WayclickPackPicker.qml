@@ -19,7 +19,7 @@ Item {
     property var controlCenter: null
     property var powerMenu: null
 
-    readonly property int itemH: 56
+    readonly property int itemH: 40
     readonly property int maxVisible: 5
 
     implicitWidth: Math.max(360, Math.min(maxWidth - 32, 430))
@@ -201,17 +201,17 @@ Item {
             readonly property bool isActive: modelData === service.activePack
 
             width: ListView.view.width
-            height: 56
+            height: root.itemH
 
             Rectangle {
                 anchors {
                     fill: parent
                     leftMargin: 6
                     rightMargin: 6
-                    topMargin: 2
-                    bottomMargin: 2
+                    topMargin: 1
+                    bottomMargin: 1
                 }
-                radius: 16
+                radius: 12
                 color: {
                     if (index === root.selected || rowHover.containsMouse)
                         return Palette.Theme.accentLight;
@@ -234,9 +234,9 @@ Item {
                 spacing: 12
 
                 Rectangle {
-                    implicitWidth: 32
-                    implicitHeight: 32
-                    radius: 10
+                    implicitWidth: 24
+                    implicitHeight: 24
+                    radius: 8
                     color: Palette.Theme.surfaceContainerHighest
                     Layout.alignment: Qt.AlignVCenter
 
@@ -244,14 +244,14 @@ Item {
                         anchors.centerIn: parent
                         text: ""
                         font.family: Palette.Theme.fontIcons
-                        font.pixelSize: 18
+                        font.pixelSize: 13
                         color: Palette.Theme.textSecondary
                     }
                 }
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: 2
+                    spacing: 0
                     Layout.alignment: Qt.AlignVCenter
 
                     Text {
@@ -259,7 +259,7 @@ Item {
                         text: root.displayName(modelData)
                         color: Palette.Theme.textPrimary
                         font.family: Palette.Theme.fontMono
-                        font.pixelSize: 13
+                        font.pixelSize: 12
                         font.weight: Font.Medium
                         elide: Text.ElideRight
                     }
@@ -269,7 +269,7 @@ Item {
                     visible: isActive
                     text: ""
                     font.family: Palette.Theme.fontIcons
-                    font.pixelSize: 16
+                    font.pixelSize: 14
                     color: Palette.Theme.accent
                     Layout.alignment: Qt.AlignVCenter
                 }

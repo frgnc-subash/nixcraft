@@ -227,7 +227,6 @@ PanelWindow {
         WayclickPackPicker {
             id: wayclickPackPickerItem
             maxWidth: root.width
-            maxHeight: root.height
             service: wayclickPackService
             launcher: launcherItem
             controlCenter: controlCenterItem
