@@ -5,4 +5,5 @@
 // position, and radius.
 const themeOverlayWidth = 560
 const clipboardOverlayWidth = 468
+const wayclickOverlayWidth = 560
 const gridSpacing = 8

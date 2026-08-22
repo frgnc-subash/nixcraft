@@ -28,6 +28,7 @@
     superfile.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixcraft/config/superfile";
     themes.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixcraft/config/themes";
     tmux.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixcraft/config/tmux";
+    wayclick.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixcraft/config/wayclick";
     yazi.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixcraft/config/yazi";
     zed.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixcraft/config/zed";
   };

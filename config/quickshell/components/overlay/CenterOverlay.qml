@@ -9,6 +9,7 @@ import "../../modules/theme"
 import "../../modules/clipboard"
 import "../../modules/servicemanager"
 import "../../modules/bar"
+import "../../modules/wayclick"
 import "../../services"
 
 PanelWindow {
@@ -34,12 +35,13 @@ PanelWindow {
     property var bar: null
     property var notificationCenter: null
     property var idleService: null
-    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
+    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
 
     property alias launcher: launcherItem
     property alias controlCenter: controlCenterItem
     property alias powerMenu: powerMenuItem
     property alias themePicker: themePickerItem
+    property alias wayclickPackPicker: wayclickPackPickerItem
     property alias clipboard: clipboardItem
     property alias serviceManager: serviceManagerItem
     property alias mediaPanel: mediaPanelItem
@@ -60,6 +62,8 @@ PanelWindow {
             return powerMenuItem;
         if (themePickerItem.visible)
             return themePickerItem;
+        if (wayclickPackPickerItem.visible)
+            return wayclickPackPickerItem;
         if (clipboardItem.visible)
             return clipboardItem;
         if (serviceManagerItem.visible)
@@ -72,7 +76,7 @@ PanelWindow {
     // The launcher and control center are meant to feel like an extension of
     // the desktop, so they don't dim it; the rest are more like modal
     // utilities and darken the backdrop behind them.
-    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
+    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
 
     // All center-origin panels share this layer surface. Closing every other
     // panel before a new one appears prevents stacked backdrops and focus.
@@ -85,6 +89,8 @@ PanelWindow {
             powerMenuItem.closePowerMenu(true);
         if (panel !== themePickerItem && themePickerItem.visible)
             themePickerItem.close(true);
+        if (panel !== wayclickPackPickerItem && wayclickPackPickerItem.visible)
+            wayclickPackPickerItem.close(true);
         if (panel !== clipboardItem && clipboardItem.visible)
             clipboardItem.close(true);
         if (panel !== serviceManagerItem && serviceManagerItem.visible)
@@ -102,6 +108,8 @@ PanelWindow {
             powerMenuItem.closePowerMenu();
         else if (themePickerItem.visible)
             themePickerItem.close();
+        else if (wayclickPackPickerItem.visible)
+            wayclickPackPickerItem.close();
         else if (clipboardItem.visible)
             clipboardItem.close();
         else if (serviceManagerItem.visible)
@@ -112,6 +120,10 @@ PanelWindow {
 
     ThemeService {
         id: themeService
+    }
+
+    WayclickPackService {
+        id: wayclickPackService
     }
 
     ClipboardService {
@@ -212,6 +224,16 @@ PanelWindow {
             powerMenu: powerMenuItem
         }
 
+        WayclickPackPicker {
+            id: wayclickPackPickerItem
+            maxWidth: root.width
+            maxHeight: root.height
+            service: wayclickPackService
+            launcher: launcherItem
+            controlCenter: controlCenterItem
+            powerMenu: powerMenuItem
+        }
+
         Clipboard {
             id: clipboardItem
             maxWidth: root.width
@@ -245,6 +267,10 @@ PanelWindow {
     Connections {
         target: themePickerItem
         function onAboutToOpen() { root.presentOnly(themePickerItem); }
+    }
+    Connections {
+        target: wayclickPackPickerItem
+        function onAboutToOpen() { root.presentOnly(wayclickPackPickerItem); }
     }
     Connections {
         target: clipboardItem
