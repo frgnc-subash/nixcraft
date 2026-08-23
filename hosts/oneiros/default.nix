@@ -7,8 +7,16 @@
   ];
 
   config = {
-    home-manager.users = builtins.listToAttrs
-      (map (user: { name = user; value =
-                      { imports = [ ./home.nix ../../modules/user ]; }; }) config.systemSettings.users);
+    home-manager.users = builtins.listToAttrs (
+      map (user: {
+        name = user;
+        value = {
+          imports = [
+            ./home.nix
+            ../../modules/user
+          ];
+        };
+      }) config.systemSettings.users
+    );
   };
 }

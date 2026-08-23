@@ -13,7 +13,6 @@
   };
   imports = [
     ./hardware-configuration.nix
-    ../../modules/system/bluetooth
     ../../modules/system/services
     ../../modules/system/gpu
     ../../modules/system/storage
@@ -24,7 +23,6 @@
     boot.kernelPackages = pkgs.linuxKernel.packages.linux_7_1;
 
     systemSettings.users = [ "axosis" ];
-    systemSettings.bluetooth.enable = true;
     systemSettings.services.enable = true;
     systemSettings.gpu.enable = true;
     systemSettings.storage.enable = true;
@@ -61,6 +59,7 @@
       extraGroups = [
         "networkmanager"
         "wheel"
+        "input"
       ];
       shell = pkgs.zsh;
     };
@@ -87,6 +86,7 @@
       xwayland.enable = true;
       withUWSM = true;
     };
+    
     xdg.portal.enable = true;
     xdg.portal.extraPortals = [
       pkgs.xdg-desktop-portal-gtk

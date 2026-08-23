@@ -1,13 +1,22 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.systemSettings.services;
-in {
+in
+{
   options = {
     systemSettings.services = {
       enable = lib.mkEnableOption "Enable core system services";
     };
   };
   config = lib.mkIf cfg.enable {
+    hardware.bluetooth.enable = true;
+    services.blueman.enable = true;
+
     services.power-profiles-daemon.enable = true;
 
     networking.firewall = {
