@@ -217,7 +217,6 @@ PanelWindow {
         setWallpaperProcess.command = ["awww", "img", path, "--transition-type", "center", "--transition-duration", "0.7", "--transition-fps", "60"];
 
         setWallpaperProcess.running = true;
-        root.hide();
     }
 
     function refreshCurrent() {
