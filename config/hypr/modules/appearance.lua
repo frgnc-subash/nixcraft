@@ -25,7 +25,7 @@ hl.config({
     decoration = {
         rounding = 6,
         rounding_power = 6,
-        active_opacity = 0.97,
+        active_opacity = 0.90,
         inactive_opacity = 0.95,
         screen_shader = os.getenv("HOME") .. "/.config/hypr/shaders/rounded_corners.glsl",
 

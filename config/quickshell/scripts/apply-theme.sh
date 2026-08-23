@@ -43,6 +43,14 @@ install_if_present "$theme_dir/tmux.conf" "$HOME/.config/tmux/theme.conf"
 install_if_present "$theme_dir/yazi-flavor.toml" "$HOME/.config/yazi/flavors/nixcraft.yazi/flavor.toml"
 printf 'return dofile("%s")\n' "$theme_dir/hyprland.lua" > "$HOME/.config/hypr/theme.lua"
 
+# nvim watches this file (config/nvim/lua/config/autocmds.lua) and live-
+# reloads its colorscheme on change, so writing it is enough — no signal
+# or restart needed even for an already-open nvim session.
+if [ -f "$theme_dir/neovim.lua" ]; then
+    nvim_theme=$(sed -n 's/^return "\(.*\)"/\1/p' "$theme_dir/neovim.lua" | head -n1)
+    [ -n "$nvim_theme" ] && printf '%s' "$nvim_theme" > "$HOME/.config/nvim/theme_name.txt"
+fi
+
 case "$theme_name" in
     gruvbox)    zed_theme="Gruvbox Dark" ;;
     mocha)      zed_theme="Catppuccin Mocha" ;;

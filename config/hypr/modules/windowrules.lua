@@ -8,11 +8,6 @@
 local theme = dofile(os.getenv("HOME") .. "/.config/hypr/theme.lua")
 
 hl.window_rule({
-    name = "browser-ws3",
-    workspace = "3",
-})
-
-hl.window_rule({
     name = "audio-tui-float",
     match = {
         class = "^(audio-tui)$",
@@ -21,6 +16,14 @@ hl.window_rule({
     size = "800 500",
     center = true,
 })
+
+for _, class in ipairs({ "brave-browser", "zen", "vesktop" }) do
+    hl.window_rule({
+        name    = class .. "-full-opacity",
+        match   = { class = "^(" .. class .. ")$" },
+        opacity = "1.0 override",
+    })
+end
 
 hl.window_rule({
     name = "suppress-maximize",
