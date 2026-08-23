@@ -24,7 +24,7 @@ in
       wireguard-tools
       brave
       inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-      libreoffice-still
+      libreoffice-stable
       errands
       zathura
       zathuraPkgs.zathura_pdf_poppler
