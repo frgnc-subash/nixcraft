@@ -17,7 +17,7 @@ Curiosity brought me here. These is nixcraft, a NixOS configuration for my perso
     </tr>
     <tr>
       <td><img src='/assets/showcase/six.png' alt='showcase' width='100%'></td>
-      <td><img src='/assets/showcase/seven.png' alt='showcase' width='100%'></td>
+      <td><img src='/assets/showcase/sev.png' alt='showcase' width='100%'></td>
     </tr>
   </table>
 </p>

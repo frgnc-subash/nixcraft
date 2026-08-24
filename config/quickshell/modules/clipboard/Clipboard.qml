@@ -226,6 +226,7 @@ Item {
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: 9
                             text: modelData.text.replace(/\n/g, " ")
+                            textFormat: Text.PlainText
                             color: Palette.Theme.textPrimary
                             font.family: Palette.Theme.fontMono
                             font.pixelSize: 11
