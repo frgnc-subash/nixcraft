@@ -304,10 +304,6 @@ PopupWindow {
                             }
                         }
 
-                        Item {
-                            Layout.preferredHeight: 4
-                        }
-
                         Text {
                             text: popup.player ? (popup.player.trackArtist || "") : ""
                             color: Palette.Theme.textSecondary
@@ -315,6 +311,7 @@ PopupWindow {
                             font.pixelSize: 13
                             elide: Text.ElideRight
                             Layout.fillWidth: true
+                            Layout.topMargin: -4
                             visible: text !== ""
                         }
 
@@ -324,6 +321,7 @@ PopupWindow {
 
                         RowLayout {
                             Layout.fillWidth: true
+                            Layout.topMargin: 10
                             spacing: 12
 
                             Text {

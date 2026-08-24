@@ -183,8 +183,6 @@ Item {
                     }
                 }
 
-                Item { Layout.preferredHeight: 4 }
-
                 Text {
                     text: root.player ? (root.player.trackArtist || "") : ""
                     color: Palette.Theme.textSecondary
@@ -192,6 +190,7 @@ Item {
                     font.pixelSize: 13
                     elide: Text.ElideRight
                     Layout.fillWidth: true
+                    Layout.topMargin: -4
                     visible: text !== ""
                 }
 
@@ -199,6 +198,7 @@ Item {
 
                 RowLayout {
                     Layout.fillWidth: true
+                    Layout.topMargin: 10
                     spacing: 12
 
                     // Previous

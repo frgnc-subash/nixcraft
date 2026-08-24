@@ -45,8 +45,8 @@ Item {
     readonly property int notificationCount: notificationCenter ? notificationCenter.count : 0
     readonly property bool showingDetail: detailMode !== "none"
 
-    implicitWidth: Math.max(400, Math.min(maxWidth - 2, 470))
-    implicitHeight: showingDetail ? Math.max(320, Math.min(maxHeight - 4, 400)) : Math.max(464, Math.min(maxHeight - 4, 524))
+    implicitWidth: Math.max(400, Math.min(maxWidth - 2, 490))
+    implicitHeight: showingDetail ? Math.max(320, Math.min(maxHeight - 4, 400)) : Math.max(464, Math.min(maxHeight - 4, 500))
 
     signal aboutToOpen
     signal aboutToClose
