@@ -21,7 +21,7 @@ Curiosity brought me here. These is nixcraft, a NixOS configuration for my perso
     </tr>
   </table>
 </p>
-<img src='/assets/showcase/mocha.png' alt='showcase' width='100%'>
+<img src='/assets/showcase/catppuccin.png' alt='showcase' width='100%'>
 
 ## Installation
 
