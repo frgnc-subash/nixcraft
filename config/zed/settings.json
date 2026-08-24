@@ -39,7 +39,7 @@
       "default_config_options": {
         "mode": "acceptEdits",
         "model": "sonnet",
-        "effort": "medium",
+        "effort": "high",
         "fast": false,
       },
       "type": "registry",
