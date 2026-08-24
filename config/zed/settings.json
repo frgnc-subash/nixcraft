@@ -37,9 +37,9 @@
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
-        "mode": "auto",
+        "mode": "acceptEdits",
         "model": "sonnet",
-        "effort": "medium",
+        "effort": "high",
         "fast": false,
       },
       "type": "registry",

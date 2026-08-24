@@ -40,6 +40,7 @@ hl.bind(mainMod .. " + B", app(secondBrowser))
 hl.bind("ALT + B", app("kitty -e btop"))
 
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("quickshell ipc call clipboard toggle"))
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("quickshell ipc call controlcenter toggle"))
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("quickshell ipc call theme toggle"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("~/.config/hypr/scripts/reload.sh"))
 hl.bind("ALT + V", hl.dsp.exec_cmd("sg input -c $HOME/.config/wayclick/scripts/wayclick.sh"))
@@ -169,8 +170,10 @@ hl.bind(
     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
     { locked = true, repeating = true }
 )
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("quickshell ipc call osd brightnessUp"), { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("quickshell ipc call osd brightnessDown"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("quickshell ipc call osd brightnessUp"),
+    { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("quickshell ipc call osd brightnessDown"),
+    { locked = true, repeating = true })
 
 -- -------------------
 -- Media Controls
