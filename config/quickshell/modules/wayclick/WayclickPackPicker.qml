@@ -214,7 +214,7 @@ Item {
                 radius: 12
                 color: {
                     if (index === root.selected || rowHover.containsMouse)
-                        return Palette.Theme.accentLight;
+                        return Palette.Theme.surfaceContainerHigh;
                     return "transparent";
                 }
                 border.width: 0

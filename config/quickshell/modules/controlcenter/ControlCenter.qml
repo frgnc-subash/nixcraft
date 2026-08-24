@@ -36,6 +36,7 @@ Item {
     property bool showBrightnessOsdOnRead: false
     property bool showMicOsdOnRead: false
     property bool dndEnabled: false
+    property bool hyprsunsetEnabled: false
     property string powerProfilePending: ""
     readonly property bool keepAwake: idleService ? idleService.keepAwake : false
 
@@ -44,8 +45,8 @@ Item {
     readonly property int notificationCount: notificationCenter ? notificationCenter.count : 0
     readonly property bool showingDetail: detailMode !== "none"
 
-    implicitWidth: Math.max(360, Math.min(maxWidth - 2, 520))
-    implicitHeight: showingDetail ? Math.max(320, Math.min(maxHeight - 4, 400)) : notificationCount > 0 ? Math.max(500, Math.min(maxHeight - 4, 600)) : Math.max(420, Math.min(maxHeight - 4, 440))
+    implicitWidth: Math.max(400, Math.min(maxWidth - 2, 470))
+    implicitHeight: showingDetail ? Math.max(320, Math.min(maxHeight - 4, 400)) : Math.max(464, Math.min(maxHeight - 4, 524))
 
     signal aboutToOpen
     signal aboutToClose
@@ -359,7 +360,7 @@ Item {
     }
 
     function wifiIcon() {
-        return root.wifiEnabled ? "\ue63e" : "\ue648";
+        return root.wifiEnabled ? "\ue1ba" : "\ue648";
     }
 
     function networkIcon() {
@@ -378,8 +379,8 @@ Item {
         return root.wifiEnabled ? "Wi-Fi" : "Off";
     }
 
-    function dndIcon() {
-        return "\ue51c";
+    function gameModeIcon() {
+        return "\ue6ec";
     }
 
     function powerIcon() {
@@ -430,6 +431,21 @@ Item {
         notificationClear.exec(["sh", "-c", "command -v swaync-client >/dev/null 2>&1 && swaync-client -C"]);
     }
 
+    function toggleHyprsunset() {
+        hyprsunsetEnabled = !hyprsunsetEnabled;
+        if (hyprsunsetEnabled) {
+            hyprsunsetSet.exec(["hyprctl", "hyprsunset", "temperature", "2500"]);
+        } else {
+            // No hyprctl request restores the hyprsunset.conf profile schedule,
+            // so the daemon has to be restarted to pick it back up.
+            hyprsunsetSet.exec(["sh", "-c", "pkill -x hyprsunset; sleep 0.3; setsid -f hyprsunset >/dev/null 2>&1"]);
+        }
+    }
+
+    function hyprsunsetIcon() {
+        return "";
+    }
+
     function toggleKeepAwake() {
         if (root.idleService)
             root.idleService.toggleKeepAwake();
@@ -439,7 +455,7 @@ Item {
         return "\uefef";
     }
     function ethernetIcon() {
-        return "\ue8be";
+        return "\ueb2f";
     }
 
     function volumeIcon() {
@@ -650,96 +666,64 @@ Item {
         onExited: root.readBrightness()
     }
 
+    Process {
+        id: hyprsunsetSet
+    }
+
+    RowLayout {
+        anchors.fill: parent
+        spacing: 0
+
         Item {
-            id: normalView
-            anchors.fill: parent
-            opacity: root.showingDetail ? 0 : 1
-            scale: root.showingDetail ? 0.98 : 1
-            transformOrigin: Item.Top
-            enabled: !root.showingDetail
+            id: contentArea
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 190
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: 300
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            ColumnLayout {
+            Item {
+                id: normalView
                 anchors.fill: parent
-                anchors.leftMargin: 16
-                anchors.rightMargin: 16
-                anchors.bottomMargin: 16
-                anchors.topMargin: 12
-                spacing: 10
+                opacity: root.showingDetail ? 0 : 1
+                scale: root.showingDetail ? 0.98 : 1
+                transformOrigin: Item.Top
+                enabled: !root.showingDetail
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 12
-
-                    ColumnLayout {
-                        spacing: 0
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-
-                        SystemClock {
-                            id: ccClock
-                            precision: SystemClock.Minutes
-                        }
-
-                        Text {
-                            text: Qt.formatDateTime(ccClock.date, "hh:mm")
-                            color: Palette.Theme.textPrimary
-                            font.family: Palette.Theme.fontMono
-                            font.pixelSize: 14
-                            font.weight: Font.Normal
-                            Layout.alignment: Qt.AlignLeft
-                        }
-
-                        Text {
-                            text: Qt.formatDateTime(ccClock.date, "ddd, MMM d")
-                            color: Palette.Theme.textMuted
-                            font.family: Palette.Theme.fontMono
-                            font.pixelSize: 10
-                            Layout.alignment: Qt.AlignLeft
-                        }
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 190
+                        easing.type: Easing.OutCubic
                     }
                 }
 
-                Divider {
-                    Layout.fillWidth: true
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 300
+                        easing.type: Easing.OutCubic
+                    }
                 }
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.minimumHeight: 244
-                    Layout.preferredHeight: 244
-                    Layout.maximumHeight: 244
-                    spacing: 8
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 16
+                    anchors.bottomMargin: 16
+                    anchors.topMargin: 18
+                    spacing: 10
 
                     ColumnLayout {
                         Layout.fillWidth: true
-                        spacing: 8
+                        spacing: 12
 
-                        GridLayout {
+                        RowLayout {
                             Layout.fillWidth: true
-                            columns: 2
-                            columnSpacing: 8
-                            rowSpacing: 8
+                            spacing: 10
 
                             QuickTile {
                                 Layout.fillWidth: true
-                                Layout.minimumHeight: 76
-                                Layout.preferredHeight: 76
-                                Layout.maximumHeight: 76
+                                Layout.minimumHeight: 84
+                                Layout.preferredHeight: 84
+                                Layout.maximumHeight: 84
                                 compact: true
-                                accentColor: Palette.Theme.info
+                                accentColor: Palette.Theme.accent
                                 iconGlyph: root.networkIcon()
                                 title: "Network"
                                 subtitle: root.networkSubtitle()
@@ -750,11 +734,11 @@ Item {
 
                             QuickTile {
                                 Layout.fillWidth: true
-                                Layout.minimumHeight: 76
-                                Layout.preferredHeight: 76
-                                Layout.maximumHeight: 76
+                                Layout.minimumHeight: 84
+                                Layout.preferredHeight: 84
+                                Layout.maximumHeight: 84
                                 compact: true
-                                accentColor: Palette.Theme.info
+                                accentColor: Palette.Theme.accent
                                 iconGlyph: root.bluetoothIcon()
                                 title: "Bluetooth"
                                 subtitle: root.bluetoothSubtitle()
@@ -764,291 +748,319 @@ Item {
                             }
                         }
 
-                        Surface {
+                        RowLayout {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 152
-                            radius: 14
-                            color: Palette.Theme.surfaceContainerLow
-                            tintOpacity: 0.025
+                            spacing: 10
 
-                            ColumnLayout {
+                            Surface {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: slidersInner.implicitHeight + 20
+                                radius: 14
+                                color: Palette.Theme.surfaceContainerLow
+                                tintOpacity: 0.025
+
+                                ColumnLayout {
+                                    id: slidersInner
+                                    anchors.fill: parent
+                                    anchors.margins: 10
+                                    spacing: 2
+
+                                    ControlSlider {
+                                        Layout.fillWidth: true
+                                        iconGlyph: root.volumeIcon()
+                                        accentColor: Palette.Theme.accent
+                                        value: root.volumeValue
+                                        onIconClicked: root.toggleMute()
+                                        onIconRightClicked: root.openWiremix()
+                                        onValueRequested: value => root.setVolume(value)
+                                    }
+
+                                    ControlSlider {
+                                        Layout.fillWidth: true
+                                        iconGlyph: root.brightnessIcon()
+                                        accentColor: Palette.Theme.accent
+                                        value: root.brightnessValue
+                                        onValueRequested: value => root.setBrightness(value)
+                                    }
+
+                                    ControlSlider {
+                                        Layout.fillWidth: true
+                                        iconGlyph: root.micIcon()
+                                        accentColor: Palette.Theme.accent
+                                        value: root.micValue
+                                        onIconClicked: root.toggleMicMute()
+                                        onValueRequested: value => root.setMic(value)
+                                    }
+                                }
+                            }
+
+                            Surface {
+                                Layout.preferredHeight: slidersInner.implicitHeight + 20
+                                Layout.preferredWidth: gridInner.implicitWidth + 20
+                                radius: 14
+                                color: Palette.Theme.surfaceContainerLow
+                                tintOpacity: 0.025
+
+                                GridLayout {
+                                    id: gridInner
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 10
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    columns: 2
+                                    columnSpacing: 10
+                                    rowSpacing: 10
+
+                                    QuickTile {
+                                        iconOnly: true
+                                        accentColor: Palette.Theme.accent
+                                        iconGlyph: root.hyprsunsetIcon()
+                                        title: "Night"
+                                        active: root.hyprsunsetEnabled
+                                        onClicked: root.toggleHyprsunset()
+                                    }
+
+                                    QuickTile {
+                                        iconOnly: true
+                                        accentColor: "#4a90e2"
+                                        iconGlyph: root.gameModeIcon()
+                                        title: "Game Mode"
+                                        active: root.dndEnabled
+                                        onClicked: root.toggleDnd()
+                                    }
+
+                                    QuickTile {
+                                        iconOnly: true
+                                        accentColor: Palette.Theme.success
+                                        iconGlyph: root.keepAwakeIcon()
+                                        title: "Keep Awake"
+                                        active: root.keepAwake
+                                        onClicked: root.toggleKeepAwake()
+                                    }
+
+                                    QuickTile {
+                                        iconOnly: true
+                                        accentColor: root.powerProfileColor()
+                                        activeIconColor: root.powerProfile === "balanced" ? "#ffffff" : "#000000"
+                                        iconGlyph: root.powerIcon()
+                                        title: "Power"
+                                        active: root.powerProfileLoaded
+                                        onClicked: root.cyclePowerProfile()
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 2
+                        spacing: 8
+
+                        Text {
+                            text: "Notifications"
+                            color: Palette.Theme.textPrimary
+                            font.family: Palette.Theme.fontMono
+                            font.pixelSize: 13
+                            font.weight: Font.DemiBold
+                            Layout.alignment: Qt.AlignVCenter
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        Rectangle {
+                            width: 34
+                            height: 34
+                            radius: 17
+                            color: clearAllMouse.containsMouse ? Palette.Theme.surfaceContainerHighest : Palette.Theme.surfaceContainerHigh
+
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: 100
+                                }
+                            }
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: ""
+                                color: Palette.Theme.textPrimary
+                                font.family: Palette.Theme.fontIcons
+                                font.pixelSize: 18
+                                font.bold: true
+                            }
+
+                            MouseArea {
+                                id: clearAllMouse
                                 anchors.fill: parent
-                                anchors.margins: 8
-                                spacing: 2
-
-                                ControlSlider {
-                                    Layout.fillWidth: true
-                                    iconGlyph: root.volumeIcon()
-                                    accentColor: Palette.Theme.accent
-                                    value: root.volumeValue
-                                    onIconClicked: root.toggleMute()
-                                    onIconRightClicked: root.openWiremix()
-                                    onValueRequested: value => root.setVolume(value)
-                                }
-
-                                ControlSlider {
-                                    Layout.fillWidth: true
-                                    iconGlyph: root.brightnessIcon()
-                                    accentColor: Palette.Theme.accent
-                                    value: root.brightnessValue
-                                    onValueRequested: value => root.setBrightness(value)
-                                }
-
-                                ControlSlider {
-                                    Layout.fillWidth: true
-                                    iconGlyph: root.micIcon()
-                                    accentColor: Palette.Theme.accent
-                                    value: root.micValue
-                                    onIconClicked: root.toggleMicMute()
-                                    onValueRequested: value => root.setMic(value)
-                                }
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.clearAllNotifications()
                             }
                         }
                     }
 
                     Divider {
-                        vertical: true
-                        Layout.fillHeight: true
-                        Layout.topMargin: 4
-                        Layout.bottomMargin: 4
-                    }
-
-                    ColumnLayout {
-                        Layout.preferredWidth: 154
-                        Layout.minimumWidth: 154
-                        spacing: 8
-
-                        QuickTile {
-                            Layout.fillWidth: true
-                            Layout.minimumHeight: 76
-                            Layout.preferredHeight: 76
-                            Layout.maximumHeight: 76
-                            compact: true
-                            accentColor: Palette.Theme.warning
-                            iconGlyph: root.dndIcon()
-                            title: "DND"
-                            subtitle: root.dndEnabled ? "On" : "Off"
-                            active: root.dndEnabled
-                            onClicked: root.toggleDnd()
-                        }
-
-                        QuickTile {
-                            Layout.fillWidth: true
-                            Layout.minimumHeight: 76
-                            Layout.preferredHeight: 76
-                            Layout.maximumHeight: 76
-                            compact: true
-                            accentColor: Palette.Theme.success
-                            iconGlyph: root.keepAwakeIcon()
-                            title: "Keep Awake"
-                            subtitle: root.keepAwake ? "On" : "Off"
-                            active: root.keepAwake
-                            onClicked: root.toggleKeepAwake()
-                        }
-
-                        QuickTile {
-                            Layout.fillWidth: true
-                            Layout.minimumHeight: 76
-                            Layout.preferredHeight: 76
-                            Layout.maximumHeight: 76
-                            compact: true
-                            accentColor: root.powerProfileColor()
-                            activeIconColor: root.powerProfile === "balanced" ? "#ffffff" : "#000000"
-                            iconGlyph: root.powerIcon()
-                            title: "Power"
-                            subtitle: root.powerProfileLoaded ? root.powerProfile : "loading"
-                            active: root.powerProfileLoaded
-                            onClicked: root.cyclePowerProfile()
-                        }
-                    }
-                }
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 10
-
-                    Text {
-                        text: "Notifications"
-                        color: Palette.Theme.textMuted
-                        font.family: Palette.Theme.fontMono
-                        font.pixelSize: 11
                         Layout.fillWidth: true
                     }
 
-                    Text {
-                        text: String(root.notificationCount)
-                        color: Palette.Theme.textMuted
-                        font.family: Palette.Theme.fontMono
-                        font.pixelSize: 11
-                        Layout.rightMargin: 2
-                    }
-
-                    ActionChip {
-                        label: "Clear all"
-                        active: false
-                        onClicked: root.clearAllNotifications()
-                    }
-                }
-
-                Divider {
-                    Layout.fillWidth: true
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: "No notifications"
-                        color: Palette.Theme.textMuted
-                        font.family: Palette.Theme.fontMono
-                        font.pixelSize: 12
-                        visible: root.notificationCount === 0
-                    }
-
-                    ListView {
-                        anchors.fill: parent
-                        clip: true
-                        spacing: 10
-                        model: root.notificationCenter ? root.notificationCenter.groupedNotifications : []
-                        visible: root.notificationCount > 0
-                        reuseItems: true
-                        cacheBuffer: 320
-
-                        delegate: NotificationGroupCard {
-                            required property var modelData
-                            width: ListView.view.width
-                            notificationCenter: root.notificationCenter
-                            group: modelData
-                        }
-                    }
-                }
-            }
-        }
-
-        Item {
-            id: detailView
-            anchors.fill: parent
-            anchors.margins: 12
-            opacity: root.showingDetail ? 1 : 0
-            scale: root.showingDetail ? 1 : 0.98
-            transformOrigin: Item.Top
-            enabled: root.showingDetail
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 210
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: 320
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            ColumnLayout {
-                anchors.fill: parent
-                spacing: 8
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 8
-
-                    Rectangle {
-                        implicitWidth: 28
-                        implicitHeight: 28
-                        radius: 14
-                        color: Palette.Theme.surfaceContainerHigh
-                        Layout.alignment: Qt.AlignVCenter
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
                         Text {
                             anchors.centerIn: parent
-                            text: root.detailMode === "wifi" ? root.wifiIcon() : root.bluetoothIcon()
-                            color: Palette.Theme.info
-                            font.family: Palette.Theme.fontIcons
-                            font.pixelSize: 17
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
+                            text: "No notifications"
+                            color: Palette.Theme.textMuted
+                            font.family: Palette.Theme.fontMono
+                            font.pixelSize: 12
+                            visible: root.notificationCount === 0
+                        }
+
+                        ListView {
+                            anchors.fill: parent
+                            clip: true
+                            spacing: 10
+                            model: root.notificationCenter ? root.notificationCenter.groupedNotifications : []
+                            visible: root.notificationCount > 0
+                            reuseItems: true
+                            cacheBuffer: 320
+
+                            delegate: NotificationGroupCard {
+                                required property var modelData
+                                width: ListView.view.width
+                                notificationCenter: root.notificationCenter
+                                group: modelData
+                            }
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: detailView
+                anchors.fill: parent
+                anchors.margins: 12
+                opacity: root.showingDetail ? 1 : 0
+                scale: root.showingDetail ? 1 : 0.98
+                transformOrigin: Item.Top
+                enabled: root.showingDetail
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 210
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 320
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 8
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+
+                        Rectangle {
+                            implicitWidth: 28
+                            implicitHeight: 28
+                            radius: 14
+                            color: Palette.Theme.surfaceContainerHigh
+                            Layout.alignment: Qt.AlignVCenter
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.detailMode === "wifi" ? root.wifiIcon() : root.bluetoothIcon()
+                                color: Palette.Theme.info
+                                font.family: Palette.Theme.fontIcons
+                                font.pixelSize: 17
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
+
+                        Text {
+                            text: root.detailMode === "wifi" ? "Wi-Fi networks" : "Bluetooth devices"
+                            color: Palette.Theme.textPrimary
+                            font.family: Palette.Theme.fontMono
+                            font.pixelSize: 12
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
+                        }
+
+                        IconButton {
+                            icon: "\ue5c4"
+                            implicitWidth: 28
+                            implicitHeight: 28
+                            onClicked: root.closeDetailWindow(true)
+                        }
+
+                        IconButton {
+                            icon: "\ue5d5"
+                            implicitWidth: 28
+                            implicitHeight: 28
+                            onClicked: {
+                                if (root.detailMode === "wifi")
+                                    root.scanWifi(true);
+                                else
+                                    root.scanBluetooth();
+                            }
                         }
                     }
 
-                    Text {
-                        text: root.detailMode === "wifi" ? "Wi-Fi networks" : "Bluetooth devices"
-                        color: Palette.Theme.textPrimary
-                        font.family: Palette.Theme.fontMono
-                        font.pixelSize: 12
-                        elide: Text.ElideRight
+                    Divider {
                         Layout.fillWidth: true
                     }
 
-                    IconButton {
-                        icon: "\ue5c4"
-                        implicitWidth: 28
-                        implicitHeight: 28
-                        onClicked: root.closeDetailWindow(true)
-                    }
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
-                    IconButton {
-                        icon: "\ue5d5"
-                        implicitWidth: 28
-                        implicitHeight: 28
-                        onClicked: {
-                            if (root.detailMode === "wifi")
-                                root.scanWifi(true);
-                            else
-                                root.scanBluetooth();
+                        Text {
+                            anchors.centerIn: parent
+                            text: root.detailMode === "wifi" ? (root.wifiScanning ? "Scanning" : "No networks") : (root.bluetoothScanning ? "Scanning" : "No devices")
+                            color: Palette.Theme.textMuted
+                            font.family: Palette.Theme.fontMono
+                            font.pixelSize: 12
+                            visible: detailList.count === 0
                         }
-                    }
-                }
 
-                Divider {
-                    Layout.fillWidth: true
-                }
+                        ListView {
+                            id: detailList
 
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                            anchors.fill: parent
+                            clip: true
+                            spacing: 0
+                            model: root.detailMode === "wifi" ? wifiNetworkModel : bluetoothDeviceModel
+                            reuseItems: true
+                            cacheBuffer: 240
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: root.detailMode === "wifi" ? (root.wifiScanning ? "Scanning" : "No networks") : (root.bluetoothScanning ? "Scanning" : "No devices")
-                        color: Palette.Theme.textMuted
-                        font.family: Palette.Theme.fontMono
-                        font.pixelSize: 12
-                        visible: detailList.count === 0
-                    }
+                            delegate: DeviceRow {
+                                required property var modelData
 
-                    ListView {
-                        id: detailList
-
-                        anchors.fill: parent
-                        clip: true
-                        spacing: 0
-                        model: root.detailMode === "wifi" ? wifiNetworkModel : bluetoothDeviceModel
-                        reuseItems: true
-                        cacheBuffer: 240
-
-                        delegate: DeviceRow {
-                            required property var modelData
-
-                            width: ListView.view.width
-                            iconGlyph: root.detailMode === "wifi" ? root.wifiIcon() : root.bluetoothIcon()
-                            title: root.detailMode === "wifi" ? modelData.ssid : modelData.name
-                            subtitle: root.detailMode === "wifi" ? (modelData.security + "  " + modelData.signal + "%") : modelData.address
-                            active: root.detailMode === "wifi" ? modelData.active : false
-                            onClicked: {
-                                if (root.detailMode === "wifi")
-                                    root.connectWifi(modelData.ssid);
-                                else
-                                    root.pairBluetooth(modelData.address);
+                                width: ListView.view.width
+                                iconGlyph: root.detailMode === "wifi" ? root.wifiIcon() : root.bluetoothIcon()
+                                title: root.detailMode === "wifi" ? modelData.ssid : modelData.name
+                                subtitle: root.detailMode === "wifi" ? (modelData.security + "  " + modelData.signal + "%") : modelData.address
+                                active: root.detailMode === "wifi" ? modelData.active : false
+                                onClicked: {
+                                    if (root.detailMode === "wifi")
+                                        root.connectWifi(modelData.ssid);
+                                    else
+                                        root.pairBluetooth(modelData.address);
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
 }

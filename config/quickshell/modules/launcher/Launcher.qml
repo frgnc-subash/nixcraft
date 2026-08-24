@@ -180,7 +180,7 @@ Item {
                 radius: 16
                 color: {
                     if (absoluteIndex === root.selected || rowHover.containsMouse)
-                        return Palette.Theme.accentLight;
+                        return Palette.Theme.surfaceContainerHigh;
                     return "transparent";
                 }
                 border.width: 0

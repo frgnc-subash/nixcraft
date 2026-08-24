@@ -211,6 +211,11 @@ PopupWindow {
                 anchors.margins: 16
                 opacity: 0
 
+                SystemClock {
+                    id: mediaClock
+                    precision: SystemClock.Minutes
+                }
+
                 RowLayout {
                     anchors.fill: parent
                     spacing: 16
@@ -260,14 +265,43 @@ PopupWindow {
                         Layout.fillHeight: true
                         spacing: 0
 
-                        Text {
-                            text: popup.player ? (popup.player.trackTitle || "Unknown Title") : "Nothing playing"
-                            color: Palette.Theme.textTitle
-                            font.family: Palette.Theme.fontMono
-                            font.pixelSize: 14
-                            font.weight: Font.DemiBold
-                            elide: Text.ElideRight
+                        RowLayout {
                             Layout.fillWidth: true
+                            spacing: 8
+
+                            Text {
+                                text: popup.player ? (popup.player.trackTitle || "Unknown Title") : "Nothing playing"
+                                color: Palette.Theme.textTitle
+                                font.family: Palette.Theme.fontMono
+                                font.pixelSize: 14
+                                font.weight: Font.DemiBold
+                                elide: Text.ElideRight
+                                Layout.fillWidth: true
+                            }
+
+                            ColumnLayout {
+                                spacing: 0
+                                Layout.alignment: Qt.AlignTop | Qt.AlignRight
+                                Layout.topMargin: 6
+
+                                Text {
+                                    text: Qt.formatDateTime(mediaClock.date, "hh:mm")
+                                    color: Palette.Theme.textSecondary
+                                    font.family: Palette.Theme.fontMono
+                                    font.pixelSize: 16
+                                    font.weight: Font.Bold
+                                    Layout.alignment: Qt.AlignRight
+                                }
+
+                                Text {
+                                    text: Qt.formatDateTime(mediaClock.date, "ddd, MMM d")
+                                    color: Palette.Theme.textMuted
+                                    font.family: Palette.Theme.fontMono
+                                    font.pixelSize: 10
+                                    font.weight: Font.DemiBold
+                                    Layout.alignment: Qt.AlignRight
+                                }
+                            }
                         }
 
                         Item {

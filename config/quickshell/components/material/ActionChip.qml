@@ -14,6 +14,10 @@ Rectangle {
     radius: height / 2
     color: root.active ? Palette.Theme.primaryContainer : (actionMouse.containsMouse ? Palette.Theme.secondaryContainerHover : Palette.Theme.secondaryContainer)
 
+    Behavior on color {
+        ColorAnimation { duration: 120 }
+    }
+
     Text {
         id: chipText
         anchors.centerIn: parent
@@ -23,6 +27,10 @@ Rectangle {
         font.pixelSize: 11
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
+
+        Behavior on color {
+            ColorAnimation { duration: 120 }
+        }
     }
 
     MouseArea {

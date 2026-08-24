@@ -193,6 +193,13 @@ Item {
                         color: index === root.selected ? Palette.Theme.surfaceContainerHigh : Palette.Theme.surfaceContainerLow
                         border.width: index === root.selected ? 2 : 0
                         border.color: Palette.Theme.accent
+
+                        Behavior on color {
+                            ColorAnimation { duration: 120 }
+                        }
+                        Behavior on border.width {
+                            NumberAnimation { duration: 120 }
+                        }
                         Rectangle {
                             anchors.left: parent.left
                             anchors.leftMargin: 10

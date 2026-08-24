@@ -165,6 +165,10 @@ Surface {
                             font.family: Palette.Theme.fontMono
                             font.pixelSize: 11
                             font.underline: true
+
+                            Behavior on color {
+                                ColorAnimation { duration: 120 }
+                            }
                         }
                         MouseArea {
                             id: actionMouse

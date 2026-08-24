@@ -207,6 +207,13 @@ Item {
                     border.width: index === root.selected ? 1 : 0
                     border.color: Palette.Theme.accent
 
+                    Behavior on color {
+                        ColorAnimation { duration: 120 }
+                    }
+                    Behavior on border.width {
+                        NumberAnimation { duration: 120 }
+                    }
+
                     Rectangle {
                         anchors.left: parent.left
                         anchors.leftMargin: 10

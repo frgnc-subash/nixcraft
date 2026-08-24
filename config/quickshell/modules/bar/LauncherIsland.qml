@@ -14,7 +14,7 @@ BarSection {
         anchors.fill: parent
         radius: width / 2
         color: Palette.Theme.textPrimary
-        opacity: launcherButtonHover.containsMouse ? 0.08 : 0.04
+        opacity: launcherButtonHover.containsMouse ? 0.14 : 0.05
 
         Behavior on opacity {
             NumberAnimation {

@@ -1,3 +1,4 @@
+import Quickshell
 import Quickshell.Services.Mpris
 import QtQuick
 import QtQuick.Layouts
@@ -92,6 +93,11 @@ Item {
         anchors.fill: parent
         anchors.margins: 16
 
+        SystemClock {
+            id: panelClock
+            precision: SystemClock.Minutes
+        }
+
         RowLayout {
             anchors.fill: parent
             spacing: 16
@@ -138,14 +144,43 @@ Item {
                 Layout.fillHeight: true
                 spacing: 0
 
-                Text {
-                    text: root.player ? (root.player.trackTitle || "Unknown Title") : "Nothing playing"
-                    color: Palette.Theme.textTitle
-                    font.family: Palette.Theme.fontMono
-                    font.pixelSize: 14
-                    font.weight: Font.DemiBold
-                    elide: Text.ElideRight
+                RowLayout {
                     Layout.fillWidth: true
+                    spacing: 8
+
+                    Text {
+                        text: root.player ? (root.player.trackTitle || "Unknown Title") : "Nothing playing"
+                        color: Palette.Theme.textTitle
+                        font.family: Palette.Theme.fontMono
+                        font.pixelSize: 14
+                        font.weight: Font.DemiBold
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
+                    }
+
+                    ColumnLayout {
+                        spacing: 0
+                        Layout.alignment: Qt.AlignTop | Qt.AlignRight
+                        Layout.topMargin: 6
+
+                        Text {
+                            text: Qt.formatDateTime(panelClock.date, "hh:mm")
+                            color: Palette.Theme.textSecondary
+                            font.family: Palette.Theme.fontMono
+                            font.pixelSize: 16
+                            font.weight: Font.Bold
+                            Layout.alignment: Qt.AlignRight
+                        }
+
+                        Text {
+                            text: Qt.formatDateTime(panelClock.date, "ddd, MMM d")
+                            color: Palette.Theme.textMuted
+                            font.family: Palette.Theme.fontMono
+                            font.pixelSize: 10
+                            font.weight: Font.DemiBold
+                            Layout.alignment: Qt.AlignRight
+                        }
+                    }
                 }
 
                 Item { Layout.preferredHeight: 4 }
