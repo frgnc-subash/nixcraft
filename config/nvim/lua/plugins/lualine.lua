@@ -88,9 +88,11 @@ local theme_overrides = {
 -- Rounded, isolated "pill" look — mode and filetype sit in their own
 -- capsule (half-circle caps via the round separator glyphs), instead of
 -- LazyVim's default flag-shaped/connected powerline sections.
-local ROUND_LEFT = "█"
-local ROUND_RIGHT = "█"
-
+local theme_overrides = {
+    ryo = ryo_theme,
+    gruvbox = gruvbox_theme,
+}
+local SEPARATOR = "█"
 return {
     {
         "nvim-lualine/lualine.nvim",
@@ -99,12 +101,10 @@ return {
             opts.options.component_separators = ""
             opts.options.section_separators = { left = "", right = "" }
             opts.options.globalstatus = true
-
             local override = theme_overrides[current_theme_name()]
             if override then
                 opts.options.theme = override
             end
-
             opts.sections = {
                 lualine_a = {
                     {
@@ -112,20 +112,20 @@ return {
                         fmt = function(str)
                             return str
                         end,
-                        separator = { left = ROUND_LEFT, right = ROUND_RIGHT },
+                        separator = { left = SEPARATOR, right = SEPARATOR },
                         padding = { left = 1, right = 1 },
                     },
                 },
                 lualine_b = {},
                 lualine_c = {
                     { "progress", padding = { left = 1, right = 0 } },
-                    { "location", padding = { left = 1, right = 1 } },
+                    { "location", padding = { left = 0, right = 1 } },
                 },
                 lualine_x = {
                     {
                         "diagnostics",
                         symbols = { error = " ", warn = " ", info = " ", hint = " " },
-                        padding = { left = 1, right = 1 },
+                        padding = { left = 0, right = 1 },
                     },
                 },
                 lualine_y = {
@@ -133,14 +133,14 @@ return {
                         function()
                             return #(vim.lsp.get_clients({ bufnr = 0 })) > 0 and "󰒋 Lsp" or ""
                         end,
-                        padding = { left = 1, right = 1 },
+                        padding = { left = 0, right = 1 },
                     },
                 },
                 lualine_z = {
                     {
                         "filetype",
                         icon_only = false,
-                        separator = { left = ROUND_LEFT, right = ROUND_RIGHT },
+                        separator = { left = SEPARATOR, right = SEPARATOR },
                         padding = { left = 1, right = 1 },
                     },
                 },
