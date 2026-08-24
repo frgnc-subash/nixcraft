@@ -4,16 +4,20 @@ Curiosity brought me here. These is nixcraft, a NixOS configuration for my perso
 
 ## Showcase
 
-<img src='/assets/showcase/fastfetch.png' alt='showcase' width='100%'>
+<img src='/assets/showcase/one.png' alt='showcase' width='100%'>
 <p align="center">
   <table>
     <tr>
-      <td><img src='/assets/showcase/pickers.png' alt='showcase' width='100%'></td>
-      <td><img src='/assets/showcase/mediaplayer.png' alt='showcase' width='100%'></td>
+      <td><img src='/assets/showcase/two.png' alt='showcase' width='100%'></td>
+      <td><img src='/assets/showcase/three.png' alt='showcase' width='100%'></td>
     </tr>
     <tr>
-      <td><img src='/assets/showcase/panel.png' alt='showcase' width='100%'></td>
-      <td><img src='/assets/showcase/powermenu.png' alt='showcase' width='100%'></td>
+      <td><img src='/assets/showcase/four.png' alt='showcase' width='100%'></td>
+      <td><img src='/assets/showcase/five.png' alt='showcase' width='100%'></td>
+    </tr>
+    <tr>
+      <td><img src='/assets/showcase/six.png' alt='showcase' width='100%'></td>
+      <td><img src='/assets/showcase/seven.png' alt='showcase' width='100%'></td>
     </tr>
   </table>
 </p>
