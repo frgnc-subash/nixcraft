@@ -2,7 +2,6 @@ import Quickshell
 import Quickshell.Services.Mpris
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Shapes
 import QtQuick.Effects
 import "../../theme" as Palette
 import "../../components/material"
@@ -360,53 +359,23 @@ PopupWindow {
                                 implicitHeight: 38
                                 Layout.alignment: Qt.AlignVCenter
 
-                                Shape {
-                                    anchors.fill: parent
-                                    antialiasing: true
-
-                                    ShapePath {
-                                        strokeWidth: 2
-                                        strokeColor: Palette.Theme.border
-                                        fillColor: "transparent"
-                                        capStyle: ShapePath.RoundCap
-                                        PathAngleArc {
-                                            centerX: 19
-                                            centerY: 19
-                                            radiusX: 17
-                                            radiusY: 17
-                                            startAngle: -90
-                                            sweepAngle: 360
-                                        }
-                                    }
-                                    ShapePath {
-                                        strokeWidth: 2
-                                        strokeColor: Palette.Theme.accent
-                                        fillColor: "transparent"
-                                        capStyle: ShapePath.RoundCap
-                                        PathAngleArc {
-                                            centerX: 19
-                                            centerY: 19
-                                            radiusX: 17
-                                            radiusY: 17
-                                            startAngle: -90
-                                            sweepAngle: 360 * popup.progress
-                                            Behavior on sweepAngle {
-                                                NumberAnimation {
-                                                    duration: 250
-                                                    easing.type: Easing.OutCubic
-                                                }
-                                            }
-                                        }
-                                    }
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: 26
+                                    height: 26
+                                    radius: width / 2
+                                    color: Palette.Theme.textPrimary
                                 }
 
                                 Text {
                                     id: playPauseBtn
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.horizontalCenterOffset: (popup.hasPlayer && popup.player.isPlaying) ? 0 : 1
+                                    anchors.centerIn: parent
+                                    width: 26
+                                    height: 26
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
                                     text: popup.hasPlayer && popup.player.isPlaying ? "\ue034" : "\ue037"
-                                    color: Palette.Theme.textPrimary
+                                    color: Palette.Theme.accentText
                                     font.family: Palette.Theme.fontIcons
                                     font.pixelSize: 24
 
