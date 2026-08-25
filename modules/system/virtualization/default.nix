@@ -9,26 +9,10 @@ let
 in
 {
   options.systemSettings.virtualization = {
-    enable = lib.mkEnableOption "Wine, Bottles, and virt-manager";
+    enable = lib.mkEnableOption "virt-manager and Waydroid";
   };
   config = lib.mkIf cfg.enable {
-    nixpkgs.overlays = [
-      (final: prev: {
-        python3 = prev.python3.override {
-          packageOverrides = pyFinal: pyPrev: {
-            patool = pyPrev.patool.overridePythonAttrs (old: {
-              doCheck = false;
-            });
-          };
-        };
-        python3Packages = final.python3.pkgs;
-      })
-    ];
-
     environment.systemPackages = with pkgs; [
-      (bottles.override { removeWarningPopup = true; })
-      wineWow64Packages.stable
-      winetricks
       virt-manager
       pkgs.wl-clipboard
     ];
