@@ -68,6 +68,12 @@ ShellRoot {
         if (overlay.mediaPanel)
             overlay.mediaPanel.toggleMediaPanel();
     }
+    IpcHandler {
+        target: "shell"
+        function reload(): void {
+            Quickshell.reload(true);
+        }
+    }
     Bar {
         id: mainBar
         osd: mainOsd

@@ -434,7 +434,7 @@ Item {
     function toggleHyprsunset() {
         hyprsunsetEnabled = !hyprsunsetEnabled;
         if (hyprsunsetEnabled) {
-            hyprsunsetSet.exec(["hyprctl", "hyprsunset", "temperature", "2500"]);
+            hyprsunsetSet.exec(["hyprctl", "hyprsunset", "temperature", "2800"]);
         } else {
             // No hyprctl request restores the hyprsunset.conf profile schedule,
             // so the daemon has to be restarted to pick it back up.

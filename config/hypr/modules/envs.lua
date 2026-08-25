@@ -1,17 +1,14 @@
 -- ┌─┐┌┐┌┬  ┬┬┬─┐┌─┐┌┐┌┌┬┐┌─┐┌┐┌┌┬┐  ┬  ┬┌─┐┬─┐┬┌─┐┌┐ ┬  ┌─┐┌─┐
 -- ├┤ │││└┐┌┘│├┬┘│ │││││││├┤ │││ │   └┐┌┘├─┤├┬┘│├─┤├┴┐│  ├┤ └─┐
 -- └─┘┘└┘ └┘ ┴┴└─└─┘┘└┘┴ ┴└─┘┘└┘ ┴    └┘ ┴ ┴┴└─┴┴ ┴└─┘┴─┘└─┘└─┘
-
--- NVIDIA
+-- NVIDIA / GPU vendor selection
 hl.env("LIBVA_DRIVER_NAME", "iHD")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "mesa")
+hl.env("__EGL_VENDOR_LIBRARY_FILENAMES", "/run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json")
 hl.env("NVD_BACKEND", "direct")
 hl.env("__GL_GSYNC_ALLOWED", "0")
 hl.env("__GL_VRR_ALLOWED", "0")
 hl.env("__GL_THREADED_OPTIMIZATIONS", "1")
-
--- Wayland
-hl.env("GBM_BACKEND", "nvidia-drm")
 hl.env("WLR_NO_HARDWARE_CURSORS", "1")
 
 -- Qt

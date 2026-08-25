@@ -50,16 +50,5 @@ in
         Restart = "on-failure";
       };
     };
-    home.sessionVariables = {
-      XDG_CURRENT_DESKTOP = "Hyprland";
-      XDG_SESSION_TYPE = "wayland";
-      XDG_SESSION_DESKTOP = "Hyprland";
-      QT_QPA_PLATFORM = "wayland";
-      QT_QPA_PLATFORMTHEME = lib.mkDefault "qt6ct";
-      XCURSOR_SIZE = "20";
-      HYPRCURSOR_SIZE = "20";
-      XCURSOR_THEME = "Bibata-Modern-Ice";
-      TERMINAL = "kitty";
-      NIXOS_OZONE_WL = "1";    };
   };
 }

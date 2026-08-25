@@ -26,7 +26,7 @@ in
     };
 
     services.fstrim.enable = true;
-
+    services.earlyoom.enable = true;
     services.fwupd.enable = true;
 
     services.printing.enable = true;
