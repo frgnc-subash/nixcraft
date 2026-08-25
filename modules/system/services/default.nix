@@ -30,6 +30,7 @@ in
     services.fwupd.enable = true;
 
     services.printing.enable = true;
+    zramSwap.enable = true;
 
     services.avahi = {
       enable = true;
