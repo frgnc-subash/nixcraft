@@ -17,7 +17,6 @@ in {
       htop
       pokeget-rs
       pipes-rs
-      # momoi
       nitch
       peaclock
       cbonsai

@@ -27,13 +27,10 @@
     systemSettings.gpu.enable = true;
     systemSettings.storage.enable = true;
     systemSettings.virtualization.enable = true;
-    services.journald.extraConfig = "Storage=persistent";
+    systemSettings.sddm.enable = true;
 
-    systemSettings.sddm = {
-      enable = true;
-      theme = "ken";
-      avatar = ../../assets/pfp.png;
-    };
+    services.journald.extraConfig = "Storage=persistent";
+    services.flatpak.enable = true;
 
     services.gnome.gnome-keyring.enable = true;
     services.displayManager.ly.enable = false;
@@ -66,19 +63,17 @@
 
     nixpkgs.config = {
       allowUnfree = true;
-
       permittedInsecurePackages = [
         "pnpm-10.29.2"
         "electron-40.10.5"
       ];
     };
 
-    services.flatpak.enable = true;
-
     nix.settings.experimental-features = [
       "nix-command"
       "flakes"
     ];
+
     nix.settings.auto-optimise-store = true;
 
     programs.hyprland = {
@@ -86,12 +81,6 @@
       xwayland.enable = true;
       withUWSM = true;
     };
-    
-    xdg.portal.enable = true;
-    xdg.portal.extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-hyprland
-    ];
 
     programs.zsh.enable = true;
     programs.dconf.enable = true;

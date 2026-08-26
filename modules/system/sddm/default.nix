@@ -23,8 +23,8 @@ in
     };
     avatar = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Path to a PNG/JPG to use as the SDDM login avatar for `user`. Set to null to skip.";
+      description = "Path to the avatar image.";
+      default = ../../assets/pfp.png;
     };
   };
   config = lib.mkIf cfg.enable {

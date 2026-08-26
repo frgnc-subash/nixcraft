@@ -26,32 +26,19 @@ in
       nodejs_24
       bun
       python3
-      mariadb
- 
+
       eww
       quickshell
 
-
-      # rust
       rustup
-
-      # build tools / compilers
       gcc
       cmake
-
-      # nix tooling (LSP + linter)
       nixd
       nil
-
-      # go lang
       pkgs.go
       pkgs.gopls
       pkgs.gotools
-
-      # python package manager
       uv
-
-      # Qt / GUI dev
       qt6.qtdeclarative
     ];
   };
