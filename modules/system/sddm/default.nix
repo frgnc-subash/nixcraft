@@ -24,7 +24,7 @@ in
     avatar = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       description = "Path to the avatar image.";
-      default = ../../assets/pfp.png;
+      default = ../../../assets/pfp.png;
     };
   };
   config = lib.mkIf cfg.enable {
