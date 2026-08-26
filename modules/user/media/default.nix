@@ -21,6 +21,7 @@ in
       ffmpeg
       tesseract
       swappy
+      ani-cli
       pulseaudio
       loupe
       satty
