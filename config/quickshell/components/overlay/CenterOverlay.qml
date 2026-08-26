@@ -6,6 +6,7 @@ import "../../modules/launcher"
 import "../../modules/controlcenter"
 import "../../modules/powermenu"
 import "../../modules/theme"
+import "../../modules/shader"
 import "../../modules/clipboard"
 import "../../modules/servicemanager"
 import "../../modules/bar"
@@ -35,12 +36,13 @@ PanelWindow {
     property var bar: null
     property var notificationCenter: null
     property var idleService: null
-    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
+    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
 
     property alias launcher: launcherItem
     property alias controlCenter: controlCenterItem
     property alias powerMenu: powerMenuItem
     property alias themePicker: themePickerItem
+    property alias shaderPicker: shaderPickerItem
     property alias wayclickPackPicker: wayclickPackPickerItem
     property alias clipboard: clipboardItem
     property alias serviceManager: serviceManagerItem
@@ -62,6 +64,8 @@ PanelWindow {
             return powerMenuItem;
         if (themePickerItem.visible)
             return themePickerItem;
+        if (shaderPickerItem.visible)
+            return shaderPickerItem;
         if (wayclickPackPickerItem.visible)
             return wayclickPackPickerItem;
         if (clipboardItem.visible)
@@ -76,7 +80,7 @@ PanelWindow {
     // The launcher and control center are meant to feel like an extension of
     // the desktop, so they don't dim it; the rest are more like modal
     // utilities and darken the backdrop behind them.
-    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
+    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
 
     // All center-origin panels share this layer surface. Closing every other
     // panel before a new one appears prevents stacked backdrops and focus.
@@ -89,6 +93,8 @@ PanelWindow {
             powerMenuItem.closePowerMenu(true);
         if (panel !== themePickerItem && themePickerItem.visible)
             themePickerItem.close(true);
+        if (panel !== shaderPickerItem && shaderPickerItem.visible)
+            shaderPickerItem.close(true);
         if (panel !== wayclickPackPickerItem && wayclickPackPickerItem.visible)
             wayclickPackPickerItem.close(true);
         if (panel !== clipboardItem && clipboardItem.visible)
@@ -108,6 +114,8 @@ PanelWindow {
             powerMenuItem.closePowerMenu();
         else if (themePickerItem.visible)
             themePickerItem.close();
+        else if (shaderPickerItem.visible)
+            shaderPickerItem.close();
         else if (wayclickPackPickerItem.visible)
             wayclickPackPickerItem.close();
         else if (clipboardItem.visible)
@@ -120,6 +128,10 @@ PanelWindow {
 
     ThemeService {
         id: themeService
+    }
+
+    ShaderService {
+        id: shaderService
     }
 
     WayclickPackService {
@@ -224,6 +236,15 @@ PanelWindow {
             powerMenu: powerMenuItem
         }
 
+        ShaderPicker {
+            id: shaderPickerItem
+            maxWidth: root.width
+            service: shaderService
+            launcher: launcherItem
+            controlCenter: controlCenterItem
+            powerMenu: powerMenuItem
+        }
+
         WayclickPackPicker {
             id: wayclickPackPickerItem
             maxWidth: root.width
@@ -266,6 +287,10 @@ PanelWindow {
     Connections {
         target: themePickerItem
         function onAboutToOpen() { root.presentOnly(themePickerItem); }
+    }
+    Connections {
+        target: shaderPickerItem
+        function onAboutToOpen() { root.presentOnly(shaderPickerItem); }
     }
     Connections {
         target: wayclickPackPickerItem

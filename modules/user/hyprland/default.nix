@@ -29,6 +29,7 @@ in
       slurp
       hyprpicker
       libnotify
+      hyprshade
       zenity
       wallust
     ];
