@@ -7,8 +7,10 @@ import "components/overlay"
 import "modules/notification"
 import "modules/osd"
 import "modules/wallpicker"
+import "modules/workspaces"
 import "modules/lockscreen"
 import "modules/idle"
+import "services"
 
 ShellRoot {
     id: root
@@ -23,6 +25,13 @@ ShellRoot {
     }
     WallpaperPicker {
         id: wallpicker
+    }
+    WorkspacesService {
+        id: workspacesService
+    }
+    WorkspaceOverview {
+        id: workspaceOverview
+        service: workspacesService
     }
     Osd {
         id: mainOsd

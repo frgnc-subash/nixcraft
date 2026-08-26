@@ -139,7 +139,20 @@ hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.move({ workspace = "special:mag
 -- -------------------
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+
+-- -------------------
+-- Workspace overview (alt-tab style)
+-- -------------------
+-- Hold ALT and tap TAB to step through workspaces with live window
+-- previews per slot; releasing ALT commits the switch, mirroring classic
+-- alt-tab. The release bind targets Alt_L itself (the physical key
+-- carrying the mod), which is what actually fires the confirm. Windows can
+-- also be dragged between slots while it's open to move them without
+-- switching to them.
 hl.bind(mainMod .. " + TAB", hl.dsp.focus({ workspace = "previous" }))
+hl.bind("ALT + TAB", hl.dsp.exec_cmd("quickshell ipc call workspaces next"))
+hl.bind("ALT + SHIFT + TAB", hl.dsp.exec_cmd("quickshell ipc call workspaces prev"))
+hl.bind("ALT + Alt_L", hl.dsp.exec_cmd("quickshell ipc call workspaces activate"), { release = true })
 
 -- -------------------
 -- Mouse Bindings

@@ -35,7 +35,7 @@ const surfaceTintOpacity = 0.015
 
 // ── Typography ──
 const fontMono  = "SF Mono "
-const fontIcons = "Material Symbols Rounded "
+const fontIcons = "Material Symbols Rounded"
 
 // ── Shape ──
 const radiusSmall = 10

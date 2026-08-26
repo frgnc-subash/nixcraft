@@ -319,6 +319,7 @@ Item {
                 height: 62
 
                 Rectangle {
+                    id: searchField
                     anchors {
                         fill: parent
                         leftMargin: 10
@@ -326,7 +327,7 @@ Item {
                         topMargin: 10
                         bottomMargin: 8
                     }
-                    radius: 18
+                    radius: height / 2
                     color: Palette.Theme.surfaceContainerHigh
                     border.width: 0
                 }
@@ -339,14 +340,14 @@ Item {
                         topMargin: 10
                         bottomMargin: 8
                     }
-                    spacing: 10
+                    spacing: 12
 
                     // leading search icon
                     Text {
                         text: "\ue8b6"
                         font.family: Palette.Theme.fontIcons
                         font.pixelSize: 18
-                        color: Palette.Theme.textSecondary
+                        color: Palette.Theme.textMuted
                         Layout.alignment: Qt.AlignVCenter
                     }
 
@@ -366,7 +367,7 @@ Item {
                         Text {
                             anchors.fill: parent
                             verticalAlignment: Text.AlignVCenter
-                            text: "Search applications…"
+                            text: "Search, calculate or run"
                             font: parent.font
                             color: Palette.Theme.textMuted
                             visible: parent.text === ""
