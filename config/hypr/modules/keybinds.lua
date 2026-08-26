@@ -9,7 +9,6 @@ local secondBrowser = "brave"
 local mainMod = "SUPER"
 local guiEditor = "zeditor"
 
-
 local function app(cmd)
     return hl.dsp.exec_cmd("uwsm app -- " .. cmd)
 end
@@ -31,8 +30,8 @@ hl.bind(mainMod .. " + D", app("vesktop"))
 hl.bind(mainMod .. " + O", app("obsidian"))
 hl.bind(mainMod .. " + N", app("kitty -e nvim"))
 hl.bind(mainMod .. " + Y", app("kitty -e yazi"))
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("quickshell ipc call mediapanel toggle"))
-hl.bind(mainMod .. " + S", app("spotify"))
+hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("quickshell ipc call mediapanel toggle"))
+hl.bind(mainMod .. " + M", app("spotify"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
 
 hl.bind(mainMod .. " + Z", app(browser))

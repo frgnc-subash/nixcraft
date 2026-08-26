@@ -19,6 +19,7 @@ in
     home.packages = with pkgs; [
       vesktop
       mission-center
+      figma-linux
       proton-authenticator
       proton-vpn
       wireguard-tools
