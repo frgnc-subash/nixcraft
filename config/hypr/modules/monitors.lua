@@ -8,15 +8,15 @@ hl.monitor({
 --
 -- local scale = 2
 --
--- hl.monitor({
---     output   = "",
---     mode     = "highres",
---     position = "auto",
---     scale    = scale,
--- })
---
--- hl.config({
---     xwayland = { force_zero_scaling = true },
--- })
---
--- hl.env("GDK_SCALE", tostring(scale))
+hl.monitor({
+    output   = "",
+    mode     = "highres",
+    position = "auto",
+    scale    = scale,
+})
+
+hl.config({
+    xwayland = { force_zero_scaling = true },
+})
+
+hl.env("GDK_SCALE", tostring(scale))
