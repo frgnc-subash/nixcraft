@@ -50,6 +50,7 @@ PanelWindow {
 
     MouseArea {
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton
         onClicked: root.service.cancel()
     }
 
@@ -105,6 +106,7 @@ PanelWindow {
 
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton
             onClicked: {}
         }
 
@@ -288,6 +290,7 @@ PanelWindow {
                                         id: winDrag
                                         anchors.fill: parent
                                         enabled: !winTile.overflow
+                                        acceptedButtons: Qt.LeftButton
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
                                         drag.target: winTile
@@ -321,6 +324,7 @@ PanelWindow {
                     MouseArea {
                         anchors.fill: parent
                         visible: !cell.hasWindows
+                        acceptedButtons: Qt.LeftButton
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onEntered: root.service.selectIndex(cell.index)
