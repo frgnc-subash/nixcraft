@@ -18,6 +18,10 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       vesktop
+      foliate
+      switcheroo
+      localsend
+      obs-studio
       mission-center
       figma-linux
       proton-authenticator
