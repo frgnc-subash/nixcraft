@@ -7,6 +7,7 @@
 }:
 let
   cfg = config.userSettings.looks;
+  mocu-xcursor = pkgs.callPackage ./mocu-xcursor.nix { };
 in
 {
   options.userSettings.looks = {
@@ -16,7 +17,7 @@ in
     home.packages = with pkgs; [
       adw-gtk3
       papirus-icon-theme
-      bibata-cursors
+      mocu-xcursor
       nerd-fonts.jetbrains-mono
       nerd-fonts.departure-mono
       nerd-fonts.geist-mono
@@ -40,9 +41,9 @@ in
       enable = true;
       gtk.enable = true;
       x11.enable = true;
-      package = pkgs.bibata-cursors;
-      name = "Bibata-Modern-Classic";
-      size = 20;
+      package = mocu-xcursor;
+      name = "Mocu-Black-Right";
+      size = 24;
     };
 
     # Make Qt apps actually use Kvantum
@@ -54,9 +55,9 @@ in
     gtk = {
       enable = true;
       cursorTheme = {
-        name = "Bibata-Modern-Classic";
-        size = 20;
-        package = pkgs.bibata-cursors;
+        name = "Mocu-Black-Right";
+        size = 24;
+        package = mocu-xcursor;
       };
     };
     # Tell Kvantum which theme to load
