@@ -5,24 +5,33 @@
   pixman,
   libdrm,
 }:
-
-hyprlandPlugins.mkHyprlandPlugin hyprlandPlugins.hyprland {
+hyprlandPlugins.mkHyprlandPlugin (finalAttrs: {
   pluginName = "hyprglass";
-  version = "0.6.2";
+  version = "0.7.0";
 
   src = fetchFromGitHub {
     owner = "hyprnux";
     repo = "hyprglass";
-    rev = "v0.7.2";
-    hash = lib.fakeHash; # placeholder — see step 2
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-x/584kY+XXlU/OWKtZAFo89VtowjLXs1DiP9PC0o0Os=";
   };
 
-  buildInputs = [ pixman libdrm ];
+  installPhase = ''
+    runHook preInstall
+    mkdir -p $out/lib
+    mv hyprglass.so $out/lib/libhyprglass.so
+    runHook postInstall
+  '';
 
-  meta = with lib; {
+  buildInputs = [
+    pixman
+    libdrm
+  ];
+
+  meta = {
     description = "Liquid Glass inspired plugin for Hyprland (blur, refraction, chromatic aberration)";
     homepage = "https://github.com/hyprnux/hyprglass";
-    license = licenses.bsd3;
-    platforms = platforms.linux;
+    license = lib.licenses.bsd3;
+    platforms = lib.platforms.linux;
   };
-}
+})

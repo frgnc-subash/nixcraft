@@ -12,7 +12,7 @@ in
     enable = lib.mkEnableOption "Hyprland window manager";
   };
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
+    home.packages = (with pkgs; [
       brightnessctl
       kitty
       hypridle
@@ -32,6 +32,8 @@ in
       hyprshade
       zenity
       wallust
+    ]) ++ [
+      (pkgs.callPackage ./hyprglass.nix { })
     ];
     xdg.portal = {
       enable = true;
