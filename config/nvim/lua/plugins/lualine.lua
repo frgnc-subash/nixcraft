@@ -118,6 +118,33 @@ return {
                     { "location", padding = { left = 0, right = 1 } },
                 },
                 lualine_x = {
+                    -- Macro recording ("recording @q"), search count, etc. — driven by
+                    -- noice's status API. LazyVim's default lualine ships this; it was
+                    -- dropped when this file replaced `opts.sections` wholesale.
+                    {
+                        function()
+                            return require("noice").api.status.command.get()
+                        end,
+                        cond = function()
+                            return package.loaded["noice"] and require("noice").api.status.command.has()
+                        end,
+                        color = function()
+                            return { fg = Snacks.util.color("Statement") }
+                        end,
+                        padding = { left = 0, right = 1 },
+                    },
+                    {
+                        function()
+                            return require("noice").api.status.mode.get()
+                        end,
+                        cond = function()
+                            return package.loaded["noice"] and require("noice").api.status.mode.has()
+                        end,
+                        color = function()
+                            return { fg = Snacks.util.color("Constant") }
+                        end,
+                        padding = { left = 0, right = 1 },
+                    },
                     {
                         "diagnostics",
                         symbols = { error = " ", warn = " ", info = " ", hint = " " },
