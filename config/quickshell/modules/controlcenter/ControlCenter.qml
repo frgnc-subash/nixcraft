@@ -436,9 +436,26 @@ Item {
         if (hyprsunsetEnabled) {
             hyprsunsetSet.exec(["hyprctl", "hyprsunset", "temperature", "2800"]);
         } else {
-            // No hyprctl request restores the hyprsunset.conf profile schedule,
-            // so the daemon has to be restarted to pick it back up.
-            hyprsunsetSet.exec(["sh", "-c", "pkill -x hyprsunset; sleep 0.3; setsid -f hyprsunset >/dev/null 2>&1"]);
+            // Restarting the daemon (the old approach) is what caused the
+            // flash: Wayland only allows a single gamma-control client, so
+            // killing hyprsunset makes the compositor immediately snap back
+            // to neutral gamma, then hyprsunset has to relaunch and reclaim
+            // control ~0.3s later — a hard flash no matter what value gets
+            // reapplied afterward. Sending a direct hyprctl request instead
+            // (same as the "on" branch) changes the temperature in place,
+            // with no client handoff and no flash. The trade-off: once
+            // manually set this way, the daemon stops auto-advancing through
+            // hyprsunset.conf's remaining profiles for the rest of the
+            // session (resumes on next login/restart) — acceptable, since a
+            // guaranteed flash on every toggle is worse than a schedule that
+            // needs a nudge later.
+            hyprsunsetSet.exec(["sh", "-c", [
+                "conf=\"$HOME/.config/hypr/hyprsunset.conf\"",
+                "now=$(date +%H%M)",
+                "t=$(awk -v now=\"$now\" '/time[[:space:]]*=/{gsub(/[^0-9:]/,\"\");n=split($0,a,\":\");tm=a[1]a[2];next}/temperature[[:space:]]*=/{gsub(/[^0-9]/,\"\");temp=$0;if(first==\"\")first=temp;last=temp;if(tm<=now)best=temp}END{print (best!=\"\"?best:last)}' \"$conf\")",
+                "[ -n \"$t\" ] || t=4000",
+                "hyprctl hyprsunset temperature \"$t\"",
+            ].join("; ")]);
         }
     }
 
