@@ -12,6 +12,8 @@ in
     enable = lib.mkEnableOption "coding";
   };
   config = lib.mkIf cfg.enable {
+    home.sessionPath = [ "${config.home.homeDirectory}/.config/emacs/bin" ];
+
     home.packages = with pkgs; [
 
       # editors
@@ -19,6 +21,7 @@ in
       neovim
       zed-editor
       claude-code
+      emacs
       antigravity-ide
 
       # languages & runtimes
