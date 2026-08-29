@@ -24,9 +24,6 @@ hl.config({
         },
     },
 
-    -- -------------------
-    -- Cursor
-    -- -------------------
     cursor = {
         inactive_timeout = 30,
         no_hardware_cursors = true,
@@ -34,9 +31,6 @@ hl.config({
         zoom_rigid = false,
     },
 
-    -- -------------------
-    -- Dwindle Layout
-    -- -------------------
     dwindle = {
         preserve_split = true, -- You probably want this
     },
@@ -44,26 +38,18 @@ hl.config({
     scrolling = {
         fullscreen_on_one_column = true,
     },
-    -- -------------------
-    -- Master Layout
-    -- -------------------
+
     master = {
         new_status = "master",
     },
 })
 
--- -------------------
--- Gestures
--- -------------------
 hl.gesture({
     fingers = 3,
     direction = "horizontal",
     action = "workspace",
 })
 
--- -------------------
--- Device Settings
--- -------------------
 hl.device({
     name = "synps/2-synaptics-touchpad",
     enabled = true,

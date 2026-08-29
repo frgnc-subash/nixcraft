@@ -2,9 +2,6 @@
 -- │││││││ │││ ││││  ├┬┘│ ││  ├┤ └─┐
 -- └┴┘┴┘└┘─┴┘└─┘└┴┘  ┴└─└─┘┴─┘└─┘└─┘
 
--- -------------------
--- Windows and Rules
--- -------------------
 local theme = dofile(os.getenv("HOME") .. "/.config/hypr/theme.lua")
 
 hl.window_rule({
@@ -74,9 +71,6 @@ hl.window_rule({
     center = true,
 })
 
--- -------------------
--- Layer Rules
--- -------------------
 hl.layer_rule({
     name = "rofi-no-blur",
     match = {

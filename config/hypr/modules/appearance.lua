@@ -16,9 +16,6 @@ do
 end
 
 hl.config({
-    -- -------------------
-    -- General Settings
-    -- -------------------
     general = {
         gaps_in = 3,
         gaps_out = 4,
@@ -29,12 +26,9 @@ hl.config({
         allow_tearing = false,
     },
 
-    -- -------------------
-    -- Window Decoration
-    -- -------------------
     decoration = {
-        rounding = 6,
-        rounding_power = 6,
+        rounding = 10,
+        rounding_power = 8,
         active_opacity = 0.90,
         inactive_opacity = 0.95,
         screen_shader = screen_shader,
@@ -58,16 +52,10 @@ hl.config({
         },
     },
 
-    -- -------------------
-    -- Master Layout
-    -- -------------------
     master = {
         new_status = "master",
     },
 
-    -- -------------------
-    -- Miscellaneous
-    -- -------------------
     misc = {
         force_default_wallpaper = 1,
         disable_hyprland_logo = true,
@@ -78,13 +66,5 @@ hl.config({
 
     ecosystem = {
         no_update_news = true,
-    },
-
-    -- plugin = {
-    --     hyprscrolling = {
-    --         column_width             = 0.7,
-    --         fullscreen_on_one_column = true,
-    --         follow_focus             = true,
-    --     },
-    -- },
+    }
 })
