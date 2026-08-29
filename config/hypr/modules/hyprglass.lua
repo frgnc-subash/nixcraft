@@ -50,6 +50,6 @@ if hl.plugin.hyprglass then
     hl.window_rule({
         name = "kitty-glass-opacity",
         match = { class = "kitty" },
-        opacity = "0.80 override",
+        opacity = "0.85 override",
     })
 end
