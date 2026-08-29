@@ -12,34 +12,34 @@ end
 
 local ryo_theme = {
     normal = {
-        a = { fg = "#071017", bg = "#bb9af7", gui = "bold" },
-        b = { fg = "#eef5ff", bg = "#263447" },
-        c = { fg = "#d7e2ef", bg = "#10141b" },
+        a = { fg = "#000000", bg = "#bb9af7", gui = "bold" },
+        b = { fg = "#eef5f7", bg = "#101018" },
+        c = { fg = "#c9d1d9", bg = "#0a0a10" },
     },
     insert = {
-        a = { fg = "#071017", bg = "#8ff0c7", gui = "bold" },
-        b = { fg = "#eef5ff", bg = "#263447" },
-        c = { fg = "#d7e2ef", bg = "#10141b" },
+        a = { fg = "#000000", bg = "#8ff0c7", gui = "bold" },
+        b = { fg = "#eef5f7", bg = "#101018" },
+        c = { fg = "#c9d1d9", bg = "#0a0a10" },
     },
     visual = {
-        a = { fg = "#071017", bg = "#c7a8ff", gui = "bold" },
-        b = { fg = "#eef5ff", bg = "#263447" },
-        c = { fg = "#d7e2ef", bg = "#10141b" },
+        a = { fg = "#000000", bg = "#8bd5ff", gui = "bold" },
+        b = { fg = "#eef5f7", bg = "#101018" },
+        c = { fg = "#c9d1d9", bg = "#0a0a10" },
     },
     replace = {
-        a = { fg = "#071017", bg = "#ff8f9b", gui = "bold" },
-        b = { fg = "#eef5ff", bg = "#263447" },
-        c = { fg = "#d7e2ef", bg = "#10141b" },
+        a = { fg = "#000000", bg = "#f7768e", gui = "bold" },
+        b = { fg = "#eef5f7", bg = "#101018" },
+        c = { fg = "#c9d1d9", bg = "#0a0a10" },
     },
     command = {
-        a = { fg = "#071017", bg = "#ffd88a", gui = "bold" },
-        b = { fg = "#eef5ff", bg = "#263447" },
-        c = { fg = "#d7e2ef", bg = "#10141b" },
+        a = { fg = "#000000", bg = "#f5c97f", gui = "bold" },
+        b = { fg = "#eef5f7", bg = "#101018" },
+        c = { fg = "#c9d1d9", bg = "#0a0a10" },
     },
     inactive = {
-        a = { fg = "#9aa8ba", bg = "#10141b" },
-        b = { fg = "#9aa8ba", bg = "#10141b" },
-        c = { fg = "#9aa8ba", bg = "#10141b" },
+        a = { fg = "#566678", bg = "#0a0a10" },
+        b = { fg = "#566678", bg = "#0a0a10" },
+        c = { fg = "#566678", bg = "#0a0a10" },
     },
 }
 
@@ -80,11 +80,7 @@ local gruvbox_theme = {
 -- theme_name.txt (see each theme's config/themes/<name>/neovim.lua). Themes
 -- not listed here just use their colorscheme plugin's own lualine "auto"
 -- theme.
-local theme_overrides = {
-    ryo = ryo_theme,
-    gruvbox = gruvbox_theme,
-}
-
+--
 -- Rounded, isolated "pill" look — mode and filetype sit in their own
 -- capsule (half-circle caps via the round separator glyphs), instead of
 -- LazyVim's default flag-shaped/connected powerline sections.

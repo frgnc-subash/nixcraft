@@ -3,15 +3,6 @@ local f = io.open(theme_file, "r")
 if f then
   local name = f:read("*all"):gsub("%s+", "")
   f:close()
-  if name == "catppuccin-dynamic" then
-    vim.g.lazyvim_colorscheme = "catppuccin-mocha"
-    vim.g.is_dynamic = true
-  elseif name == "ryo" then
-    vim.g.lazyvim_colorscheme = "default"
-    vim.g.is_dynamic = false
-  else
-    vim.g.lazyvim_colorscheme = name
-    vim.g.is_dynamic = false
-  end
+  vim.g.lazyvim_colorscheme = name
 end
 require("config.lazy")

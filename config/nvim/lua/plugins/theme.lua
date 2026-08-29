@@ -9,21 +9,6 @@ return {
     lazy = false,
     priority = 1000,
     opts = { transparent_background = false },
-    config = function(_, opts)
-      if vim.g.is_dynamic then
-        local matugen_path = vim.fn.expand("~/.config/matugen/generated/neovim-colors.lua")
-        local f = loadfile(matugen_path)
-        if f then
-          local ok, colors = pcall(f)
-          if ok then
-            opts.color_overrides = { mocha = colors }
-          end
-        end
-      else
-        opts.color_overrides = {}
-      end
-      require("catppuccin").setup(opts)
-    end,
   },
   {
     "LazyVim/LazyVim",
