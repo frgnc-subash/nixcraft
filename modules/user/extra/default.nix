@@ -12,6 +12,8 @@ in {
       btop
       cava
       cmatrix
+      fortune
+      lolcat
       cowsay
       fastfetch
       htop

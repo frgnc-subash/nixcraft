@@ -14,8 +14,6 @@
     ./extra
   ];
 
-  # Keep these paths editable for live development while retaining their
-  # source in this flake repository.
   xdg.configFile = {
     btop.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixcraft/config/btop";
     cava.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixcraft/config/cava";
