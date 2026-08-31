@@ -31,6 +31,8 @@ PanelWindow {
     property var themePicker: null
     property var clipboard: null
     property var mediaPanel: null
+    property var toolMenu: null
+    property var emojiPicker: null
     property var ensureControlCenter: null
     property real osdValue: 0
     property string osdLabel: "0%"
@@ -283,10 +285,6 @@ PanelWindow {
     }
 
     Process {
-        id: hyprpickerAction
-    }
-
-    Process {
         id: volumeRead
         command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
 
@@ -428,11 +426,14 @@ PanelWindow {
                 }
 
                 IconButton {
-                    icon: "\ue3b8"
+                    icon: "\ue1bd"
                     implicitWidth: 26
                     implicitHeight: 34
                     Layout.alignment: Qt.AlignVCenter
-                    onClicked: hyprpickerAction.exec(["hyprpicker", "-a"])
+                    onClicked: {
+                        if (bar.toolMenu && typeof bar.toolMenu.toggleToolMenu === "function")
+                            bar.toolMenu.toggleToolMenu();
+                    }
                 }
             }
         }
@@ -609,6 +610,20 @@ PanelWindow {
             target: bar.mediaPanel
             enabled: bar.mediaPanel !== null
             function onAboutToOpen() { bar.centerMode = "mediaPanel"; }
+            function onAboutToClose() { bar.centerMode = "normal"; }
+        }
+
+        Connections {
+            target: bar.toolMenu
+            enabled: bar.toolMenu !== null
+            function onAboutToOpen() { bar.centerMode = "toolMenu"; }
+            function onAboutToClose() { bar.centerMode = "normal"; }
+        }
+
+        Connections {
+            target: bar.emojiPicker
+            enabled: bar.emojiPicker !== null
+            function onAboutToOpen() { bar.centerMode = "emoji"; }
             function onAboutToClose() { bar.centerMode = "normal"; }
         }
     }

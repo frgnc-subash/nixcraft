@@ -11,6 +11,8 @@ import "../../modules/clipboard"
 import "../../modules/servicemanager"
 import "../../modules/bar"
 import "../../modules/wayclick"
+import "../../modules/emoji"
+import "../../modules/toolmenu"
 import "../../services"
 
 PanelWindow {
@@ -36,7 +38,7 @@ PanelWindow {
     property var bar: null
     property var notificationCenter: null
     property var idleService: null
-    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
+    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible
 
     property alias launcher: launcherItem
     property alias controlCenter: controlCenterItem
@@ -47,6 +49,8 @@ PanelWindow {
     property alias clipboard: clipboardItem
     property alias serviceManager: serviceManagerItem
     property alias mediaPanel: mediaPanelItem
+    property alias toolMenu: toolMenuItem
+    property alias emojiPicker: emojiPickerItem
 
     visible: true
 
@@ -74,13 +78,17 @@ PanelWindow {
             return serviceManagerItem;
         if (mediaPanelItem.visible)
             return mediaPanelItem;
+        if (toolMenuItem.visible)
+            return toolMenuItem;
+        if (emojiPickerItem.visible)
+            return emojiPickerItem;
         return null;
     }
 
     // The launcher and control center are meant to feel like an extension of
     // the desktop, so they don't dim it; the rest are more like modal
     // utilities and darken the backdrop behind them.
-    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible
+    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible
 
     // All center-origin panels share this layer surface. Closing every other
     // panel before a new one appears prevents stacked backdrops and focus.
@@ -103,6 +111,10 @@ PanelWindow {
             serviceManagerItem.close(true);
         if (panel !== mediaPanelItem && mediaPanelItem.visible)
             mediaPanelItem.close(true);
+        if (panel !== toolMenuItem && toolMenuItem.visible)
+            toolMenuItem.closeToolMenu(true);
+        if (panel !== emojiPickerItem && emojiPickerItem.visible)
+            emojiPickerItem.close(true);
     }
 
     function closeActive() {
@@ -124,6 +136,10 @@ PanelWindow {
             serviceManagerItem.close();
         else if (mediaPanelItem.visible)
             mediaPanelItem.close();
+        else if (toolMenuItem.visible)
+            toolMenuItem.closeToolMenu();
+        else if (emojiPickerItem.visible)
+            emojiPickerItem.close();
     }
 
     ThemeService {
@@ -140,6 +156,10 @@ PanelWindow {
 
     ClipboardService {
         id: clipboardService
+    }
+
+    EmojiService {
+        id: emojiService
     }
 
     // Dims the desktop behind modal-style panels. Sits below the notch so it
@@ -226,6 +246,20 @@ PanelWindow {
             controlCenter: controlCenterItem
         }
 
+        ToolMenu {
+            id: toolMenuItem
+            maxWidth: root.width
+            launcher: launcherItem
+            controlCenter: controlCenterItem
+        }
+
+        EmojiPicker {
+            id: emojiPickerItem
+            maxWidth: root.width
+            maxHeight: root.height
+            service: emojiService
+        }
+
         ThemePicker {
             id: themePickerItem
             maxWidth: root.width
@@ -307,5 +341,13 @@ PanelWindow {
     Connections {
         target: mediaPanelItem
         function onAboutToOpen() { root.presentOnly(mediaPanelItem); }
+    }
+    Connections {
+        target: toolMenuItem
+        function onAboutToOpen() { root.presentOnly(toolMenuItem); }
+    }
+    Connections {
+        target: emojiPickerItem
+        function onAboutToOpen() { root.presentOnly(emojiPickerItem); }
     }
 }

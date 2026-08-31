@@ -9,7 +9,7 @@ if hl.plugin.hyprglass then
 
     hg.config({
         enabled = false,
-        default_theme = "light",
+        default_theme = "dark",
         default_preset = "apple",
         layers = { enabled = 0 },
     })

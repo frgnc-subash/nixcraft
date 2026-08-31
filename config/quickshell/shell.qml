@@ -92,6 +92,8 @@ ShellRoot {
         themePicker: overlay.themePicker
         clipboard: overlay.clipboard
         mediaPanel: overlay.mediaPanel
+        toolMenu: overlay.toolMenu
+        emojiPicker: overlay.emojiPicker
         ensureControlCenter: function () {
             return overlay.controlCenter;
         }

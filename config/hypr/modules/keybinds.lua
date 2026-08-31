@@ -36,6 +36,7 @@ hl.bind(mainMod .. " + B", app(secondBrowser))
 hl.bind("ALT + B", app("kitty -e btop"))
 
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("quickshell ipc call clipboard toggle"))
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("quickshell ipc call toolmenu toggle"))
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("quickshell ipc call controlcenter toggle"))
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("quickshell ipc call theme toggle"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("quickshell ipc call shader toggle"))
