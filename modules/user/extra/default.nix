@@ -13,6 +13,7 @@ in {
       cava
       cmatrix
       fortune
+      toilet
       lolcat
       cowsay
       fastfetch
