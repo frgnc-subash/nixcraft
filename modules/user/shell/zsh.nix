@@ -64,7 +64,7 @@ in
         bindkey '^p' history-search-backward
         bindkey '^n' history-search-forward
 
-        export PATH=$HOME/.config/hypr/scripts:$PATH
+        export PATH=$HOME/.config/quickshell/scripts:$PATH
         export TERMINAL='kitty'
         export EDITOR='nvim'
         export VISUAL='nvim'

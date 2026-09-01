@@ -16,7 +16,7 @@ Item {
     property var controlCenter: null
     property int selectedIndex: 0
 
-    implicitWidth: Math.min(maxWidth - 24, 240)
+    implicitWidth: Math.min(maxWidth - 24, actions.length * 48 + (actions.length - 1) * 8 + 16)
     implicitHeight: content.implicitHeight + 16
 
     signal aboutToOpen
@@ -26,12 +26,12 @@ Item {
         {
             name: "Color Picker",
             icon: "",
-            command: ["bash", "-lc", "~/.config/hypr/scripts/screenshot.sh p"]
+            command: ["bash", "-lc", "~/.config/quickshell/scripts/screenshot.sh p"]
         },
         {
             name: "Screenshot",
             icon: "",
-            command: ["bash", "-lc", "~/.config/hypr/scripts/screenshot.sh ri"]
+            command: ["bash", "-lc", "~/.config/quickshell/scripts/screenshot.sh ri"]
         },
         {
             name: "Emoji",
@@ -42,6 +42,11 @@ Item {
             name: "Clipboard",
             icon: "",
             command: ["qs", "ipc", "call", "clipboard", "toggle"]
+        },
+        {
+            name: "Record",
+            icon: "",
+            command: ["bash", "-lc", "~/.config/quickshell/scripts/record.sh"]
         }
     ]
 
@@ -90,10 +95,18 @@ Item {
             openToolMenu();
     }
 
+    property var pendingCommand: null
+
     function choose(index) {
         var action = actions[index];
         closeToolMenu(true);
-        actionProcess.exec(action.command);
+        // grim/slurp/hyprpicker need to grab keyboard/pointer input, which
+        // only becomes available once the compositor has actually unmapped
+        // this layer surface -- that happens a frame after `visible = false`,
+        // not in this same tick. Defer the launch so the grab doesn't race
+        // this panel's own teardown.
+        pendingCommand = action.command;
+        launchTimer.restart();
     }
 
     Keys.onPressed: event => {
@@ -114,6 +127,13 @@ Item {
 
     Process {
         id: actionProcess
+    }
+
+    Timer {
+        id: launchTimer
+        interval: 80
+        repeat: false
+        onTriggered: actionProcess.exec(root.pendingCommand)
     }
 
     ColumnLayout {
