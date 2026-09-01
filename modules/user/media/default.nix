@@ -25,7 +25,7 @@ in
       pulseaudio
       loupe
       satty
-      kooha
+      wf-recorder
     ];
   };
 }
