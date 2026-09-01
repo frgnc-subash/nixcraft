@@ -30,6 +30,7 @@ in
       nodejs_24
       bun
       python3
+      maven
 
       eww
       quickshell
