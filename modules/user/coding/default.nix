@@ -23,6 +23,7 @@ in
       claude-code
       emacs
       antigravity-ide
+      jetbrains.idea
 
       # languages & runtimes
       jdk21
