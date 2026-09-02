@@ -40,7 +40,7 @@
         "mode": "auto",
         "model": "sonnet",
         "effort": "high",
-        "fast": false,
+        "fast": true,
       },
       "type": "registry",
     },
