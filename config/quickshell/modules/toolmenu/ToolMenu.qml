@@ -45,7 +45,7 @@ Item {
         },
         {
             name: "Record",
-            icon: "",
+            icon: "\u{e061}",
             command: ["bash", "-lc", "~/.config/quickshell/scripts/record.sh"]
         }
     ]

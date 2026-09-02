@@ -187,30 +187,15 @@ Surface {
             }
         }
     }
-    Text {
-        id: clearText
-        text: "Clear"
-        color: clearMouse.containsMouse ? Palette.Theme.textPrimary : Palette.Theme.textMuted
-        font.family: Palette.Theme.fontMono
-        font.pixelSize: 11
-        font.underline: true
+    IconButton {
+        icon: ""
+        implicitWidth: 28
+        implicitHeight: 28
         anchors {
             right: parent.right
             rightMargin: 11
             verticalCenter: parent.verticalCenter
         }
-
-        Behavior on color {
-            ColorAnimation { duration: 120 }
-        }
-
-        MouseArea {
-            id: clearMouse
-            anchors.fill: parent
-            anchors.margins: -6
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: card.dismissNotification()
-        }
+        onClicked: card.dismissNotification()
     }
 }

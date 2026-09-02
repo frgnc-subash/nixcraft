@@ -57,6 +57,7 @@ in
         tl = "tmux list-sessions";
         tk = "tmux kill-server";
         ta = "tmux a";
+        asciiquarium = "asciiquarium --transparent";
       };
 
       initContent = ''

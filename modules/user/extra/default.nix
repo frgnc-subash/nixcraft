@@ -8,7 +8,7 @@ in {
   };
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      asciiquarium
+      asciiquarium-transparent
       btop
       cava
       cmatrix
