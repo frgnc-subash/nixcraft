@@ -42,6 +42,7 @@ PanelWindow {
     property var mediaPanel: null
     property var toolMenu: null
     property var emojiPicker: null
+    property var workspacesService: null
     property var ensureControlCenter: null
     property real osdValue: 0
     property string osdLabel: "0%"
@@ -439,12 +440,38 @@ PanelWindow {
             anchors.verticalCenter: parent.verticalCenter
             implicitWidth: Math.max(workspaces.implicitWidth + 24, 185)
 
+            MouseArea {
+                // The dots no longer have their own click handlers, so this
+                // single MouseArea catches every click in the capsule —
+                // circles, pills, and empty space alike — and opens the
+                // full overview.
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (bar.workspacesService)
+                        bar.workspacesService.step(1);
+                }
+            }
+
             Workspaces {
                 id: workspaces
                 anchors.centerIn: parent
             }
         }
 
+        BarSection {
+            id: weatherCapsule
+            anchors.left: workspacesCapsule.right
+            anchors.leftMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
+            implicitWidth: weather.implicitWidth + 24
+            visible: weather.available
+
+            Weather {
+                id: weather
+                anchors.centerIn: parent
+            }
+        }
 
         BarSection {
             id: batteryCapsule

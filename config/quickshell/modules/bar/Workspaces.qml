@@ -39,11 +39,6 @@ RowLayout {
                     easing.type: Easing.OutCubic
                 }
             }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Hyprland.dispatch("workspace " + (index + 1))
-            }
         }
     }
 }

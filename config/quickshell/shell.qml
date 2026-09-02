@@ -86,6 +86,7 @@ ShellRoot {
     Bar {
         id: mainBar
         osd: mainOsd
+        workspacesService: workspacesService
         launcher: overlay.launcher
         controlCenter: overlay.controlCenter
         powerMenu: overlay.powerMenu
