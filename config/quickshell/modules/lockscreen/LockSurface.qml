@@ -135,15 +135,14 @@ WlSessionLockSurface {
                 Surface {
                     id: pwField
                     anchors.fill: parent
-                    radius: height / 2
-                    color: Palette.Theme.surfaceContainer
+                    radius: 14
+                    color: passwordInput.activeFocus ? Palette.Theme.surfaceContainerHigh : Palette.Theme.surfaceContainer
                     outlineWidth: 0
 
-                    scale: passwordInput.activeFocus ? 1.015 : 1
-                    Behavior on scale {
-                        NumberAnimation {
-                            duration: 180
-                            easing.type: Easing.OutCubic
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: 260
+                            easing.type: Easing.InOutQuad
                         }
                     }
 
@@ -152,11 +151,17 @@ WlSessionLockSurface {
                         anchors.fill: parent
                         anchors.margins: 4
                         verticalAlignment: TextInput.AlignVCenter
-                        horizontalAlignment: TextInput.AlignHCenter
+                        // NoEcho renders no glyphs, so alignment has no
+                        // visual effect here — but AlignHCenter combined
+                        // with NoEcho breaks QtQuick's cursor-position
+                        // tracking and silently swallows Backspace.
                         echoMode: TextInput.NoEcho
                         focus: true
                         selectByMouse: false
-                        enabled: !root.lockScreen.authBusy
+                        // Stays enabled (and keeps focus) even while PAM is
+                        // verifying; disabling it here would drop active
+                        // focus and force the user to click back in.
+                        readOnly: root.lockScreen.authBusy
 
                         Keys.onEscapePressed: text = ""
 
@@ -200,7 +205,7 @@ WlSessionLockSurface {
 
                     RowLayout {
                         anchors.centerIn: parent
-                        spacing: 7
+                        spacing: 8
                         opacity: passwordInput.text.length > 0 ? 1 : 0
 
                         Behavior on opacity {
@@ -211,11 +216,11 @@ WlSessionLockSurface {
 
                         Repeater {
                             model: Math.min(passwordInput.text.length, 16)
-                            delegate: Rectangle {
+                            delegate: MaterialDot {
                                 id: dot
-                                width: 7
-                                height: 7
-                                radius: 3.5
+                                width: 11
+                                height: 11
+                                shapeIndex: index
                                 scale: 0
                                 color: root.lockScreen.authFailed ? Palette.Theme.errorColor : Palette.Theme.accent
 
@@ -257,6 +262,10 @@ WlSessionLockSurface {
         function onAuthFailedChanged() {
             if (root.lockScreen.authFailed)
                 shakeAnim.restart();
+        }
+        function onAuthBusyChanged() {
+            if (!root.lockScreen.authBusy)
+                passwordInput.forceActiveFocus();
         }
     }
 

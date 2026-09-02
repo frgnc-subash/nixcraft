@@ -25,6 +25,15 @@ PanelWindow {
     color: "transparent"
 
     property string centerMode: "normal"
+    // Scroll-cycled content shown in the center notch. "apps" (active
+    // window name) is the default; scrolling the notch steps through
+    // the rest.
+    property var centerModules: ["apps", "clock", "cava"]
+    property int centerModuleIndex: 0
+    // Remembers what was showing before playback auto-switched to cava,
+    // so stopping playback restores it instead of always falling back to apps.
+    property int previousCenterModuleIndex: 0
+    property bool isRecording: false
     property var launcher: null
     property var controlCenter: null
     property var powerMenu: null
@@ -72,14 +81,51 @@ PanelWindow {
         return false;
     }
 
+    // Auto-switch the notch to the cava visualizer when playback starts,
+    // and restore whatever module was showing before once it stops.
+    onMediaPlayingChanged: {
+        var cavaIdx = centerModules.indexOf("cava");
+        if (cavaIdx < 0)
+            return;
+        if (mediaPlaying) {
+            if (centerModuleIndex !== cavaIdx) {
+                previousCenterModuleIndex = centerModuleIndex;
+                centerModuleIndex = cavaIdx;
+            }
+        } else if (centerModuleIndex === cavaIdx) {
+            centerModuleIndex = previousCenterModuleIndex;
+        }
+    }
+
     property int batteryPercent: 0
     property bool batteryCharging: false
     property bool batteryAvailable: false
+
+    function checkRecording() {
+        recordingCheck.exec(["sh", "-c", "pgrep -x wf-recorder >/dev/null && echo 1 || echo 0"]);
+    }
+
+    Process {
+        id: recordingCheck
+        stdout: SplitParser {
+            splitMarker: "\n"
+            onRead: data => bar.isRecording = data.trim() === "1"
+        }
+    }
+
+    Timer {
+        id: recordingTimer
+        interval: 1200
+        running: true
+        repeat: true
+        onTriggered: bar.checkRecording()
+    }
 
     Component.onCompleted: {
         readVolume(true);
         readBrightness(true);
         readBattery();
+        checkRecording();
     }
 
     function showOsd(kind, value, label) {
@@ -180,6 +226,19 @@ PanelWindow {
 
     function readBatteryStatus() {
         batteryStatusRead.exec(["sh", "-c", "cat /sys/class/power_supply/BAT*/status 2>/dev/null || echo 'None'"]);
+    }
+
+    // Window classes don't always match their icon theme name (e.g. Zed
+    // reports "dev.zed.Zed" but ships an icon literally named "zed") —
+    // resolve through the desktop entry first, falling back to a direct
+    // lookup for the common case where they already match.
+    function iconForClass(cls) {
+        if (!cls)
+            return "";
+        var entry = DesktopEntries.heuristicLookup(cls);
+        if (entry && entry.icon)
+            return Quickshell.iconPath(entry.icon, true);
+        return Quickshell.iconPath(cls, true);
     }
 
     function getControlCenter(create) {
@@ -475,10 +534,22 @@ PanelWindow {
         wingSize: 9
         clipContent: false
 
+        readonly property string activeCenterModule: bar.centerModules[bar.centerModuleIndex]
+
+        // "~" and the clock share this width so the notch doesn't resize
+        // when cycling between them — cava sizes itself independently, and
+        // a real app title (which varies) grows/shrinks the notch too.
+        readonly property real idleContentWidth: Math.max(desktopContent.implicitWidth, clockContent.implicitWidth)
+
         readonly property real centerContentWidth: {
-            if (bar.mediaPlaying)
+            switch (centerCapsule.activeCenterModule) {
+            case "cava":
                 return cavaContent.implicitWidth;
-            return clockContent.implicitWidth;
+            case "clock":
+                return centerCapsule.idleContentWidth;
+            default:
+                return bar.appClass !== "" ? appsContent.implicitWidth : centerCapsule.idleContentWidth;
+            }
         }
         opacity: mediaPopup.visible ? 0 : 1
 
@@ -522,14 +593,93 @@ PanelWindow {
             }
         }
 
-        Cava {
-            id: cavaContent
+        RowLayout {
+            id: appsContent
             anchors.centerIn: parent
-            active: bar.mediaPlaying && visible
-            visible: bar.mediaPlaying
-            opacity: bar.centerMode === "normal" && bar.mediaPlaying && !(launcher && launcher.visible) ? 1 : 0
+            spacing: 7
+            // Only mounted once there's an actual app — no hidden icon
+            // sitting in the layout reserving space for the "~" case.
+            visible: centerCapsule.activeCenterModule === "apps" && bar.appClass !== ""
+            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "apps" && bar.appClass !== "" && !(launcher && launcher.visible) ? 1 : 0
             Behavior on opacity {
                 NumberAnimation { duration: 100 }
+            }
+
+            IconImage {
+                implicitSize: 14
+                source: bar.iconForClass(bar.appClass)
+                visible: source !== ""
+                smooth: true
+                mipmap: true
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            Text {
+                text: bar.appTitle
+                color: Palette.Theme.textPrimary
+                font.family: Palette.Theme.fontMono
+                font.pixelSize: 12
+                font.weight: Font.DemiBold
+                elide: Text.ElideRight
+                Layout.maximumWidth: 200
+                Layout.alignment: Qt.AlignVCenter
+            }
+        }
+
+        Text {
+            id: desktopContent
+            anchors.centerIn: parent
+            text: "~"
+            color: Palette.Theme.textPrimary
+            font.family: Palette.Theme.fontMono
+            font.pixelSize: 12
+            font.weight: Font.DemiBold
+            // The only child on screen in this state — nothing else can
+            // push it off-center.
+            visible: centerCapsule.activeCenterModule === "apps" && bar.appClass === ""
+            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "apps" && bar.appClass === "" && !(launcher && launcher.visible) ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation { duration: 100 }
+            }
+        }
+
+        Item {
+            id: cavaContent
+            anchors.centerIn: parent
+            implicitWidth: bar.mediaPlaying ? cavaVisualizer.implicitWidth : silenceText.implicitWidth
+            implicitHeight: Math.max(cavaVisualizer.implicitHeight, silenceText.implicitHeight)
+            visible: centerCapsule.activeCenterModule === "cava"
+            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "cava" && !(launcher && launcher.visible) ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation { duration: 100 }
+            }
+
+            // The visualizer only ever runs while something is actually
+            // playing — with nothing to visualize it just sat there
+            // painted on one stale frame, which read as frozen/broken.
+            Cava {
+                id: cavaVisualizer
+                anchors.centerIn: parent
+                active: bar.mediaPlaying && cavaContent.visible
+                visible: bar.mediaPlaying
+                opacity: bar.mediaPlaying ? 1 : 0
+                Behavior on opacity {
+                    NumberAnimation { duration: 140 }
+                }
+            }
+
+            Text {
+                id: silenceText
+                anchors.centerIn: parent
+                text: "Enjoy Silence"
+                visible: !bar.mediaPlaying
+                opacity: !bar.mediaPlaying ? 1 : 0
+                color: Palette.Theme.textMuted
+                font.family: Palette.Theme.fontMono
+                font.pixelSize: 12
+                Behavior on opacity {
+                    NumberAnimation { duration: 140 }
+                }
             }
         }
 
@@ -537,8 +687,8 @@ PanelWindow {
             id: clockContent
             anchors.centerIn: parent
             spacing: 8
-            visible: !bar.mediaPlaying
-            opacity: bar.centerMode === "normal" && !bar.mediaPlaying && !(launcher && launcher.visible) ? 1 : 0
+            visible: centerCapsule.activeCenterModule === "clock"
+            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "clock" && !(launcher && launcher.visible) ? 1 : 0
             Behavior on opacity {
                 NumberAnimation { duration: 100 }
             }
@@ -547,9 +697,33 @@ PanelWindow {
         }
 
         MouseArea {
+            id: centerScrollArea
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             cursorShape: Qt.PointingHandCursor
+
+            // A trackpad swipe fires many small wheel deltas in quick
+            // succession; without this gate each one would yank the module
+            // index and restart the crossfade/width animations mid-flight,
+            // reading as stutter. One swipe now advances a single step.
+            property bool wheelLocked: false
+
+            Timer {
+                id: wheelUnlock
+                interval: 260
+                onTriggered: centerScrollArea.wheelLocked = false
+            }
+
+            onWheel: wheel => {
+                wheel.accepted = true;
+                if (bar.centerMode !== "normal" || wheelLocked)
+                    return;
+                var len = bar.centerModules.length;
+                var dir = wheel.angleDelta.y > 0 ? 1 : -1;
+                bar.centerModuleIndex = (bar.centerModuleIndex + dir + len) % len;
+                wheelLocked = true;
+                wheelUnlock.restart();
+            }
             onClicked: mouse => {
                 if (mouse.button === Qt.RightButton) {
                     bar.closeControlCenter();
@@ -569,7 +743,6 @@ PanelWindow {
                 bar.toggleControlCenter();
             }
         }
-
 
         Connections {
             target: launcher
@@ -625,6 +798,50 @@ PanelWindow {
             enabled: bar.emojiPicker !== null
             function onAboutToOpen() { bar.centerMode = "emoji"; }
             function onAboutToClose() { bar.centerMode = "normal"; }
+        }
+    }
+
+    // Recording badge — pinned just outside the notch's right edge (not
+    // inside it) so it can never overlap centered content, no matter how
+    // narrow the current module's width is.
+    Rectangle {
+        id: recordingDot
+        visible: bar.isRecording
+        anchors.left: centerCapsule.right
+        anchors.leftMargin: 6
+        anchors.verticalCenter: centerCapsule.verticalCenter
+        width: 7
+        height: 7
+        radius: 3.5
+        color: Palette.Theme.errorColor
+
+        SequentialAnimation on opacity {
+            running: bar.isRecording
+            loops: Animation.Infinite
+            NumberAnimation {
+                to: 0.15
+                duration: 650
+                easing.type: Easing.InOutSine
+            }
+            NumberAnimation {
+                to: 1
+                duration: 650
+                easing.type: Easing.InOutSine
+            }
+        }
+
+        Process {
+            id: stopRecording
+            onExited: bar.checkRecording()
+        }
+
+        MouseArea {
+            // The dot itself is only 7px — pad the hit target so it's
+            // actually clickable.
+            anchors.fill: parent
+            anchors.margins: -6
+            cursorShape: Qt.PointingHandCursor
+            onClicked: stopRecording.exec(["bash", "-lc", "~/.config/quickshell/scripts/record.sh"])
         }
     }
 }
