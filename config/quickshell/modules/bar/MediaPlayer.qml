@@ -359,11 +359,10 @@ PopupWindow {
                                 implicitHeight: 38
                                 Layout.alignment: Qt.AlignVCenter
 
-                                Rectangle {
+                                CookieShape {
                                     anchors.centerIn: parent
                                     width: 26
                                     height: 26
-                                    radius: width / 2
                                     color: Palette.Theme.textPrimary
                                 }
 

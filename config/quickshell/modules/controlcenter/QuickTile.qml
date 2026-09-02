@@ -20,6 +20,27 @@ Item {
     implicitWidth: root.iconOnly ? 62 : 180
     implicitHeight: root.iconOnly ? 62 : (root.compact ? 76 : 82)
 
+    SequentialAnimation {
+        id: toggleBounce
+        NumberAnimation {
+            target: root
+            property: "scale"
+            to: 1.08
+            duration: 100
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: root
+            property: "scale"
+            to: 1
+            duration: 220
+            easing.type: Easing.OutBack
+            easing.overshoot: 3
+        }
+    }
+
+    onActiveChanged: toggleBounce.restart()
+
     Rectangle {
         anchors.fill: parent
         radius: Palette.Theme.radiusMedium
@@ -64,6 +85,7 @@ Item {
         width: 36
         height: 36
         radius: 11
+
         anchors {
             left: parent.left
             leftMargin: root.compact ? 12 : 11
@@ -80,8 +102,8 @@ Item {
 
         Image {
             anchors.centerIn: parent
-            width: 19
-            height: 19
+            width: 24
+            height: 24
             source: root.iconSource
             visible: root.iconSource !== ""
             fillMode: Image.PreserveAspectFit
@@ -95,7 +117,7 @@ Item {
             text: root.iconGlyph
             color: root.active ? root.activeIconColor : Palette.Theme.textPrimary
             font.family: Palette.Theme.fontIcons
-            font.pixelSize: 18
+            font.pixelSize: 22
 
             Behavior on color {
                 ColorAnimation { duration: 120 }

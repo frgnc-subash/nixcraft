@@ -713,8 +713,9 @@ Item {
 
                 Behavior on scale {
                     NumberAnimation {
-                        duration: 300
-                        easing.type: Easing.OutCubic
+                        duration: 340
+                        easing.type: Easing.OutBack
+                        easing.overshoot: 1.8
                     }
                 }
 
@@ -886,34 +887,10 @@ Item {
                             Layout.fillWidth: true
                         }
 
-                        Rectangle {
-                            width: 34
-                            height: 34
-                            radius: 17
-                            color: clearAllMouse.containsMouse ? Palette.Theme.surfaceContainerHighest : Palette.Theme.surfaceContainerHigh
-
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 100
-                                }
-                            }
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: ""
-                                color: Palette.Theme.textPrimary
-                                font.family: Palette.Theme.fontIcons
-                                font.pixelSize: 18
-                                font.bold: true
-                            }
-
-                            MouseArea {
-                                id: clearAllMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.clearAllNotifications()
-                            }
+                        ActionChip {
+                            label: "Clear all"
+                            visible: root.notificationCount > 0
+                            onClicked: root.clearAllNotifications()
                         }
                     }
 
@@ -972,8 +949,9 @@ Item {
 
                 Behavior on scale {
                     NumberAnimation {
-                        duration: 320
-                        easing.type: Easing.OutCubic
+                        duration: 360
+                        easing.type: Easing.OutBack
+                        easing.overshoot: 1.8
                     }
                 }
 

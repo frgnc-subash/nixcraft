@@ -194,9 +194,9 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         wingSize: 9
-        slabRadius: 20
 
         readonly property var panel: root.activePanel
+        slabRadius: 20
 
         // When no panel is active collapse back to bar notch size so the
         // next open always grows from the right seed, not from zero.
@@ -206,19 +206,21 @@ PanelWindow {
 
         Behavior on slabWidth {
             NumberAnimation {
-                duration: 260
-                easing.type: Easing.OutExpo
+                duration: 240
+                easing.type: Easing.OutBack
+                easing.overshoot: 0.6
             }
         }
         Behavior on slabHeight {
             NumberAnimation {
-                duration: 260
-                easing.type: Easing.OutExpo
+                duration: 240
+                easing.type: Easing.OutBack
+                easing.overshoot: 0.6
             }
         }
         Behavior on opacity {
             NumberAnimation {
-                duration: 260
+                duration: 160
                 easing.type: Easing.OutCubic
             }
         }

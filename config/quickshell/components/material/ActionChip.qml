@@ -18,6 +18,25 @@ Rectangle {
         ColorAnimation { duration: 120 }
     }
 
+    SequentialAnimation {
+        id: pressBounce
+        NumberAnimation {
+            target: root
+            property: "scale"
+            to: 0.92
+            duration: 80
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: root
+            property: "scale"
+            to: 1
+            duration: 200
+            easing.type: Easing.OutBack
+            easing.overshoot: 3
+        }
+    }
+
     Text {
         id: chipText
         anchors.centerIn: parent
@@ -38,6 +57,9 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
+        onClicked: {
+            pressBounce.restart();
+            root.clicked();
+        }
     }
 }

@@ -581,7 +581,7 @@ PanelWindow {
 
         Behavior on slabWidth {
             NumberAnimation {
-                duration: 280
+                duration: 120
                 easing.type: Easing.OutCubic
             }
         }

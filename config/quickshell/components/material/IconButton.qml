@@ -15,6 +15,25 @@ Item {
     implicitHeight: Palette.Theme.iconButtonSize
     opacity: enabled ? 1 : 0.38
 
+    SequentialAnimation {
+        id: pressBounce
+        NumberAnimation {
+            target: root
+            property: "scale"
+            to: 0.85
+            duration: 80
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: root
+            property: "scale"
+            to: 1
+            duration: 200
+            easing.type: Easing.OutBack
+            easing.overshoot: 3
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         radius: width / 2
@@ -54,7 +73,9 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: if (root.enabled)
-            root.clicked()
+        onClicked: if (root.enabled) {
+            pressBounce.restart();
+            root.clicked();
+        }
     }
 }
