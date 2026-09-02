@@ -399,6 +399,18 @@ Item {
         return Palette.Theme.surfaceContainer;
     }
 
+    // Each power profile gets its own silhouette, not just a color swap —
+    // power-saver is a calm full circle, performance is a sharp-cornered
+    // square, balanced sits in between as a plain rounded square.
+    function powerProfileShapeRadius() {
+        if (root.powerProfile === "power-saver")
+            return 31;
+        if (root.powerProfile === "performance")
+            return 4;
+        return Palette.Theme.radiusMedium;
+    }
+
+
     function bluetoothSubtitle() {
         if (!root.bluetoothLoaded)
             return "loading";
@@ -737,10 +749,11 @@ Item {
 
                             QuickTile {
                                 Layout.fillWidth: true
-                                Layout.minimumHeight: 84
-                                Layout.preferredHeight: 84
-                                Layout.maximumHeight: 84
+                                Layout.minimumHeight: 68
+                                Layout.preferredHeight: 68
+                                Layout.maximumHeight: 68
                                 compact: true
+                                shapeRadius: 22
                                 accentColor: Palette.Theme.accent
                                 iconGlyph: root.networkIcon()
                                 title: "Network"
@@ -752,10 +765,11 @@ Item {
 
                             QuickTile {
                                 Layout.fillWidth: true
-                                Layout.minimumHeight: 84
-                                Layout.preferredHeight: 84
-                                Layout.maximumHeight: 84
+                                Layout.minimumHeight: 68
+                                Layout.preferredHeight: 68
+                                Layout.maximumHeight: 68
                                 compact: true
+                                shapeRadius: 22
                                 accentColor: Palette.Theme.accent
                                 iconGlyph: root.bluetoothIcon()
                                 title: "Bluetooth"
@@ -862,6 +876,8 @@ Item {
                                         iconGlyph: root.powerIcon()
                                         title: "Power"
                                         active: root.powerProfileLoaded
+                                        shapeRadius: root.powerProfileShapeRadius()
+                                        pulseKey: root.powerProfile
                                         onClicked: root.cyclePowerProfile()
                                     }
                                 }

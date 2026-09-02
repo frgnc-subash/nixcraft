@@ -9,8 +9,8 @@ QtObject {
     // here notifies every bound component and updates the UI immediately.
     property var bg: "#030305"
     property var surface: "#030305"
-    property var surfaceContainerLow: "#0a0a10"
-    property var surfaceContainer: "#101018"
+    property var surfaceContainerLow: "#101018"
+    property var surfaceContainer: "#0a0a10"
     property var surfaceContainerHigh: "#181822"
     property var surfaceContainerHighest: "#22222e"
     property var surfaceTint: "#eef5f7"

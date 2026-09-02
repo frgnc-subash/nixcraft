@@ -14,6 +14,16 @@ Item {
     property bool iconOnly: false
     property color accentColor: Palette.Theme.accent
     property color activeIconColor: "#000000"
+    // Optional per-instance shape override for icon-only tiles (e.g. a
+    // toggle that cycles between multiple states can morph its silhouette
+    // per state — circle / rounded-square — instead of just swapping
+    // color). -1 means "use the normal default radius".
+    property real shapeRadius: -1
+    // Bind this to whatever value identifies the tile's current state (e.g.
+    // a cycling toggle's mode name) to get the bounce below on every state
+    // change — `active` alone doesn't cover toggles that stay active while
+    // cycling between several non-boolean states.
+    property var pulseKey: undefined
     signal clicked()
     signal rightClicked()
 
@@ -40,12 +50,21 @@ Item {
     }
 
     onActiveChanged: toggleBounce.restart()
+    onPulseKeyChanged: toggleBounce.restart()
 
     Rectangle {
         anchors.fill: parent
-        radius: Palette.Theme.radiusMedium
+        radius: root.shapeRadius >= 0 ? root.shapeRadius : Palette.Theme.radiusMedium
         color: root.iconOnly && root.active ? root.accentColor : Palette.Theme.surfaceContainerHighest
         border.width: 0
+
+        Behavior on radius {
+            NumberAnimation {
+                duration: 320
+                easing.type: Easing.OutBack
+                easing.overshoot: 1.6
+            }
+        }
 
         Behavior on color {
             ColorAnimation { duration: 120 }
@@ -55,7 +74,7 @@ Item {
     Rectangle {
         visible: !root.iconOnly
         anchors.fill: parent
-        radius: Palette.Theme.radiusMedium
+        radius: root.shapeRadius >= 0 ? root.shapeRadius : Palette.Theme.radiusMedium
         color: root.accentColor
         opacity: root.active ? 0.12 : 0
 
@@ -82,13 +101,13 @@ Item {
     Rectangle {
         id: iconContainer
         visible: !root.iconOnly
-        width: 36
-        height: 36
-        radius: 11
+        width: 40
+        height: 40
+        radius: width / 2
 
         anchors {
             left: parent.left
-            leftMargin: root.compact ? 12 : 11
+            leftMargin: root.compact ? 14 : 11
             top: root.compact ? undefined : parent.top
             topMargin: root.compact ? 0 : 11
             verticalCenter: root.compact ? parent.verticalCenter : undefined
@@ -102,8 +121,8 @@ Item {
 
         Image {
             anchors.centerIn: parent
-            width: 24
-            height: 24
+            width: 28
+            height: 28
             source: root.iconSource
             visible: root.iconSource !== ""
             fillMode: Image.PreserveAspectFit
@@ -117,7 +136,7 @@ Item {
             text: root.iconGlyph
             color: root.active ? root.activeIconColor : Palette.Theme.textPrimary
             font.family: Palette.Theme.fontIcons
-            font.pixelSize: 22
+            font.pixelSize: 26
 
             Behavior on color {
                 ColorAnimation { duration: 120 }
@@ -134,8 +153,8 @@ Item {
             // overlap when the tile is resized by the right-side column.
             left: root.compact ? iconContainer.right : parent.left
             right: parent.right
-            leftMargin: 13
-            rightMargin: root.compact ? 12 : 12
+            leftMargin: root.compact ? 10 : 13
+            rightMargin: root.compact ? 14 : 12
             top: root.compact ? undefined : iconContainer.bottom
             topMargin: root.compact ? 0 : 8
             verticalCenter: root.compact ? parent.verticalCenter : undefined
@@ -173,7 +192,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        radius: Palette.Theme.radiusMedium
+        radius: root.shapeRadius >= 0 ? root.shapeRadius : Palette.Theme.radiusMedium
         color: "#ffffff"
         opacity: tileMouse.containsMouse ? 0.04 : 0
 
