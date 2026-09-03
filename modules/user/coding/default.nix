@@ -36,7 +36,10 @@ in
       quickshell
 
       rustup
-      clang
+      # clang itself is intentionally left out: its wrapper ships a `cpp`
+      # binary that collides with gcc's own `cpp` in this profile's buildEnv.
+      # clang-tools (clangd/clang-format/clang-tidy) doesn't ship one, so it
+      # coexists with gcc fine and is all that's needed for the C LSP setup.
       clang-tools
       gcc
       cmake
