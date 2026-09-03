@@ -36,6 +36,8 @@ in
       quickshell
 
       rustup
+      clang
+      clang-tools
       gcc
       cmake
       nixd
