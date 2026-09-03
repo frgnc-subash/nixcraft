@@ -5,7 +5,7 @@
 require("modules.autostarts")
 require("modules.keybinds")
 
-require("modules.hyprglass")
+-- require("modules.hyprglass")
 require("modules.appearance")
 require("modules.envs")
 

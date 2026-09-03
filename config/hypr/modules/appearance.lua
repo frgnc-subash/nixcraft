@@ -2,11 +2,8 @@
 -- ├─┤├─┘├─┘├┤ ├─┤├┬┘├─┤││││  ├┤
 -- ┴ ┴┴  ┴  └─┘┴ ┴┴└─┴ ┴┘└┘└─┘└─┘
 
--- dofile(os.getenv("HOME") .. "/.config/matugen/generated/hypr-colors.lua")
 local theme = dofile(os.getenv("HOME") .. "/.config/hypr/theme.lua")
 
--- Selected via the Quickshell shader picker (quickshell/modules/shader);
--- falls back to the default corner shader if the state file is missing.
 local screen_shader = os.getenv("HOME") .. "/.config/hypr/shaders/rounded_corners.glsl"
 do
     local ok, state_shader = pcall(dofile, os.getenv("HOME") .. "/.config/hypr/shader.lua")
@@ -46,9 +43,12 @@ hl.config({
             passes = 2,
             new_optimizations = true,
             ignore_opacity = true,
-            noise = 0.05,
-            brightness = 1,
-            contrast = 1,
+            noise = 0.01,
+            vibrancy = 0.35,
+            vibrancy_darkness = 0.35,
+            brightness = 0.8,
+            contrast = 2,
+            special = false,
         },
     },
 
@@ -60,7 +60,6 @@ hl.config({
         force_default_wallpaper = 1,
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
-        -- vfr = false,
         enable_swallow = true,
     },
 

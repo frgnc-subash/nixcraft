@@ -62,37 +62,6 @@ hl.window_rule({
 })
 
 hl.window_rule({
-    name = "calendar-float",
-    match = {
-        class = "^(org.gnome.Calender)$",
-    },
-    float = true,
-    size = "300 500",
-    center = true,
-})
-
-hl.layer_rule({
-    name = "rofi-no-blur",
-    match = {
-        namespace = "rofi",
-    },
-    blur = false,
-})
-
-hl.layer_rule({
-    name = "logout-blur",
-    match = {
-        namespace = "logout_dialog",
-    },
-    blur = true,
-})
--- hl.layer_rule({
--- 	name = "swaync-notification-animation",
--- 	match = { namespace = "swaync-control-center" },
--- 	animation = "slide top",
--- })
-
-hl.window_rule({
     name = "move-kitty",
     match = { class = "kitty" },
     move = { 100, 100 },

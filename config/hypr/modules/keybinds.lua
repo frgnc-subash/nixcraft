@@ -93,7 +93,8 @@ hl.bind("Print", hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh rc"
 hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh rf"), { locked = true })
 hl.bind("CTRL + Print", hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh ri"), { locked = true })
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh sc"), { locked = true })
-hl.bind(mainMod .. " + SHIFT + Print", hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh sf"), { locked = true })
+hl.bind(mainMod .. " + SHIFT + Print", hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh sf"),
+    { locked = true })
 hl.bind("CTRL + SHIFT + Print", hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh si"), { locked = true })
 hl.bind("ALT + Print", hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh p"), { locked = true })
 
