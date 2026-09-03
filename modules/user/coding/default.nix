@@ -47,6 +47,14 @@ in
       pkgs.gotools
       uv
       qt6.qtdeclarative
+
+      prettierd
+      prettier
+      google-java-format
+      ruff
+      shfmt
+      stylua
+      taplo
     ];
   };
 }
