@@ -17,11 +17,15 @@ ShellRoot {
     NotificationCenter {
         id: notificationCenter
     }
+    BarLayoutService {
+        id: barLayoutService
+    }
     CenterOverlay {
         id: overlay
         notificationCenter: notificationCenter
         bar: mainBar
         idleService: idleService
+        barLayout: barLayoutService
     }
     WallpaperPicker {
         id: wallpicker
@@ -86,6 +90,7 @@ ShellRoot {
     Bar {
         id: mainBar
         osd: mainOsd
+        barLayout: barLayoutService
         workspacesService: workspacesService
         launcher: overlay.launcher
         controlCenter: overlay.controlCenter

@@ -17,7 +17,7 @@ hl.bind(mainMod .. " + RETURN", app(terminal))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + E", app(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(" qs ipc call launcher toggle "))
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("quickshell ipc call launcher toggle"))
 
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
@@ -33,6 +33,7 @@ hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
 
 hl.bind(mainMod .. " + Z", app(browser))
 hl.bind(mainMod .. " + B", app(secondBrowser))
+hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("quickshell ipc call barlayout toggle"))
 hl.bind("ALT + B", app("kitty -e btop"))
 
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("quickshell ipc call clipboard toggle"))

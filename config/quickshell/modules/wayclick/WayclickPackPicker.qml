@@ -23,7 +23,7 @@ Item {
     readonly property int maxVisible: 5
 
     implicitWidth: Math.max(360, Math.min(maxWidth - 32, 430))
-    implicitHeight: searchRow.height + divider.height + visibleCount * itemH + 8
+    implicitHeight: searchRow.height + visibleCount * itemH + 8
 
     signal aboutToOpen
     signal aboutToClose
@@ -378,11 +378,7 @@ Item {
             }
         }
 
-        // ── divider ──────────────────────────────────────────────
-        Divider {
-            id: divider
-            Layout.fillWidth: true
-        }
+
 
         Item {
             id: listPanel

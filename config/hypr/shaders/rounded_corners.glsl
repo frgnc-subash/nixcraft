@@ -6,7 +6,7 @@ in vec2 v_texcoord;
 uniform sampler2D tex;
 out vec4 fragColor;
 
-const float RADIUS = 12.0;
+const float RADIUS = 8.0;
 
 const vec2 RESOLUTION = vec2(1366.0, 768.0);
 const float AA = 1.0;

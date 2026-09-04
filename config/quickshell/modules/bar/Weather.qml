@@ -6,6 +6,7 @@ import "../../theme" as Palette
 
 Item {
     id: root
+    property bool vertical: false
     property string tempC: ""
     property string conditionText: ""
     property int weatherCode: 0
@@ -29,8 +30,8 @@ Item {
     }
 
     visible: available
-    implicitWidth: row.implicitWidth
-    implicitHeight: 30
+    implicitWidth: root.vertical ? Math.max(24, row.implicitWidth) : row.implicitWidth
+    implicitHeight: root.vertical ? row.implicitHeight : 30
 
     function refresh() {
         weatherProcess.running = true;
@@ -118,10 +119,12 @@ Item {
         }
     }
 
-    RowLayout {
+    GridLayout {
         id: row
         anchors.centerIn: parent
-        spacing: 5
+        columns: root.vertical ? 1 : 999
+        rowSpacing: 3
+        columnSpacing: 5
         Text {
             text: root.iconGlyph
             font.family: root.iconFontFamily
@@ -129,15 +132,17 @@ Item {
             color: Palette.Theme.textPrimary
             opacity: root.isStale ? 0.55 : 1.0
             verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
         }
         Text {
-            text: root.tempC + "°C"
+            // Vertical bar is narrow — "C" is implied, drop it to save
+            // width instead of forcing the whole bar wider to fit "20°C".
+            text: root.tempC + (root.vertical ? "°" : "°C")
             color: Palette.Theme.textPrimary
             opacity: root.isStale ? 0.55 : 1.0
             font.family: Palette.Theme.fontMono
-            font.pixelSize: 13
-            Layout.alignment: Qt.AlignVCenter
+            font.pixelSize: root.vertical ? 12 : 13
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
         }
     }
 }

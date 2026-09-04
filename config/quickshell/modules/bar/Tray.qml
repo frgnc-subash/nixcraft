@@ -6,12 +6,16 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import "../../theme" as Palette
 
-RowLayout {
+GridLayout {
     id: root
-    spacing: 5
 
     // Pass the enclosing PanelWindow so right-click menus can position correctly.
     required property var parentWindow
+    property bool vertical: false
+
+    columns: vertical ? 1 : 999
+    rowSpacing: 5
+    columnSpacing: 5
 
     Repeater {
         model: SystemTray.items

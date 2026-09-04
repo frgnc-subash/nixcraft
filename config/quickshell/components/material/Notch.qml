@@ -24,6 +24,11 @@ Item {
     // Set false when content is guaranteed not to overflow (e.g. static bar
     // notch) to skip the stencil-buffer pass.
     property bool clipContent: true
+    // Mirrors the whole notch top-to-bottom so it hangs off the *bottom*
+    // screen edge instead of the top (flat edge + wings at the bottom,
+    // rounded corners at the top). Used for the vertical-bar overlay stage,
+    // which has no top bar to seed from.
+    property bool bottomAligned: false
 
     property color color: Palette.Theme.surfaceContainer
     property color tint: Palette.Theme.surfaceTint
@@ -48,6 +53,11 @@ Item {
         // CurveRenderer (Qt 6.6+) gives best sub-pixel quality; falls back
         // to GeometryRenderer on older builds.
         preferredRendererType: Shape.CurveRenderer
+        // The path below is drawn left-right symmetric, so rotating the
+        // whole thing 180° is equivalent to a pure vertical flip (mirroring
+        // horizontally would be a no-op on a symmetric shape) — cheaper and
+        // less error-prone than re-deriving a mirrored path.
+        rotation: root.bottomAligned ? 180 : 0
 
         ShapePath {
             // Pre-blend tint into the base color so a single path covers both.
@@ -103,7 +113,10 @@ Item {
     Item {
         id: contentHolder
         x: root.wing
-        y: 0
+        // When bottom-aligned the rounded corners move to the top, so the
+        // padding that used to protect the bottom corners now needs to
+        // protect the top ones instead.
+        y: root.bottomAligned ? root.contentBottomPadding : 0
         width: root.slabWidth
         height: Math.max(0, root.slabHeight - root.contentBottomPadding)
         clip: root.clipContent

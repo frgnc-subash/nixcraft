@@ -13,6 +13,7 @@ import "../../modules/bar"
 import "../../modules/wayclick"
 import "../../modules/emoji"
 import "../../modules/toolmenu"
+import "../../modules/barlayout"
 import "../../services"
 
 PanelWindow {
@@ -38,7 +39,21 @@ PanelWindow {
     property var bar: null
     property var notificationCenter: null
     property var idleService: null
-    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible
+    property var barLayout: null
+    readonly property bool verticalBar: barLayout ? barLayout.vertical : false
+    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible
+
+    // In vertical-bar mode, Control Center / Power Menu / Tool Menu / Media
+    // Player grow down from the top edge (there's no bar up there to anchor
+    // to); every other panel (launcher, pickers, clipboard, emoji, service
+    // manager) grows up from the bottom instead. Horizontal mode is
+    // untouched — always top, exactly as it always has been.
+    readonly property bool activeIsTopOrigin: controlCenterItem.visible || powerMenuItem.visible || toolMenuItem.visible || mediaPanelItem.visible
+    // Remembered rather than recomputed once activePanel goes null, so the
+    // stage doesn't jump to a different edge mid-close-fade.
+    property bool lastOriginTop: true
+    onActivePanelChanged: if (activePanel)
+        lastOriginTop = activeIsTopOrigin
 
     property alias launcher: launcherItem
     property alias controlCenter: controlCenterItem
@@ -51,6 +66,7 @@ PanelWindow {
     property alias mediaPanel: mediaPanelItem
     property alias toolMenu: toolMenuItem
     property alias emojiPicker: emojiPickerItem
+    property alias barLayoutPicker: barLayoutPickerItem
 
     visible: true
 
@@ -82,13 +98,15 @@ PanelWindow {
             return toolMenuItem;
         if (emojiPickerItem.visible)
             return emojiPickerItem;
+        if (barLayoutPickerItem.visible)
+            return barLayoutPickerItem;
         return null;
     }
 
     // The launcher and control center are meant to feel like an extension of
     // the desktop, so they don't dim it; the rest are more like modal
     // utilities and darken the backdrop behind them.
-    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible
+    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible
 
     // All center-origin panels share this layer surface. Closing every other
     // panel before a new one appears prevents stacked backdrops and focus.
@@ -115,6 +133,8 @@ PanelWindow {
             toolMenuItem.closeToolMenu(true);
         if (panel !== emojiPickerItem && emojiPickerItem.visible)
             emojiPickerItem.close(true);
+        if (panel !== barLayoutPickerItem && barLayoutPickerItem.visible)
+            barLayoutPickerItem.close(true);
     }
 
     function closeActive() {
@@ -140,6 +160,8 @@ PanelWindow {
             toolMenuItem.closeToolMenu();
         else if (emojiPickerItem.visible)
             emojiPickerItem.close();
+        else if (barLayoutPickerItem.visible)
+            barLayoutPickerItem.close();
     }
 
     ThemeService {
@@ -185,14 +207,26 @@ PanelWindow {
     // Seed dimensions: the bar's collapsed notch width and height.
     // When a panel opens the stage grows from these values, creating a
     // seamless expansion from the clock/cava notch rather than a separate
-    // overlay appearing on top of it.
+    // overlay appearing on top of it. The vertical bar has no top notch to
+    // seed from, so the stage just starts flat (zero height) and grows
+    // from whichever edge (top or bottom) the next panel opens from.
     readonly property real barSlabWidth: bar ? (bar.centerCapsuleSlabWidth || 120) : 120
-    readonly property real barSlabHeight: bar ? bar.height : 34
+    readonly property real barSlabHeight: root.verticalBar ? 0 : (bar ? bar.height : 34)
+    readonly property bool stageAtTop: !root.verticalBar || root.lastOriginTop
 
     Notch {
         id: stage
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+        // A plain `y` binding instead of toggling which anchor line
+        // (top/bottom) is active — flipping anchors on a still-animating
+        // item was the cause of the "opens from the wrong edge sometimes"
+        // flakiness: for a frame or two both edges could end up anchored at
+        // once, which forces Qt Quick to stretch the item between them
+        // (overriding the height the grow animation was driving). A single
+        // deterministic `y` expression has no such transient double-anchor
+        // state.
+        y: root.stageAtTop ? 0 : (parent.height - height)
+        bottomAligned: !root.stageAtTop
         wingSize: 9
 
         readonly property var panel: root.activePanel
@@ -306,6 +340,14 @@ PanelWindow {
         MediaPanel {
             id: mediaPanelItem
         }
+
+        BarLayoutPicker {
+            id: barLayoutPickerItem
+            service: root.barLayout
+            launcher: launcherItem
+            controlCenter: controlCenterItem
+            powerMenu: powerMenuItem
+        }
     }
 
     Connections {
@@ -351,5 +393,9 @@ PanelWindow {
     Connections {
         target: emojiPickerItem
         function onAboutToOpen() { root.presentOnly(emojiPickerItem); }
+    }
+    Connections {
+        target: barLayoutPickerItem
+        function onAboutToOpen() { root.presentOnly(barLayoutPickerItem); }
     }
 }

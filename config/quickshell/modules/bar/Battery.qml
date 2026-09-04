@@ -5,6 +5,8 @@ import "../../theme" as Palette
 Item {
     id: root
     required property var bar
+    property bool vertical: false
+    property bool showPercent: true
     readonly property int percent: bar ? bar.batteryPercent : 0
     readonly property bool charging: bar ? bar.batteryCharging : false
     readonly property bool available: bar ? bar.batteryAvailable : false
@@ -45,13 +47,15 @@ Item {
     }
 
     visible: available
-    implicitWidth: row.implicitWidth
-    implicitHeight: 30
+    implicitWidth: root.vertical ? Math.max(24, row.implicitWidth) : row.implicitWidth
+    implicitHeight: root.vertical ? row.implicitHeight : 30
 
-    RowLayout {
+    GridLayout {
         id: row
         anchors.centerIn: parent
-        spacing: 5
+        columns: root.vertical ? 1 : 999
+        rowSpacing: 3
+        columnSpacing: 5
 
         Text {
             text: root.iconGlyph
@@ -59,7 +63,7 @@ Item {
             font.pixelSize: 14
             color: root.iconColor
             verticalAlignment: Text.AlignVCenter
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             Behavior on color {
                 ColorAnimation {
                     duration: 200
@@ -67,11 +71,12 @@ Item {
             }
         }
         Text {
+            visible: root.showPercent
             text: root.percent + "%"
             color: root.iconColor
             font.family: Palette.Theme.fontMono
             font.pixelSize: 13
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             Behavior on color {
                 ColorAnimation {
                     duration: 200

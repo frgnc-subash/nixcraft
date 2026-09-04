@@ -27,7 +27,7 @@ Item {
     // current result count — a count that changes on every keystroke would
     // otherwise retrigger the shared stage's grow/shrink animation constantly
     // while typing.
-    implicitHeight: searchRow.height + divider.height + maxVisible * itemH + 8
+    implicitHeight: searchRow.height + maxVisible * itemH + 8
 
     // ── IPC ───────────────────────────────────────────────────────
     signal aboutToOpen
@@ -363,6 +363,10 @@ Item {
                         selectionColor: Palette.Theme.accent + "44"
                         clip: true
                         verticalAlignment: TextInput.AlignVCenter
+                        // Focusing the field on open (below) would otherwise
+                        // leave a blinking caret sitting over the empty
+                        // placeholder — only show it once there's real text.
+                        cursorVisible: text !== ""
 
                         Text {
                             anchors.fill: parent
@@ -396,12 +400,6 @@ Item {
                         }
                     }
                 }
-            }
-
-            // ── divider ───────────────────────────────────────────
-            Divider {
-                id: divider
-                Layout.fillWidth: true
             }
 
             Item {
