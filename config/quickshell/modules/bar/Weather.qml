@@ -71,6 +71,29 @@ Item {
         onTriggered: root.refresh()
     }
 
+    // Debounce bursts of nmcli events (e.g. Wi-Fi association followed
+    // immediately by DHCP/connectivity-check lines) into a single refresh.
+    Timer {
+        id: reconnectDebounce
+        interval: 2000
+        onTriggered: root.refresh()
+    }
+
+    // Long-running nmcli monitor so a fresh reading is fetched as soon as
+    // connectivity comes back, instead of waiting up to 5 minutes.
+    Process {
+        id: networkMonitor
+        command: ["nmcli", "monitor"]
+        running: true
+        stdout: SplitParser {
+            splitMarker: "\n"
+            onRead: data => {
+                if (data.includes("connected") || data.includes("Connectivity"))
+                    reconnectDebounce.restart();
+            }
+        }
+    }
+
     Process {
         id: weatherProcess
         command: ["curl", "-s", "--max-time", "8", "https://wttr.in/?format=j1"]
