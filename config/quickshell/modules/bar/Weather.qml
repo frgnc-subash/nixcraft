@@ -1,21 +1,18 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Io
 import "../../theme" as Palette
 
 Item {
     id: root
-
     property string tempC: ""
     property string conditionText: ""
     property int weatherCode: 0
+    property bool isStale: false // true when showing a cached (not freshly fetched) reading
     readonly property bool available: tempC !== ""
-
     readonly property string iconFontFamily: Palette.Theme.fontIcons || "Material Symbols Outlined"
 
-    // wttr.in reports worldweatheronline's numeric condition codes — bucket
-    // them into the handful of Material Symbols ligature names that matter
-    // for a small bar icon.
     readonly property string iconGlyph: {
         var c = root.weatherCode;
         if (c === 113)
@@ -39,6 +36,33 @@ Item {
         weatherProcess.running = true;
     }
 
+    // Persistent last-known-good reading, survives quickshell/session restarts.
+    FileView {
+        id: cacheFile
+        path: Quickshell.cachePath("weather-cache.json")
+        watchChanges: false
+        onAdapterUpdated: writeAdapter()
+
+        JsonAdapter {
+            id: cache
+            property string tempC: ""
+            property string conditionText: ""
+            property int weatherCode: 0
+
+            // Fires once the file finishes loading (or immediately with
+            // defaults if it doesn't exist yet). Only use it as a fallback
+            // if a live reading hasn't already come in.
+            onTempCChanged: {
+                if (root.tempC === "" && cache.tempC !== "") {
+                    root.tempC = cache.tempC;
+                    root.conditionText = cache.conditionText;
+                    root.weatherCode = cache.weatherCode;
+                    root.isStale = true;
+                }
+            }
+        }
+    }
+
     Timer {
         interval: 5 * 60 * 1000
         running: true
@@ -50,7 +74,6 @@ Item {
     Process {
         id: weatherProcess
         command: ["curl", "-s", "--max-time", "8", "https://wttr.in/?format=j1"]
-
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
@@ -58,9 +81,15 @@ Item {
                     root.tempC = current.temp_C;
                     root.conditionText = current.weatherDesc[0].value;
                     root.weatherCode = parseInt(current.weatherCode);
+                    root.isStale = false;
+
+                    // Update the cache so this reading survives a restart.
+                    cache.tempC = root.tempC;
+                    cache.conditionText = root.conditionText;
+                    cache.weatherCode = root.weatherCode;
                 } catch (e) {
                     // Transient network/parse failure — keep showing the
-                    // last good reading instead of blanking out.
+                    // last good reading (live or cached) instead of blanking out.
                 }
             }
         }
@@ -70,18 +99,19 @@ Item {
         id: row
         anchors.centerIn: parent
         spacing: 5
-
         Text {
             text: root.iconGlyph
             font.family: root.iconFontFamily
             font.pixelSize: 14
             color: Palette.Theme.textPrimary
+            opacity: root.isStale ? 0.55 : 1.0
             verticalAlignment: Text.AlignVCenter
             Layout.alignment: Qt.AlignVCenter
         }
         Text {
             text: root.tempC + "°C"
             color: Palette.Theme.textPrimary
+            opacity: root.isStale ? 0.55 : 1.0
             font.family: Palette.Theme.fontMono
             font.pixelSize: 13
             Layout.alignment: Qt.AlignVCenter
