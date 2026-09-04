@@ -12,5 +12,5 @@ const gridSpacing = 8
 // which owns the live-toggleable, persisted top/left choice). The clock is
 // stacked ("18" over "59") rather than inline in this orientation, so it no
 // longer needs to be as wide as it did with "18:59" on one line.
-const barThickness = 42
+const barThickness = 34
 

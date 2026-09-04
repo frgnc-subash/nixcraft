@@ -43,17 +43,35 @@ PanelWindow {
     readonly property bool verticalBar: barLayout ? barLayout.vertical : false
     readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible
 
-    // In vertical-bar mode, Control Center / Power Menu / Tool Menu / Media
-    // Player grow down from the top edge (there's no bar up there to anchor
-    // to); every other panel (launcher, pickers, clipboard, emoji, service
-    // manager) grows up from the bottom instead. Horizontal mode is
-    // untouched — always top, exactly as it always has been.
-    readonly property bool activeIsTopOrigin: controlCenterItem.visible || powerMenuItem.visible || toolMenuItem.visible || mediaPanelItem.visible
-    // Remembered rather than recomputed once activePanel goes null, so the
-    // stage doesn't jump to a different edge mid-close-fade.
+    // In vertical-bar mode:
+    // Top origin: Control Center, Power Menu, Tool Menu, Media Panel.
+    // Bottom origin: all other panels (Launcher, Theme, Shader, Wayclick,
+    // Clipboard, Service Manager, Emoji, Bar Layout).
+    // In horizontal-bar mode: always top origin.
+    function isTopModule(panel) {
+        return panel === controlCenterItem
+            || panel === powerMenuItem
+            || panel === toolMenuItem
+            || panel === mediaPanelItem;
+    }
+
+    property var currentTargetPanel: null
     property bool lastOriginTop: true
-    onActivePanelChanged: if (activePanel)
-        lastOriginTop = activeIsTopOrigin
+
+    readonly property bool activeIsTopOrigin: {
+        if (currentTargetPanel && currentTargetPanel.visible)
+            return isTopModule(currentTargetPanel);
+        if (controlCenterItem.visible || powerMenuItem.visible || toolMenuItem.visible || mediaPanelItem.visible)
+            return true;
+        if (launcherItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible)
+            return false;
+        return lastOriginTop;
+    }
+
+    onActivePanelChanged: {
+        if (activePanel)
+            lastOriginTop = isTopModule(activePanel);
+    }
 
     property alias launcher: launcherItem
     property alias controlCenter: controlCenterItem
@@ -76,12 +94,18 @@ PanelWindow {
     // just picks whichever that is; the stage below reads its implicit size
     // to know how far to grow.
     readonly property var activePanel: {
-        if (launcherItem.visible)
-            return launcherItem;
+        if (currentTargetPanel && currentTargetPanel.visible)
+            return currentTargetPanel;
         if (controlCenterItem.visible)
             return controlCenterItem;
         if (powerMenuItem.visible)
             return powerMenuItem;
+        if (toolMenuItem.visible)
+            return toolMenuItem;
+        if (mediaPanelItem.visible)
+            return mediaPanelItem;
+        if (launcherItem.visible)
+            return launcherItem;
         if (themePickerItem.visible)
             return themePickerItem;
         if (shaderPickerItem.visible)
@@ -92,10 +116,6 @@ PanelWindow {
             return clipboardItem;
         if (serviceManagerItem.visible)
             return serviceManagerItem;
-        if (mediaPanelItem.visible)
-            return mediaPanelItem;
-        if (toolMenuItem.visible)
-            return toolMenuItem;
         if (emojiPickerItem.visible)
             return emojiPickerItem;
         if (barLayoutPickerItem.visible)
@@ -111,6 +131,8 @@ PanelWindow {
     // All center-origin panels share this layer surface. Closing every other
     // panel before a new one appears prevents stacked backdrops and focus.
     function presentOnly(panel) {
+        currentTargetPanel = panel;
+        lastOriginTop = isTopModule(panel);
         if (panel !== launcherItem && launcherItem.visible)
             launcherItem.closeLauncher(true);
         if (panel !== controlCenterItem && controlCenterItem.visible)
@@ -212,7 +234,7 @@ PanelWindow {
     // from whichever edge (top or bottom) the next panel opens from.
     readonly property real barSlabWidth: bar ? (bar.centerCapsuleSlabWidth || 120) : 120
     readonly property real barSlabHeight: root.verticalBar ? 0 : (bar ? bar.height : 34)
-    readonly property bool stageAtTop: !root.verticalBar || root.lastOriginTop
+    readonly property bool stageAtTop: !root.verticalBar || root.activeIsTopOrigin
 
     Notch {
         id: stage

@@ -26,6 +26,8 @@ Item {
     implicitWidth: 280
     implicitHeight: options.length * itemH + 16
 
+    property int selected: 0
+
     signal aboutToOpen
     signal aboutToClose
 
@@ -45,6 +47,23 @@ Item {
         }
     }
 
+    function handleKey(event) {
+        if (event.key === Qt.Key_Escape) {
+            close();
+            event.accepted = true;
+        } else if (event.key === Qt.Key_Up || event.key === Qt.Key_Left) {
+            selected = (selected - 1 + options.length) % options.length;
+            event.accepted = true;
+        } else if (event.key === Qt.Key_Down || event.key === Qt.Key_Right) {
+            selected = (selected + 1) % options.length;
+            event.accepted = true;
+        } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+            if (options[selected])
+                select(options[selected].value);
+            event.accepted = true;
+        }
+    }
+
     function select(vertical) {
         service.setVertical(vertical);
         close();
@@ -57,8 +76,10 @@ Item {
             controlCenter.closeControlCenter(true);
         if (powerMenu && powerMenu.visible)
             powerMenu.closePowerMenu(true);
+        selected = (service && service.vertical) ? 1 : 0;
         aboutToOpen();
         visible = true;
+        forceActiveFocus();
     }
 
     function close(immediate) {
@@ -90,8 +111,10 @@ Item {
             delegate: Item {
                 id: row
                 required property var modelData
+                required property int index
 
                 readonly property bool isActive: root.service && modelData.value === root.service.vertical
+                readonly property bool isSelected: index === root.selected
 
                 Layout.fillWidth: true
                 implicitHeight: root.itemH
@@ -100,7 +123,7 @@ Item {
                     anchors.fill: parent
                     radius: 12
                     color: Palette.Theme.surfaceContainerHigh
-                    opacity: row.isActive ? 1 : (rowHover.containsMouse ? 0.6 : 0)
+                    opacity: row.isSelected ? 1 : (row.isActive ? 0.7 : (rowHover.containsMouse ? 0.4 : 0))
                     Behavior on opacity {
                         NumberAnimation {
                             duration: 100
@@ -148,9 +171,14 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
+                    onEntered: root.selected = row.index
                     onClicked: root.select(row.modelData.value)
                 }
             }
         }
+    }
+
+    Keys.onPressed: function (event) {
+        root.handleKey(event);
     }
 }

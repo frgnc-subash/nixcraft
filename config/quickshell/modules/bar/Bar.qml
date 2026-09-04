@@ -580,7 +580,7 @@ PanelWindow {
             // gap, just rotated onto the leading (left) edge instead of the
             // top one.
             leftMargin: 4
-            rightMargin: 4
+            rightMargin: 0
             bottomMargin: 4
         }
 
