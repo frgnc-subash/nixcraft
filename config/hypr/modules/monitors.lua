@@ -1,3 +1,7 @@
+-- ┌┬┐┌─┐┌┐┌┬┌┬┐┌─┐┬─┐┌─┐
+-- ││││ │││││ │ │ │├┬┘└─┐
+-- ┴ ┴└─┘┘└┘┴ ┴ └─┘┴└─└─┘
+
 hl.monitor({
     output = "eDP-1",
     mode = "1366x768@60.02",
@@ -9,14 +13,14 @@ hl.monitor({
 -- local scale = 2
 --
 hl.monitor({
-    output   = "",
-    mode     = "highres",
+    output = "",
+    mode = "highres",
     position = "auto",
-    scale    = scale,
+    scale = 1.0,
 })
 
 hl.config({
     xwayland = { force_zero_scaling = true },
 })
 
-hl.env("GDK_SCALE", tostring(scale))
+hl.env("GDK_SCALE", tostring(1.0))

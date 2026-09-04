@@ -5,11 +5,11 @@
 require("modules.autostarts")
 require("modules.keybinds")
 
--- require("modules.hyprglass")
+-- require("modules.plugins")
 require("modules.appearance")
 require("modules.envs")
 
-require("modules.ani")
+require("modules.animations")
 
 require("modules.inputs")
 require("modules.monitors")
