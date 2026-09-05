@@ -123,7 +123,7 @@ Item {
             Layout.preferredHeight: 46
             Layout.minimumHeight: 46
             Layout.maximumHeight: 46
-            radius: 12
+            radius: 16
             color: Palette.Theme.surfaceContainerHigh
             border.width: search.activeFocus ? 1 : 0
             border.color: Palette.Theme.accent

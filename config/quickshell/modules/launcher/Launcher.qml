@@ -19,8 +19,85 @@ Item {
     property real maxWidth: 4000
     property var controlCenter: null
     property var serviceManager: null
+    property var shaderService: null
+    property var wayclickPackService: null
 
     readonly property int itemH: 56
+
+    // ── slash commands ───────────────────────────────────────────
+    // Typing "/" surfaces this palette; typing "/<cmd>" locks the list into
+    // that command's own items (still filterable by whatever follows).
+    readonly property var commands: [
+        { cmd: "shaders", label: "Shaders", icon: "", desc: "Change the screen shader" },
+        { cmd: "sounds", label: "Sound Packs", icon: "", desc: "Change the wayclick sound pack" }
+    ]
+
+    readonly property bool isCommandInput: query.startsWith("/")
+    readonly property string commandRest: isCommandInput ? query.slice(1) : ""
+    readonly property string commandWord: commandRest.split(/\s+/)[0].toLowerCase()
+    readonly property string commandArg: commandRest.slice(commandWord.length).replace(/^\s+/, "")
+    readonly property var matchedCommand: commands.find(c => c.cmd === commandWord) || null
+
+    readonly property string mode: {
+        if (!isCommandInput)
+            return "apps";
+        return matchedCommand ? matchedCommand.cmd : "commands";
+    }
+
+    readonly property var commandItems: commands.filter(c => commandWord === "" || c.cmd.indexOf(commandWord) !== -1 || c.label.toLowerCase().indexOf(commandWord) !== -1)
+
+    readonly property var allShaders: shaderService ? shaderService.shaders : []
+    readonly property var shaderItems: {
+        var f = commandArg.trim().toLowerCase();
+        return f === "" ? allShaders : allShaders.filter(s => shaderService.displayName(s).toLowerCase().indexOf(f) !== -1);
+    }
+
+    readonly property var allPacks: wayclickPackService ? wayclickPackService.packs : []
+    readonly property var packItems: {
+        var f = commandArg.trim().toLowerCase();
+        return f === "" ? allPacks : allPacks.filter(p => wayclickPackService.displayName(p).toLowerCase().indexOf(f) !== -1);
+    }
+
+    readonly property var currentList: {
+        switch (mode) {
+        case "apps":
+            return displayApps;
+        case "commands":
+            return commandItems;
+        case "shaders":
+            return shaderItems;
+        case "sounds":
+            return packItems;
+        default:
+            return [];
+        }
+    }
+
+    readonly property string placeholderText: {
+        switch (mode) {
+        case "shaders":
+            return "Search shaders…";
+        case "sounds":
+            return "Search sound packs…";
+        case "commands":
+            return "Type a command…";
+        default:
+            return "Search, calculate or run";
+        }
+    }
+
+    readonly property string emptyStateText: {
+        switch (mode) {
+        case "commands":
+            return "No matching commands";
+        case "shaders":
+            return allShaders.length === 0 ? "No shaders found" : "No results for '" + commandArg + "'";
+        case "sounds":
+            return allPacks.length === 0 ? "No sound packs found" : "No results for '" + commandArg + "'";
+        default:
+            return allApps.length === 0 ? "No applications found" : "No results for '" + query + "'";
+        }
+    }
 
     implicitWidth: Math.max(360, Math.min(maxWidth - 32, 430))
     // Fixed height (always room for maxVisible rows) rather than sizing to the
@@ -81,7 +158,10 @@ Item {
         selected = 0;
     }
 
-    onQueryChanged: filterApps()
+    onQueryChanged: {
+        filterApps();
+        selected = 0;
+    }
 
     Connections {
         target: DesktopEntries
@@ -107,15 +187,45 @@ Item {
             entry.execute();
     }
 
-    function launchSelected() {
-        if (displayApps.length > 0)
-            launchApp(displayApps[selected]);
+    // Enter a command's slash prefix into the input and keep typing to
+    // filter that command's own list, without needing a separate "confirm"
+    // step — mirrors how typing the full command name locks in the mode.
+    function commitCommand(command) {
+        searchInput.text = "/" + command.cmd + " ";
+        searchInput.cursorPosition = searchInput.text.length;
+    }
+
+    function activateIndex(index) {
+        var list = currentList;
+        if (index < 0 || index >= list.length)
+            return;
+        switch (mode) {
+        case "apps":
+            launchApp(list[index]);
+            return;
+        case "commands":
+            commitCommand(list[index]);
+            return;
+        case "shaders":
+            shaderService.apply(list[index]);
+            closeLauncher();
+            return;
+        case "sounds":
+            wayclickPackService.apply(list[index]);
+            closeLauncher();
+            return;
+        }
+    }
+
+    function activateSelected() {
+        activateIndex(selected);
     }
 
     function moveSelectionTo(index) {
-        if (displayApps.length === 0)
+        var list = currentList;
+        if (list.length === 0)
             return;
-        selected = Math.max(0, Math.min(displayApps.length - 1, index));
+        selected = Math.max(0, Math.min(list.length - 1, index));
         appList.positionViewAtIndex(selected, ListView.Contain);
     }
 
@@ -141,16 +251,19 @@ Item {
             return true;
         case Qt.Key_End:
             event.accepted = true;
-            moveSelectionTo(displayApps.length - 1);
+            moveSelectionTo(currentList.length - 1);
             return true;
         case Qt.Key_Return:
         case Qt.Key_Enter:
             event.accepted = true;
-            launchSelected();
+            activateSelected();
             return true;
         case Qt.Key_Escape:
             event.accepted = true;
-            closeLauncher();
+            if (mode !== "apps")
+                searchInput.text = "";
+            else
+                closeLauncher();
             return true;
         default:
             return false;
@@ -219,7 +332,7 @@ Item {
                     Text {
                         anchors.centerIn: parent
                         visible: appIcon.status !== Image.Ready
-                        text: "\ue3af"
+                        text: ""
                         font.family: Palette.Theme.fontIcons
                         font.pixelSize: 18
                         color: Palette.Theme.textSecondary
@@ -265,6 +378,127 @@ Item {
                 onClicked: {
                     root.selected = absoluteIndex;
                     root.launchApp(modelData);
+                }
+            }
+        }
+    }
+
+    // Shared row for the command palette, shader list and sound-pack list —
+    // same layout as appDelegate but with a glyph icon instead of a desktop
+    // icon image, and an active-item checkmark instead of nothing.
+    Component {
+        id: commandDelegate
+
+        Item {
+            required property var modelData
+            required property int index
+
+            readonly property bool isCommand: root.mode === "commands"
+            readonly property bool isShader: root.mode === "shaders"
+            readonly property bool isSound: root.mode === "sounds"
+
+            readonly property string rowIcon: isCommand ? modelData.icon : (isShader ? "" : "")
+            readonly property string rowPrimary: isCommand ? modelData.label : (isShader ? root.shaderService.displayName(modelData) : root.wayclickPackService.displayName(modelData))
+            readonly property string rowSecondary: isCommand ? modelData.desc : ""
+            readonly property bool rowActive: isShader ? modelData === root.shaderService.activeShader : (isSound ? modelData === root.wayclickPackService.activePack : false)
+
+            width: ListView.view.width
+            height: 56
+
+            Rectangle {
+                anchors {
+                    fill: parent
+                    leftMargin: 6
+                    rightMargin: 6
+                    topMargin: 2
+                    bottomMargin: 2
+                }
+                radius: 16
+                color: {
+                    if (index === root.selected || commandRowHover.containsMouse)
+                        return Palette.Theme.surfaceContainerHigh;
+                    return "transparent";
+                }
+                border.width: 0
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 100
+                    }
+                }
+            }
+
+            RowLayout {
+                anchors {
+                    fill: parent
+                    leftMargin: 12
+                    rightMargin: 12
+                }
+                spacing: 12
+
+                Rectangle {
+                    implicitWidth: 32
+                    implicitHeight: 32
+                    radius: 10
+                    color: Palette.Theme.surfaceContainerHighest
+                    Layout.alignment: Qt.AlignVCenter
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: rowIcon
+                        font.family: Palette.Theme.fontIcons
+                        font.pixelSize: 18
+                        color: Palette.Theme.textSecondary
+                    }
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 2
+                    Layout.alignment: Qt.AlignVCenter
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: rowPrimary
+                        color: Palette.Theme.textPrimary
+                        font.family: Palette.Theme.fontMono
+                        font.pixelSize: 13
+                        font.weight: Font.Medium
+                        elide: Text.ElideRight
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: rowSecondary
+                        visible: text !== ""
+                        color: Palette.Theme.textMuted
+                        font.family: Palette.Theme.fontMono
+                        font.pixelSize: 11
+                        elide: Text.ElideRight
+                    }
+                }
+
+                Text {
+                    visible: rowActive
+                    text: ""
+                    font.family: Palette.Theme.fontIcons
+                    font.pixelSize: 14
+                    color: Palette.Theme.accent
+                    Layout.alignment: Qt.AlignVCenter
+                }
+            }
+
+            MouseArea {
+                id: commandRowHover
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onEntered: {
+                    root.selected = index;
+                    appList.positionViewAtIndex(root.selected, ListView.Contain);
+                }
+                onClicked: {
+                    root.selected = index;
+                    root.activateIndex(index);
                 }
             }
         }
@@ -327,7 +561,7 @@ Item {
                         topMargin: 10
                         bottomMargin: 8
                     }
-                    radius: height / 2
+                    radius: 16
                     color: Palette.Theme.surfaceContainerHigh
                     border.width: 0
                 }
@@ -344,7 +578,7 @@ Item {
 
                     // leading search icon
                     Text {
-                        text: "\ue8b6"
+                        text: ""
                         font.family: Palette.Theme.fontIcons
                         font.pixelSize: 18
                         color: Palette.Theme.textMuted
@@ -371,7 +605,7 @@ Item {
                         Text {
                             anchors.fill: parent
                             verticalAlignment: Text.AlignVCenter
-                            text: "Search, calculate or run"
+                            text: root.placeholderText
                             font: parent.font
                             color: Palette.Theme.textMuted
                             visible: parent.text === ""
@@ -384,7 +618,7 @@ Item {
 
                     // clear button — fades in/out instead of popping
                     IconButton {
-                        icon: "\ue5cd"
+                        icon: ""
                         opacity: searchInput.text !== "" ? 1 : 0
                         visible: opacity > 0
                         Layout.alignment: Qt.AlignVCenter
@@ -409,11 +643,11 @@ Item {
 
                 Item {
                     anchors.fill: parent
-                    visible: root.displayApps.length === 0
+                    visible: root.currentList.length === 0
 
                     Text {
                         anchors.centerIn: parent
-                        text: root.allApps.length === 0 ? "No applications found" : "No results for '" + root.query + "'"
+                        text: root.emptyStateText
                         color: Palette.Theme.textMuted
                         font.family: Palette.Theme.fontMono
                         font.pixelSize: 12
@@ -424,13 +658,13 @@ Item {
                     id: appList
                     anchors.fill: parent
                     clip: true
-                    model: root.displayApps
+                    model: root.currentList
                     currentIndex: root.selected
                     Keys.priority: Keys.BeforeItem
                     highlightFollowsCurrentItem: true
                     preferredHighlightBegin: 0
                     preferredHighlightEnd: height
-                    interactive: root.displayApps.length > root.maxVisible
+                    interactive: root.currentList.length > root.maxVisible
                     boundsBehavior: Flickable.StopAtBounds
                     spacing: 0
                     focus: true
@@ -459,7 +693,7 @@ Item {
 
                     Keys.onPressed: event => root.handleKey(event)
 
-                    delegate: appDelegate
+                    delegate: root.mode === "apps" ? appDelegate : commandDelegate
                 }
             }
         }

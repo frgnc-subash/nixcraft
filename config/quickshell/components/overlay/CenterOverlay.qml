@@ -6,11 +6,9 @@ import "../../modules/launcher"
 import "../../modules/controlcenter"
 import "../../modules/powermenu"
 import "../../modules/theme"
-import "../../modules/shader"
 import "../../modules/clipboard"
 import "../../modules/servicemanager"
 import "../../modules/bar"
-import "../../modules/wayclick"
 import "../../modules/emoji"
 import "../../modules/toolmenu"
 import "../../modules/barlayout"
@@ -46,7 +44,7 @@ PanelWindow {
 
     // Central modules origin edge:
     // Top origin: Control Center, Power Menu, Tool Menu, Media Panel.
-    // Bottom origin: Launcher, Theme, Shader, Wayclick, Clipboard,
+    // Bottom origin: Launcher (shaders/sounds live inside it), Theme, Clipboard,
     // Service Manager, Emoji, Bar Layout, Wallpaper Picker.
     function isTopModule(panel) {
         return panel === controlCenterItem
@@ -78,10 +76,6 @@ PanelWindow {
             return launcherItem;
         if (themePickerItem.visible)
             return themePickerItem;
-        if (shaderPickerItem.visible)
-            return shaderPickerItem;
-        if (wayclickPackPickerItem.visible)
-            return wayclickPackPickerItem;
         if (clipboardItem.visible)
             return clipboardItem;
         if (serviceManagerItem.visible)
@@ -102,8 +96,6 @@ PanelWindow {
     property alias controlCenter: controlCenterItem
     property alias powerMenu: powerMenuItem
     property alias themePicker: themePickerItem
-    property alias shaderPicker: shaderPickerItem
-    property alias wayclickPackPicker: wayclickPackPickerItem
     property alias clipboard: clipboardItem
     property alias serviceManager: serviceManagerItem
     property alias mediaPanel: mediaPanelItem
@@ -115,7 +107,7 @@ PanelWindow {
     // The launcher and control center are meant to feel like an extension of
     // the desktop, so they don't dim it; the rest are more like modal
     // utilities and darken the backdrop behind them.
-    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible || wallpaperPickerItem.visible
+    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible || wallpaperPickerItem.visible
 
     // All center-origin panels share this layer surface. Closing every other
     // panel before a new one appears prevents stacked backdrops and focus.
@@ -129,10 +121,6 @@ PanelWindow {
             powerMenuItem.closePowerMenu(true);
         if (panel !== themePickerItem && themePickerItem.visible)
             themePickerItem.close(true);
-        if (panel !== shaderPickerItem && shaderPickerItem.visible)
-            shaderPickerItem.close(true);
-        if (panel !== wayclickPackPickerItem && wayclickPackPickerItem.visible)
-            wayclickPackPickerItem.close(true);
         if (panel !== clipboardItem && clipboardItem.visible)
             clipboardItem.close(true);
         if (panel !== serviceManagerItem && serviceManagerItem.visible)
@@ -158,10 +146,6 @@ PanelWindow {
             powerMenuItem.closePowerMenu();
         else if (themePickerItem.visible)
             themePickerItem.close();
-        else if (shaderPickerItem.visible)
-            shaderPickerItem.close();
-        else if (wayclickPackPickerItem.visible)
-            wayclickPackPickerItem.close();
         else if (clipboardItem.visible)
             clipboardItem.close();
         else if (serviceManagerItem.visible)
@@ -291,7 +275,7 @@ PanelWindow {
         }
     }
 
-    // ── BOTTOM STAGE (Launcher, Wallpapers, Themes, Shaders, Wayclick, etc.) ──
+    // ── BOTTOM STAGE (Launcher, Wallpapers, Themes, Clipboard, etc.) ──
     Notch {
         id: bottomStage
         anchors.horizontalCenter: parent.horizontalCenter
@@ -332,6 +316,8 @@ PanelWindow {
             maxWidth: root.width
             controlCenter: controlCenterItem
             serviceManager: serviceManagerItem
+            shaderService: shaderService
+            wayclickPackService: wayclickPackService
         }
 
         ThemePicker {
@@ -339,24 +325,6 @@ PanelWindow {
             maxWidth: root.width
             maxHeight: root.height
             service: themeService
-            launcher: launcherItem
-            controlCenter: controlCenterItem
-            powerMenu: powerMenuItem
-        }
-
-        ShaderPicker {
-            id: shaderPickerItem
-            maxWidth: root.width
-            service: shaderService
-            launcher: launcherItem
-            controlCenter: controlCenterItem
-            powerMenu: powerMenuItem
-        }
-
-        WayclickPackPicker {
-            id: wayclickPackPickerItem
-            maxWidth: root.width
-            service: wayclickPackService
             launcher: launcherItem
             controlCenter: controlCenterItem
             powerMenu: powerMenuItem
@@ -415,14 +383,6 @@ PanelWindow {
     Connections {
         target: themePickerItem
         function onAboutToOpen() { root.presentOnly(themePickerItem); }
-    }
-    Connections {
-        target: shaderPickerItem
-        function onAboutToOpen() { root.presentOnly(shaderPickerItem); }
-    }
-    Connections {
-        target: wayclickPackPickerItem
-        function onAboutToOpen() { root.presentOnly(wayclickPackPickerItem); }
     }
     Connections {
         target: clipboardItem

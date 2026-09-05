@@ -145,7 +145,7 @@ Item {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
-                radius: 10
+                radius: 16
                 color: Palette.Theme.surfaceContainerHigh
                 border.width: search.activeFocus ? 1 : 0
                 border.color: Palette.Theme.accent

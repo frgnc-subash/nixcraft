@@ -24,6 +24,14 @@ Item {
         applyShader.exec([Quickshell.env("HOME") + "/.config/quickshell/scripts/apply-shader.sh", shaderName]);
     }
 
+    // Filenames are the stable shader IDs (used by apply-shader.sh and
+    // decoration:screen_shader), so this is just a display-only prettifier.
+    function displayName(shaderName) {
+        if (shaderName === "none")
+            return "None";
+        return shaderName.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    }
+
     Process {
         id: shaderList
         command: ["sh", "-c", "printf 'none\\n'; for f in \"$HOME/.config/hypr/shaders\"/*.glsl; do [ -f \"$f\" ] || continue; b=\"${f##*/}\"; printf '%s\\n' \"${b%.glsl}\"; done | sort"]

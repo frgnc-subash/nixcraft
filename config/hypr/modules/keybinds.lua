@@ -40,10 +40,8 @@ hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("quickshell ipc call clipboar
 hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("quickshell ipc call toolmenu toggle"))
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("quickshell ipc call controlcenter toggle"))
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("quickshell ipc call theme toggle"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("quickshell ipc call shader toggle"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("~/.config/quickshell/scripts/reload.sh"))
 hl.bind("ALT + V", hl.dsp.exec_cmd("sg input -c $HOME/.config/wayclick/scripts/wayclick.sh"))
-hl.bind("ALT + SHIFT + V", hl.dsp.exec_cmd("quickshell ipc call wayclickpack toggle"))
 
 
 hl.bind("ALT + E", hl.dsp.exec_cmd("eww open activate-linux"))
