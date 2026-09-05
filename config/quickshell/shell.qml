@@ -1,7 +1,7 @@
+//@ pragma DropExpensiveFonts
 import Quickshell
 import Quickshell.Io
 import QtQuick
-import "ThemeWatcher.qml" as ThemeWatch
 import "modules/bar"
 import "components/overlay"
 import "modules/notification"
@@ -80,7 +80,7 @@ ShellRoot {
     IpcHandler {
         target: "shell"
         function reload(): void {
-            Quickshell.reload(true);
+            Quickshell.reload(false);
         }
     }
     Bar {

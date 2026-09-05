@@ -32,22 +32,27 @@ Item {
     readonly property bool shouldRun: root.active && root.anyPlaying
 
     function parseLine(line) {
-        var values = line.trim().split(/[^0-9]+/).filter(function (part) {
-            return part.length > 0;
-        }).map(function (part) {
-            return Math.max(0, Math.min(1, Number(part) / 8));
-        });
-        if (values.length > 0) {
-            levels = values.slice(0, barCount);
-            canvas.requestPaint();
+        var str = line.trim();
+        if (!str)
+            return;
+        var parts = str.split(";");
+        var count = Math.min(parts.length, root.barCount);
+        var next = [];
+        for (var i = 0; i < count; i++) {
+            var val = parseInt(parts[i]);
+            if (!isNaN(val))
+                next.push(Math.max(0, Math.min(1, val / 8)));
+            else
+                break;
         }
+        if (next.length > 0)
+            root.levels = next;
     }
 
     onShouldRunChanged: {
         cavaEnabled = shouldRun;
         if (!shouldRun)
             levels = [];
-        canvas.requestPaint();
     }
 
     Process {
@@ -73,49 +78,38 @@ Item {
             root.cavaEnabled = true
     }
 
-    Timer {
-        id: fallbackPulse
-        interval: 120
-        repeat: true
-        running: root.shouldRun && root.levels.length === 0
-        onTriggered: canvas.requestPaint()
-    }
+    Row {
+        id: barRow
+        anchors.centerIn: parent
+        spacing: 3
 
-    Canvas {
-        id: canvas
-        anchors.fill: parent
-        antialiasing: true
-        onWidthChanged: requestPaint()
-        onHeightChanged: requestPaint()
-        onPaint: {
-            var ctx = getContext("2d");
-            ctx.reset();
-            var count = root.barCount;
-            var gap = 3;
-            var barWidth = Math.max(2, (width - gap * (count - 1)) / count);
-            var now = Date.now() / 140;
-            ctx.fillStyle = Palette.Theme.accent;
-            for (var i = 0; i < count; i++) {
-                var level = root.levels.length > i ? root.levels[i] : (0.25 + Math.sin(now + i * 0.55) * 0.25);
-                var h = Math.max(3, level * height);
-                var x = i * (barWidth + gap);
-                var y = (height - h) / 2;
-                var r = barWidth / 2;
-                ctx.globalAlpha = 0.45 + level * 0.55;
-                ctx.beginPath();
-                ctx.moveTo(x + r, y);
-                ctx.lineTo(x + barWidth - r, y);
-                ctx.quadraticCurveTo(x + barWidth, y, x + barWidth, y + r);
-                ctx.lineTo(x + barWidth, y + h - r);
-                ctx.quadraticCurveTo(x + barWidth, y + h, x + barWidth - r, y + h);
-                ctx.lineTo(x + r, y + h);
-                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-                ctx.lineTo(x, y + r);
-                ctx.quadraticCurveTo(x, y, x + r, y);
-                ctx.closePath();
-                ctx.fill();
+        Repeater {
+            model: root.barCount
+
+            Item {
+                readonly property real barWidth: Math.max(2, (root.width - barRow.spacing * (root.barCount - 1)) / root.barCount)
+                readonly property real level: (root.levels && root.levels.length > index) ? root.levels[index] : 0.05
+                readonly property real barHeight: Math.max(3, level * root.height)
+
+                width: barWidth
+                height: root.height
+
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: parent.barWidth
+                    height: parent.barHeight
+                    radius: width / 2
+                    color: Palette.Theme.accent
+                    opacity: 0.45 + parent.level * 0.55
+
+                    Behavior on height {
+                        NumberAnimation {
+                            duration: 70
+                            easing.type: Easing.OutQuad
+                        }
+                    }
+                }
             }
-            ctx.globalAlpha = 1;
         }
     }
 }

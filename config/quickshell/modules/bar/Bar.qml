@@ -116,20 +116,19 @@ PanelWindow {
     property bool batteryAvailable: false
 
     function checkRecording() {
-        recordingCheck.exec(["sh", "-c", "pgrep -x wf-recorder >/dev/null && echo 1 || echo 0"]);
+        recordingCheck.exec(["pgrep", "-x", "wf-recorder"]);
     }
 
     Process {
         id: recordingCheck
-        stdout: SplitParser {
-            splitMarker: "\n"
-            onRead: data => bar.isRecording = data.trim() === "1"
+        onExited: (exitCode) => {
+            bar.isRecording = (exitCode === 0);
         }
     }
 
     Timer {
         id: recordingTimer
-        interval: 1200
+        interval: 3000
         running: true
         repeat: true
         onTriggered: bar.checkRecording()
@@ -246,13 +245,20 @@ PanelWindow {
     // reports "dev.zed.Zed" but ships an icon literally named "zed") —
     // resolve through the desktop entry first, falling back to a direct
     // lookup for the common case where they already match.
+    property var iconCache: ({})
     function iconForClass(cls) {
         if (!cls)
             return "";
+        if (iconCache[cls] !== undefined)
+            return iconCache[cls];
         var entry = DesktopEntries.heuristicLookup(cls);
+        var res = "";
         if (entry && entry.icon)
-            return Quickshell.iconPath(entry.icon, true);
-        return Quickshell.iconPath(cls, true);
+            res = Quickshell.iconPath(entry.icon, true);
+        else
+            res = Quickshell.iconPath(cls, true);
+        iconCache[cls] = res;
+        return res;
     }
 
     function getControlCenter(create) {
@@ -323,11 +329,6 @@ PanelWindow {
         function brightnessDown(): void {
             bar.adjustBrightness(false);
         }
-    }
-
-    MediaPlayer {
-        id: mediaPopup
-        bar: bar
     }
 
     Connections {
@@ -409,7 +410,7 @@ PanelWindow {
     // this just guards against missed/coalesced udev events.
     Timer {
         id: batteryTimer
-        interval: 10000
+        interval: 60000
         running: true
         repeat: true
         onTriggered: bar.readBattery()
@@ -818,7 +819,6 @@ PanelWindow {
                 return bar.appClass !== "" ? appsContent.implicitWidth : centerCapsule.idleContentWidth;
             }
         }
-        opacity: mediaPopup.visible ? 0 : 1
 
         // Sits flush against the screen edge (no top gap) while the rest of the
         // bar keeps its small top margin — so matching barRow's *height* would
@@ -998,18 +998,10 @@ PanelWindow {
             onClicked: mouse => {
                 if (mouse.button === Qt.RightButton) {
                     bar.closeControlCenter();
-
-                    if (mediaPopup.isOpen)
-                        mediaPopup.forceClose();
                     if (bar.mediaPanel)
                         bar.mediaPanel.toggleMediaPanel();
-                    else if (Mpris.players.values.length > 0)
-                        mediaPopup.open();
                     return;
                 }
-
-                if (mediaPopup.isOpen)
-                    mediaPopup.forceClose();
 
                 bar.toggleControlCenter();
             }

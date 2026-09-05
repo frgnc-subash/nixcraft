@@ -358,20 +358,22 @@ Item {
                     readonly property real ao: Math.abs(off)
                     readonly property bool focused: index === root.focusIndex
                     readonly property bool isActiveWallpaper: modelData === root.currentWallpaper
-                    readonly property real bright: panel.slotLerp(panel.slotBright, ao)
-                    readonly property real sat: panel.slotLerp(panel.slotSat, ao)
-                    readonly property real corner: (8 + 2 * Math.max(0, 1 - ao)) * root.s
+                    readonly property real bright: tile.visible ? panel.slotLerp(panel.slotBright, ao) : 0
+                    readonly property real sat: tile.visible ? panel.slotLerp(panel.slotSat, ao) : 1
+                    readonly property real corner: tile.visible ? (8 + 2 * Math.max(0, 1 - ao)) * root.s : 8
 
                     readonly property real edgeFade: {
+                        if (!tile.visible)
+                            return 0;
                         var soft = 70 * root.s;
                         var gap = Math.min(x, panel.width - (x + width));
                         return Math.max(0, Math.min(1, gap / soft));
                     }
 
-                    width: panel.slotLerp(panel.slotW, ao) * root.s
-                    height: panel.slotLerp(panel.slotH, ao) * root.s
-                    x: panel.width / 2 + panel.offsetX(off) - width / 2
-                    y: (panel.height - height) / 2
+                    width: tile.visible ? panel.slotLerp(panel.slotW, ao) * root.s : 0
+                    height: tile.visible ? panel.slotLerp(panel.slotH, ao) * root.s : 0
+                    x: tile.visible ? (panel.width / 2 + panel.offsetX(off) - width / 2) : 0
+                    y: tile.visible ? ((panel.height - height) / 2) : 0
                     z: 10 - ao
                     visible: ao <= 5
                     opacity: edgeFade * (ao <= 4 ? 1 : Math.max(0, 5 - ao))
@@ -383,7 +385,7 @@ Item {
                         color: Palette.Theme.surfaceContainerHigh
                         clip: true
 
-                        layer.enabled: true
+                        layer.enabled: tile.visible && (tile.focused || Math.abs(tile.sat - 1) > 0.02)
                         layer.effect: MultiEffect {
                             saturation: tile.sat - 1
                             shadowEnabled: tile.focused
