@@ -6,7 +6,6 @@ import "modules/bar"
 import "components/overlay"
 import "modules/notification"
 import "modules/osd"
-import "modules/wallpicker"
 import "modules/workspaces"
 import "modules/lockscreen"
 import "modules/idle"
@@ -26,9 +25,6 @@ ShellRoot {
         bar: mainBar
         idleService: idleService
         barLayout: barLayoutService
-    }
-    WallpaperPicker {
-        id: wallpicker
     }
     WorkspacesService {
         id: workspacesService

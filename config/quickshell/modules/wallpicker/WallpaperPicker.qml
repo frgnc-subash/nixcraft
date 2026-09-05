@@ -4,16 +4,24 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
-import Quickshell.Wayland
 import "../../theme" as Palette
 
-PanelWindow {
+Item {
     id: root
+
+    anchors.fill: parent
+    visible: false
+    focus: visible
+
+    property real maxWidth: 4000
+    property real maxHeight: 4000
+    property var launcher: null
+    property var controlCenter: null
+    property var powerMenu: null
 
     property string wallpapersRoot: Quickshell.env("HOME") + "/Pictures/wallpapers"
     property string activeTheme: ""
     property string wallpaperDir: activeTheme === "" ? "" : wallpapersRoot + "/" + activeTheme
-    property bool active: false
 
     property var wallpapers: []
     property var filteredWallpapers: []
@@ -31,36 +39,58 @@ PanelWindow {
     property bool hintShown: false
     property bool cyclePending: false
 
-    visible: active
+    implicitWidth: Math.min(maxWidth - 32, Math.round(860 * root.s))
+    implicitHeight: Math.round(170 * root.s)
 
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: active ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-    WlrLayershell.namespace: "quickshell:wallpicker"
-    exclusionMode: ExclusionMode.Ignore
+    signal aboutToOpen
+    signal aboutToClose
 
-    anchors {
-        top: true
-        left: true
-        right: true
-        bottom: true
+    Timer {
+        id: closeTimer
+        interval: 180
+        onTriggered: root.visible = false
     }
 
-    color: "transparent"
+    function open() {
+        if (launcher && launcher.visible)
+            launcher.closeLauncher(true);
+        if (controlCenter && controlCenter.visible)
+            controlCenter.closeControlCenter(true);
+        if (powerMenu && powerMenu.visible)
+            powerMenu.closePowerMenu(true);
+        aboutToOpen();
+        visible = true;
+        hintShown = false;
+        hintDwell.restart();
+        refresh();
+        forceActiveFocus();
+    }
+
+    function close(immediate) {
+        if (!visible)
+            return;
+        aboutToClose();
+        if (immediate) {
+            closeTimer.stop();
+            visible = false;
+            return;
+        }
+        closeTimer.restart();
+    }
 
     function show() {
-        active = true;
-        refresh();
+        open();
     }
 
     function hide() {
-        active = false;
+        close();
     }
 
     function toggle() {
-        if (active)
-            hide();
+        if (visible)
+            close();
         else
-            show();
+            open();
     }
 
     function cycle() {
@@ -89,17 +119,19 @@ PanelWindow {
         pos = focusIndex;
     }
 
-    function activate() {
+    function activate(shouldClose = false) {
         if (focusIndex < 0 || focusIndex >= filteredWallpapers.length)
             return;
         setWallpaper(filteredWallpapers[focusIndex]);
+        if (shouldClose)
+            root.close();
     }
 
-    onActiveChanged: {
-        if (active) {
+    onVisibleChanged: {
+        if (visible) {
             hintShown = false;
             hintDwell.restart();
-            keyHandler.forceActiveFocus();
+            forceActiveFocus();
         }
     }
 
@@ -122,7 +154,7 @@ PanelWindow {
     // chases `pos` toward `focusIndex` every frame — this is what gives the
     // strip its glide instead of an instant jump
     FrameAnimation {
-        running: root.active && root.pos !== root.focusIndex
+        running: root.visible && root.pos !== root.focusIndex
         onTriggered: {
             var k = 1 - Math.exp(-frameTime / 0.07);
             var next = root.pos + (root.focusIndex - root.pos) * k;
@@ -133,16 +165,16 @@ PanelWindow {
     IpcHandler {
         target: "wallpicker"
 
-        function toggle() {
+        function toggle(): void {
             root.toggle();
         }
-        function open() {
-            root.show();
+        function open(): void {
+            root.open();
         }
-        function close() {
-            root.hide();
+        function close(): void {
+            root.close();
         }
-        function cycle() {
+        function cycle(): void {
             root.cycle();
         }
     }
@@ -223,29 +255,39 @@ PanelWindow {
         currentWallpaperProcess.running = true;
     }
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: root.hide()
+    Keys.onLeftPressed: event => {
+        root.move(-1);
+        event.accepted = true;
+    }
+    Keys.onRightPressed: event => {
+        root.move(1);
+        event.accepted = true;
+    }
+    Keys.onUpPressed: event => {
+        root.move(-1);
+        event.accepted = true;
+    }
+    Keys.onDownPressed: event => {
+        root.move(1);
+        event.accepted = true;
+    }
+    Keys.onReturnPressed: event => {
+        root.activate(true);
+        event.accepted = true;
+    }
+    Keys.onEnterPressed: event => {
+        root.activate(true);
+        event.accepted = true;
+    }
+    Keys.onEscapePressed: event => {
+        root.close();
+        event.accepted = true;
     }
 
-    Rectangle {
+    Item {
         id: panel
-
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 28
-
-        width: 860 * root.s
-        height: 170 * root.s
-
-        radius: Palette.Theme.radiusLarge
-        color: Palette.Theme.surfaceContainer
+        anchors.fill: parent
         clip: true
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {}
-        }
 
         // depth slots: index 0 = focused tile, index 4 = furthest tuned slot,
         // anything past that extrapolates linearly and fades to invisible
@@ -272,13 +314,36 @@ PanelWindow {
         Item {
             id: keyHandler
             anchors.fill: parent
-            focus: root.active
+            focus: root.visible
 
-            Keys.onLeftPressed: root.move(-1)
-            Keys.onRightPressed: root.move(1)
-            Keys.onReturnPressed: root.activate()
-            Keys.onEnterPressed: root.activate()
-            Keys.onEscapePressed: root.hide()
+            Keys.onLeftPressed: event => {
+                root.move(-1);
+                event.accepted = true;
+            }
+            Keys.onRightPressed: event => {
+                root.move(1);
+                event.accepted = true;
+            }
+            Keys.onUpPressed: event => {
+                root.move(-1);
+                event.accepted = true;
+            }
+            Keys.onDownPressed: event => {
+                root.move(1);
+                event.accepted = true;
+            }
+            Keys.onReturnPressed: event => {
+                root.activate(true);
+                event.accepted = true;
+            }
+            Keys.onEnterPressed: event => {
+                root.activate(true);
+                event.accepted = true;
+            }
+            Keys.onEscapePressed: event => {
+                root.close();
+                event.accepted = true;
+            }
 
             Repeater {
                 model: root.filteredWallpapers
@@ -386,7 +451,7 @@ PanelWindow {
                             if (!tile.focused)
                                 root.focusIndex = tile.index;
                             else
-                                root.activate();
+                                root.activate(false);
                         }
                     }
                 }

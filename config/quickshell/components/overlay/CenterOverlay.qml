@@ -14,6 +14,7 @@ import "../../modules/wayclick"
 import "../../modules/emoji"
 import "../../modules/toolmenu"
 import "../../modules/barlayout"
+import "../../modules/wallpicker"
 import "../../services"
 
 PanelWindow {
@@ -41,13 +42,12 @@ PanelWindow {
     property var idleService: null
     property var barLayout: null
     readonly property bool verticalBar: barLayout ? barLayout.vertical : false
-    readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible
+    readonly property bool active: (activeTopPanel !== null) || (activeBottomPanel !== null)
 
     // Central modules origin edge:
     // Top origin: Control Center, Power Menu, Tool Menu, Media Panel.
-    // Bottom origin: all other panels (Launcher, Theme, Shader, Wayclick,
-    // Clipboard, Service Manager, Emoji, Bar Layout).
-    // Applies in both horizontal and vertical bar modes.
+    // Bottom origin: Launcher, Theme, Shader, Wayclick, Clipboard,
+    // Service Manager, Emoji, Bar Layout, Wallpaper Picker.
     function isTopModule(panel) {
         return panel === controlCenterItem
             || panel === powerMenuItem
@@ -56,45 +56,9 @@ PanelWindow {
     }
 
     property var currentTargetPanel: null
-    property bool lastOriginTop: true
 
-    readonly property bool activeIsTopOrigin: {
-        if (currentTargetPanel && currentTargetPanel.visible)
-            return isTopModule(currentTargetPanel);
-        if (controlCenterItem.visible || powerMenuItem.visible || toolMenuItem.visible || mediaPanelItem.visible)
-            return true;
-        if (launcherItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible)
-            return false;
-        return lastOriginTop;
-    }
-
-    onActivePanelChanged: {
-        if (activePanel)
-            lastOriginTop = isTopModule(activePanel);
-    }
-
-    property alias launcher: launcherItem
-    property alias controlCenter: controlCenterItem
-    property alias powerMenu: powerMenuItem
-    property alias themePicker: themePickerItem
-    property alias shaderPicker: shaderPickerItem
-    property alias wayclickPackPicker: wayclickPackPickerItem
-    property alias clipboard: clipboardItem
-    property alias serviceManager: serviceManagerItem
-    property alias mediaPanel: mediaPanelItem
-    property alias toolMenu: toolMenuItem
-    property alias emojiPicker: emojiPickerItem
-    property alias barLayoutPicker: barLayoutPickerItem
-
-    visible: true
-
-    // Every central module renders as content inside one shared notch-shaped
-    // surface — matching the bar's own notch — instead of each getting its
-    // own detached floating card. Only one is ever visible at a time, so this
-    // just picks whichever that is; the stage below reads its implicit size
-    // to know how far to grow.
-    readonly property var activePanel: {
-        if (currentTargetPanel && currentTargetPanel.visible)
+    readonly property var activeTopPanel: {
+        if (currentTargetPanel && currentTargetPanel.visible && isTopModule(currentTargetPanel))
             return currentTargetPanel;
         if (controlCenterItem.visible)
             return controlCenterItem;
@@ -104,6 +68,12 @@ PanelWindow {
             return toolMenuItem;
         if (mediaPanelItem.visible)
             return mediaPanelItem;
+        return null;
+    }
+
+    readonly property var activeBottomPanel: {
+        if (currentTargetPanel && currentTargetPanel.visible && !isTopModule(currentTargetPanel))
+            return currentTargetPanel;
         if (launcherItem.visible)
             return launcherItem;
         if (themePickerItem.visible)
@@ -120,19 +90,37 @@ PanelWindow {
             return emojiPickerItem;
         if (barLayoutPickerItem.visible)
             return barLayoutPickerItem;
+        if (wallpaperPickerItem.visible)
+            return wallpaperPickerItem;
         return null;
     }
+
+    readonly property var activePanel: activeTopPanel ? activeTopPanel : activeBottomPanel
+    readonly property bool activeIsTopOrigin: activeTopPanel !== null
+
+    property alias launcher: launcherItem
+    property alias controlCenter: controlCenterItem
+    property alias powerMenu: powerMenuItem
+    property alias themePicker: themePickerItem
+    property alias shaderPicker: shaderPickerItem
+    property alias wayclickPackPicker: wayclickPackPickerItem
+    property alias clipboard: clipboardItem
+    property alias serviceManager: serviceManagerItem
+    property alias mediaPanel: mediaPanelItem
+    property alias toolMenu: toolMenuItem
+    property alias emojiPicker: emojiPickerItem
+    property alias barLayoutPicker: barLayoutPickerItem
+    property alias wallpaperPicker: wallpaperPickerItem
 
     // The launcher and control center are meant to feel like an extension of
     // the desktop, so they don't dim it; the rest are more like modal
     // utilities and darken the backdrop behind them.
-    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible
+    readonly property bool activeDims: powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible || wallpaperPickerItem.visible
 
     // All center-origin panels share this layer surface. Closing every other
     // panel before a new one appears prevents stacked backdrops and focus.
     function presentOnly(panel) {
         currentTargetPanel = panel;
-        lastOriginTop = isTopModule(panel);
         if (panel !== launcherItem && launcherItem.visible)
             launcherItem.closeLauncher(true);
         if (panel !== controlCenterItem && controlCenterItem.visible)
@@ -157,6 +145,8 @@ PanelWindow {
             emojiPickerItem.close(true);
         if (panel !== barLayoutPickerItem && barLayoutPickerItem.visible)
             barLayoutPickerItem.close(true);
+        if (panel !== wallpaperPickerItem && wallpaperPickerItem.visible)
+            wallpaperPickerItem.close(true);
     }
 
     function closeActive() {
@@ -184,6 +174,8 @@ PanelWindow {
             emojiPickerItem.close();
         else if (barLayoutPickerItem.visible)
             barLayoutPickerItem.close();
+        else if (wallpaperPickerItem.visible)
+            wallpaperPickerItem.close();
     }
 
     ThemeService {
@@ -233,31 +225,85 @@ PanelWindow {
     // seed from, so the stage just starts flat (zero height) and grows
     // from whichever edge (top or bottom) the next panel opens from.
     readonly property real barSlabWidth: bar ? (bar.centerCapsuleSlabWidth || 120) : 120
-    readonly property real barSlabHeight: root.stageAtTop ? (root.verticalBar ? 0 : (bar ? bar.height : 34)) : 0
-    readonly property bool stageAtTop: root.activeIsTopOrigin
+    readonly property real barSlabHeight: root.verticalBar ? 0 : (bar ? bar.height : 34)
 
+    // ── TOP STAGE (Control Center, Power Menu, Tool Menu, Media Panel) ───
     Notch {
-        id: stage
+        id: topStage
         anchors.horizontalCenter: parent.horizontalCenter
-        // A plain `y` binding instead of toggling which anchor line
-        // (top/bottom) is active — flipping anchors on a still-animating
-        // item was the cause of the "opens from the wrong edge sometimes"
-        // flakiness: for a frame or two both edges could end up anchored at
-        // once, which forces Qt Quick to stretch the item between them
-        // (overriding the height the grow animation was driving). A single
-        // deterministic `y` expression has no such transient double-anchor
-        // state.
-        y: root.stageAtTop ? 0 : (parent.height - height)
-        bottomAligned: !root.stageAtTop
+        anchors.top: parent.top
+        bottomAligned: false
         wingSize: 9
-
-        readonly property var panel: root.activePanel
         slabRadius: 20
 
-        // When no panel is active collapse back to bar notch size so the
-        // next open always grows from the right seed, not from zero.
+        readonly property var panel: root.activeTopPanel
+
         slabWidth: panel ? panel.implicitWidth : root.barSlabWidth
         slabHeight: panel ? panel.implicitHeight : root.barSlabHeight
+        opacity: panel ? 1 : 0
+
+        Behavior on slabWidth {
+            NumberAnimation {
+                duration: 240
+                easing.type: Easing.OutBack
+                easing.overshoot: 0.6
+            }
+        }
+        Behavior on slabHeight {
+            NumberAnimation {
+                duration: 240
+                easing.type: Easing.OutBack
+                easing.overshoot: 0.6
+            }
+        }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 160
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        ControlCenter {
+            id: controlCenterItem
+            maxWidth: root.width
+            maxHeight: root.height
+            notificationCenter: root.notificationCenter
+            bar: root.bar
+            idleService: root.idleService
+        }
+
+        PowerMenu {
+            id: powerMenuItem
+            maxWidth: root.width
+            launcher: launcherItem
+            controlCenter: controlCenterItem
+        }
+
+        ToolMenu {
+            id: toolMenuItem
+            maxWidth: root.width
+            launcher: launcherItem
+            controlCenter: controlCenterItem
+        }
+
+        MediaPanel {
+            id: mediaPanelItem
+        }
+    }
+
+    // ── BOTTOM STAGE (Launcher, Wallpapers, Themes, Shaders, Wayclick, etc.) ──
+    Notch {
+        id: bottomStage
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        bottomAligned: true
+        wingSize: 9
+        slabRadius: 20
+
+        readonly property var panel: root.activeBottomPanel
+
+        slabWidth: panel ? panel.implicitWidth : 120
+        slabHeight: panel ? panel.implicitHeight : 0
         opacity: panel ? 1 : 0
 
         Behavior on slabWidth {
@@ -286,36 +332,6 @@ PanelWindow {
             maxWidth: root.width
             controlCenter: controlCenterItem
             serviceManager: serviceManagerItem
-        }
-
-        ControlCenter {
-            id: controlCenterItem
-            maxWidth: root.width
-            maxHeight: root.height
-            notificationCenter: root.notificationCenter
-            bar: root.bar
-            idleService: root.idleService
-        }
-
-        PowerMenu {
-            id: powerMenuItem
-            maxWidth: root.width
-            launcher: launcherItem
-            controlCenter: controlCenterItem
-        }
-
-        ToolMenu {
-            id: toolMenuItem
-            maxWidth: root.width
-            launcher: launcherItem
-            controlCenter: controlCenterItem
-        }
-
-        EmojiPicker {
-            id: emojiPickerItem
-            maxWidth: root.width
-            maxHeight: root.height
-            service: emojiService
         }
 
         ThemePicker {
@@ -359,13 +375,25 @@ PanelWindow {
             maxHeight: root.height
         }
 
-        MediaPanel {
-            id: mediaPanelItem
+        EmojiPicker {
+            id: emojiPickerItem
+            maxWidth: root.width
+            maxHeight: root.height
+            service: emojiService
         }
 
         BarLayoutPicker {
             id: barLayoutPickerItem
             service: root.barLayout
+            launcher: launcherItem
+            controlCenter: controlCenterItem
+            powerMenu: powerMenuItem
+        }
+
+        WallpaperPicker {
+            id: wallpaperPickerItem
+            maxWidth: root.width
+            maxHeight: root.height
             launcher: launcherItem
             controlCenter: controlCenterItem
             powerMenu: powerMenuItem
@@ -419,5 +447,9 @@ PanelWindow {
     Connections {
         target: barLayoutPickerItem
         function onAboutToOpen() { root.presentOnly(barLayoutPickerItem); }
+    }
+    Connections {
+        target: wallpaperPickerItem
+        function onAboutToOpen() { root.presentOnly(wallpaperPickerItem); }
     }
 }

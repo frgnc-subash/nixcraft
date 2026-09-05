@@ -867,7 +867,7 @@ PanelWindow {
             // Only mounted once there's an actual app — no hidden icon
             // sitting in the layout reserving space for the "~" case.
             visible: centerCapsule.activeCenterModule === "apps" && bar.appClass !== ""
-            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "apps" && bar.appClass !== "" && !(launcher && launcher.visible) ? 1 : 0
+            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "apps" && bar.appClass !== "" ? 1 : 0
             Behavior on opacity {
                 NumberAnimation { duration: 100 }
             }
@@ -904,7 +904,7 @@ PanelWindow {
             // The only child on screen in this state — nothing else can
             // push it off-center.
             visible: centerCapsule.activeCenterModule === "apps" && bar.appClass === ""
-            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "apps" && bar.appClass === "" && !(launcher && launcher.visible) ? 1 : 0
+            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "apps" && bar.appClass === "" ? 1 : 0
             Behavior on opacity {
                 NumberAnimation { duration: 100 }
             }
@@ -916,7 +916,7 @@ PanelWindow {
             implicitWidth: bar.mediaPlaying ? cavaVisualizer.implicitWidth : silenceText.implicitWidth
             implicitHeight: Math.max(cavaVisualizer.implicitHeight, silenceText.implicitHeight)
             visible: centerCapsule.activeCenterModule === "cava"
-            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "cava" && !(launcher && launcher.visible) ? 1 : 0
+            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "cava" ? 1 : 0
             Behavior on opacity {
                 NumberAnimation { duration: 100 }
             }
@@ -959,7 +959,7 @@ PanelWindow {
             anchors.centerIn: parent
             spacing: 8
             visible: centerCapsule.activeCenterModule === "clock"
-            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "clock" && !(launcher && launcher.visible) ? 1 : 0
+            opacity: bar.centerMode === "normal" && centerCapsule.activeCenterModule === "clock" ? 1 : 0
             Behavior on opacity {
                 NumberAnimation { duration: 100 }
             }
@@ -1016,30 +1016,9 @@ PanelWindow {
         }
 
         Connections {
-            target: launcher
-            enabled: launcher !== null
-            function onAboutToOpen() { bar.centerMode = "launcher"; }
-            function onAboutToClose() { bar.centerMode = "normal"; }
-        }
-
-        Connections {
             target: bar.controlCenter
             enabled: bar.controlCenter !== null
             function onAboutToOpen() { bar.centerMode = "controlCenter"; }
-            function onAboutToClose() { bar.centerMode = "normal"; }
-        }
-
-        Connections {
-            target: bar.themePicker
-            enabled: bar.themePicker !== null
-            function onAboutToOpen() { bar.centerMode = "theme"; }
-            function onAboutToClose() { bar.centerMode = "normal"; }
-        }
-
-        Connections {
-            target: bar.clipboard
-            enabled: bar.clipboard !== null
-            function onAboutToOpen() { bar.centerMode = "clipboard"; }
             function onAboutToClose() { bar.centerMode = "normal"; }
         }
 
@@ -1061,13 +1040,6 @@ PanelWindow {
             target: bar.toolMenu
             enabled: bar.toolMenu !== null
             function onAboutToOpen() { bar.centerMode = "toolMenu"; }
-            function onAboutToClose() { bar.centerMode = "normal"; }
-        }
-
-        Connections {
-            target: bar.emojiPicker
-            enabled: bar.emojiPicker !== null
-            function onAboutToOpen() { bar.centerMode = "emoji"; }
             function onAboutToClose() { bar.centerMode = "normal"; }
         }
     }
