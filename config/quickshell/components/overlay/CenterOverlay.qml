@@ -43,11 +43,11 @@ PanelWindow {
     readonly property bool verticalBar: barLayout ? barLayout.vertical : false
     readonly property bool active: launcherItem.visible || controlCenterItem.visible || powerMenuItem.visible || themePickerItem.visible || shaderPickerItem.visible || wayclickPackPickerItem.visible || clipboardItem.visible || serviceManagerItem.visible || mediaPanelItem.visible || toolMenuItem.visible || emojiPickerItem.visible || barLayoutPickerItem.visible
 
-    // In vertical-bar mode:
+    // Central modules origin edge:
     // Top origin: Control Center, Power Menu, Tool Menu, Media Panel.
     // Bottom origin: all other panels (Launcher, Theme, Shader, Wayclick,
     // Clipboard, Service Manager, Emoji, Bar Layout).
-    // In horizontal-bar mode: always top origin.
+    // Applies in both horizontal and vertical bar modes.
     function isTopModule(panel) {
         return panel === controlCenterItem
             || panel === powerMenuItem
@@ -233,8 +233,8 @@ PanelWindow {
     // seed from, so the stage just starts flat (zero height) and grows
     // from whichever edge (top or bottom) the next panel opens from.
     readonly property real barSlabWidth: bar ? (bar.centerCapsuleSlabWidth || 120) : 120
-    readonly property real barSlabHeight: root.verticalBar ? 0 : (bar ? bar.height : 34)
-    readonly property bool stageAtTop: !root.verticalBar || root.activeIsTopOrigin
+    readonly property real barSlabHeight: root.stageAtTop ? (root.verticalBar ? 0 : (bar ? bar.height : 34)) : 0
+    readonly property bool stageAtTop: root.activeIsTopOrigin
 
     Notch {
         id: stage
