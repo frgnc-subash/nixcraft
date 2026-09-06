@@ -29,7 +29,7 @@
     systemSettings.virtualization.enable = true;
     systemSettings.sddm.enable = true;
 
-    services.journald.extraConfig = "Storage=persistent";
+    services.journald.settings.Journal.Storage = "persistent";
     services.flatpak.enable = true;
 
     services.gnome.gnome-keyring.enable = true;
