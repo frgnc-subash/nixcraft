@@ -14,8 +14,13 @@ in
       enable = lib.mkEnableOption "Enable applications apps";
     };
   };
-  imports = [ ./spicetify.nix ];
+  imports = [
+    ./spicetify.nix
+    inputs.zen-browser.homeModules.twilight
+  ];
   config = lib.mkIf cfg.enable {
+    programs.zen-browser.enable = true;
+
     home.packages = with pkgs; [
       vesktop
       foliate
@@ -28,7 +33,6 @@ in
       proton-vpn
       wireguard-tools
       brave
-      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
       libreoffice-stable
       errands
       zathura
