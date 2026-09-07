@@ -39,6 +39,7 @@ PanelWindow {
     property var notificationCenter: null
     property var idleService: null
     property var barLayout: null
+    property var widgetsService: null
     readonly property bool verticalBar: barLayout ? barLayout.vertical : false
     readonly property bool active: (activeTopPanel !== null) || (activeBottomPanel !== null)
 
@@ -318,6 +319,7 @@ PanelWindow {
             serviceManager: serviceManagerItem
             shaderService: shaderService
             wayclickPackService: wayclickPackService
+            widgetsService: root.widgetsService
         }
 
         ThemePicker {

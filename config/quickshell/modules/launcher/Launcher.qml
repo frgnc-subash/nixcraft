@@ -21,6 +21,7 @@ Item {
     property var serviceManager: null
     property var shaderService: null
     property var wayclickPackService: null
+    property var widgetsService: null
 
     readonly property int itemH: 56
 
@@ -29,7 +30,8 @@ Item {
     // that command's own items (still filterable by whatever follows).
     readonly property var commands: [
         { cmd: "shaders", label: "Shaders", icon: "", desc: "Change the screen shader" },
-        { cmd: "sounds", label: "Sound Packs", icon: "", desc: "Change the wayclick sound pack" }
+        { cmd: "sounds", label: "Sound Packs", icon: "", desc: "Change the wayclick sound pack" },
+        { cmd: "widgets", label: "Widgets", icon: "widgets", desc: "Toggle desktop widgets" }
     ]
 
     readonly property bool isCommandInput: query.startsWith("/")
@@ -58,6 +60,12 @@ Item {
         return f === "" ? allPacks : allPacks.filter(p => wayclickPackService.displayName(p).toLowerCase().indexOf(f) !== -1);
     }
 
+    readonly property var allWidgets: widgetsService ? widgetsService.widgets : []
+    readonly property var widgetItems: {
+        var f = commandArg.trim().toLowerCase();
+        return f === "" ? allWidgets : allWidgets.filter(w => w.label.toLowerCase().indexOf(f) !== -1);
+    }
+
     readonly property var currentList: {
         switch (mode) {
         case "apps":
@@ -68,6 +76,8 @@ Item {
             return shaderItems;
         case "sounds":
             return packItems;
+        case "widgets":
+            return widgetItems;
         default:
             return [];
         }
@@ -79,6 +89,8 @@ Item {
             return "Search shaders…";
         case "sounds":
             return "Search sound packs…";
+        case "widgets":
+            return "Search widgets…";
         case "commands":
             return "Type a command…";
         default:
@@ -94,6 +106,8 @@ Item {
             return allShaders.length === 0 ? "No shaders found" : "No results for '" + commandArg + "'";
         case "sounds":
             return allPacks.length === 0 ? "No sound packs found" : "No results for '" + commandArg + "'";
+        case "widgets":
+            return allWidgets.length === 0 ? "No widgets found" : "No results for '" + commandArg + "'";
         default:
             return allApps.length === 0 ? "No applications found" : "No results for '" + query + "'";
         }
@@ -213,6 +227,11 @@ Item {
         case "sounds":
             wayclickPackService.apply(list[index]);
             closeLauncher();
+            return;
+        case "widgets":
+            // Toggling is non-exclusive (unlike picking a shader/sound), so
+            // stay open — the user likely wants to flip more than one.
+            widgetsService.toggle(list[index].id);
             return;
         }
     }
@@ -396,11 +415,13 @@ Item {
             readonly property bool isCommand: root.mode === "commands"
             readonly property bool isShader: root.mode === "shaders"
             readonly property bool isSound: root.mode === "sounds"
+            readonly property bool isWidget: root.mode === "widgets"
+            readonly property bool widgetEnabled: isWidget ? root.widgetsService.isEnabled(modelData.id) : false
 
-            readonly property string rowIcon: isCommand ? modelData.icon : (isShader ? "" : "")
-            readonly property string rowPrimary: isCommand ? modelData.label : (isShader ? root.shaderService.displayName(modelData) : root.wayclickPackService.displayName(modelData))
+            readonly property string rowIcon: isCommand ? modelData.icon : (isShader ? "" : (isSound ? "" : "widgets"))
+            readonly property string rowPrimary: isCommand ? modelData.label : (isShader ? root.shaderService.displayName(modelData) : (isSound ? root.wayclickPackService.displayName(modelData) : modelData.label))
             readonly property string rowSecondary: isCommand ? modelData.desc : ""
-            readonly property bool rowActive: isShader ? modelData === root.shaderService.activeShader : (isSound ? modelData === root.wayclickPackService.activePack : false)
+            readonly property bool rowActive: isShader ? modelData === root.shaderService.activeShader : (isSound ? modelData === root.wayclickPackService.activePack : widgetEnabled)
 
             width: ListView.view.width
             height: 56
@@ -478,11 +499,11 @@ Item {
                 }
 
                 Text {
-                    visible: rowActive
-                    text: ""
+                    visible: rowActive || isWidget
+                    text: isWidget ? (widgetEnabled ? "toggle_on" : "toggle_off") : ""
                     font.family: Palette.Theme.fontIcons
-                    font.pixelSize: 14
-                    color: Palette.Theme.accent
+                    font.pixelSize: isWidget ? 22 : 14
+                    color: isWidget && !widgetEnabled ? Palette.Theme.textMuted : Palette.Theme.accent
                     Layout.alignment: Qt.AlignVCenter
                 }
             }

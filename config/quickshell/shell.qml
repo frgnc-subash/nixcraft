@@ -10,6 +10,7 @@ import "modules/workspaces"
 import "modules/lockscreen"
 import "modules/idle"
 import "services"
+import "widgets"
 
 ShellRoot {
     id: root
@@ -19,12 +20,19 @@ ShellRoot {
     BarLayoutService {
         id: barLayoutService
     }
+    WidgetsService {
+        id: widgetsService
+    }
+    DesktopWidgetsLayer {
+        widgetsService: widgetsService
+    }
     CenterOverlay {
         id: overlay
         notificationCenter: notificationCenter
         bar: mainBar
         idleService: idleService
         barLayout: barLayoutService
+        widgetsService: widgetsService
     }
     WorkspacesService {
         id: workspacesService
