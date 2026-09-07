@@ -15,8 +15,6 @@ in
     home.packages = (with pkgs; [
       brightnessctl
       kitty
-      hypridle
-      hyprlock
       hyprsunset
       cliphist
       wl-clipboard
