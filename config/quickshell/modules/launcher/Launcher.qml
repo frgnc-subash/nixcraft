@@ -138,6 +138,19 @@ Item {
         function close(): void {
             root.closeLauncher();
         }
+        function setQuery(q: string): void {
+            root.openLauncher();
+            searchInput.text = q;
+        }
+        function next(): void {
+            root.moveSelection(1);
+        }
+        function prev(): void {
+            root.moveSelection(-1);
+        }
+        function select(): void {
+            root.activateSelected();
+        }
     }
 
     // ── app data ──────────────────────────────────────────────────
@@ -174,7 +187,83 @@ Item {
 
     onQueryChanged: {
         filterApps();
-        selected = 0;
+        if (mode === "shaders") {
+            syncShaderSelection();
+            updateShaderPreview();
+        } else {
+            selected = 0;
+        }
+    }
+
+    function syncShaderSelection() {
+        if (mode === "shaders" && shaderService && currentList === shaderItems && currentList.length > 0) {
+            if (commandArg.trim() === "" && shaderService.activeShader) {
+                var idx = currentList.indexOf(shaderService.activeShader);
+                if (idx >= 0) {
+                    selected = idx;
+                    appList.positionViewAtIndex(selected, ListView.Contain);
+                    return;
+                }
+            }
+            if (selected < 0 || selected >= currentList.length) {
+                selected = 0;
+            }
+            appList.positionViewAtIndex(selected, ListView.Contain);
+        }
+    }
+
+    function updateShaderPreview() {
+        if (mode === "shaders" && shaderService && currentList === shaderItems) {
+            var list = currentList;
+            if (list.length > 0 && selected >= 0 && selected < list.length) {
+                shaderService.preview(list[selected]);
+            } else if (list.length === 0 && shaderService.isPreviewing) {
+                shaderService.cancelPreview();
+            }
+        }
+    }
+
+    onModeChanged: {
+        if (mode === "shaders") {
+            if (shaderService) {
+                shaderService.refresh();
+                syncShaderSelection();
+                updateShaderPreview();
+            }
+        } else {
+            if (shaderService && shaderService.isPreviewing) {
+                shaderService.cancelPreview();
+            }
+        }
+    }
+
+    onSelectedChanged: {
+        if (mode === "shaders") {
+            updateShaderPreview();
+        }
+    }
+
+    onCurrentListChanged: {
+        if (mode === "shaders") {
+            syncShaderSelection();
+            updateShaderPreview();
+        }
+    }
+
+    onVisibleChanged: {
+        if (!visible && shaderService && shaderService.isPreviewing) {
+            shaderService.cancelPreview();
+        }
+    }
+
+    Connections {
+        target: root.shaderService
+        function onActiveShaderChanged(): void {
+            if (root.mode === "shaders" && root.shaderService && !root.shaderService.isPreviewing) {
+                root.syncShaderSelection();
+                root.updateShaderPreview();
+            }
+        }
     }
 
     Connections {
@@ -365,7 +454,7 @@ Item {
 
                     Text {
                         Layout.fillWidth: true
-                        text: modelData.name || ""
+                        text: (modelData && modelData.name) ? modelData.name : ""
                         color: Palette.Theme.textPrimary
                         font.family: Palette.Theme.fontMono
                         font.pixelSize: 13
@@ -375,7 +464,7 @@ Item {
 
                     Text {
                         Layout.fillWidth: true
-                        text: modelData.comment || ""
+                        text: (modelData && modelData.comment) ? modelData.comment : ""
                         visible: text !== ""
                         color: Palette.Theme.textMuted
                         font.family: Palette.Theme.fontMono
@@ -390,9 +479,10 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onEntered: {
-                    root.selected = absoluteIndex;
-                    appList.positionViewAtIndex(root.selected, ListView.Contain);
+                onPositionChanged: {
+                    if (root.selected !== absoluteIndex) {
+                        root.selected = absoluteIndex;
+                    }
                 }
                 onClicked: {
                     root.selected = absoluteIndex;
@@ -416,12 +506,12 @@ Item {
             readonly property bool isShader: root.mode === "shaders"
             readonly property bool isSound: root.mode === "sounds"
             readonly property bool isWidget: root.mode === "widgets"
-            readonly property bool widgetEnabled: isWidget ? root.widgetsService.isEnabled(modelData.id) : false
+            readonly property bool widgetEnabled: isWidget && root.widgetsService && modelData && modelData.id ? root.widgetsService.isEnabled(modelData.id) : false
 
-            readonly property string rowIcon: isCommand ? modelData.icon : (isShader ? "" : (isSound ? "" : "widgets"))
-            readonly property string rowPrimary: isCommand ? modelData.label : (isShader ? root.shaderService.displayName(modelData) : (isSound ? root.wayclickPackService.displayName(modelData) : modelData.label))
-            readonly property string rowSecondary: isCommand ? modelData.desc : ""
-            readonly property bool rowActive: isShader ? modelData === root.shaderService.activeShader : (isSound ? modelData === root.wayclickPackService.activePack : widgetEnabled)
+            readonly property string rowIcon: isCommand ? (modelData && modelData.icon ? modelData.icon : "") : (isShader ? "" : (isSound ? "" : "widgets"))
+            readonly property string rowPrimary: isCommand ? (modelData && modelData.label ? modelData.label : "") : (isShader ? (root.shaderService && modelData ? root.shaderService.displayName(modelData) : "") : (isSound ? (root.wayclickPackService && modelData ? root.wayclickPackService.displayName(modelData) : "") : (modelData && modelData.label ? modelData.label : "")))
+            readonly property string rowSecondary: isCommand ? (modelData && modelData.desc ? modelData.desc : "") : (isShader ? (rowActive ? "Active" : (index === root.selected ? "Previewing" : "")) : "")
+            readonly property bool rowActive: isShader ? (root.shaderService && modelData ? modelData === root.shaderService.activeShader : false) : (isSound ? (root.wayclickPackService && modelData ? modelData === root.wayclickPackService.activePack : false) : widgetEnabled)
 
             width: ListView.view.width
             height: 56
@@ -513,9 +603,10 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onEntered: {
-                    root.selected = index;
-                    appList.positionViewAtIndex(root.selected, ListView.Contain);
+                onPositionChanged: {
+                    if (root.selected !== index) {
+                        root.selected = index;
+                    }
                 }
                 onClicked: {
                     root.selected = index;
@@ -548,6 +639,9 @@ Item {
     function closeLauncher(immediate) {
         if (!root.visible)
             return;
+        if (shaderService && shaderService.isPreviewing) {
+            shaderService.cancelPreview();
+        }
         aboutToClose();
         if (immediate) {
             closeTimer.stop();

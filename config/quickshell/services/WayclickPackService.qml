@@ -55,6 +55,8 @@ Item {
         })
 
     function displayName(packName) {
+        if (typeof packName !== "string")
+            return "";
         if (displayNames[packName])
             return displayNames[packName];
         return packName.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
