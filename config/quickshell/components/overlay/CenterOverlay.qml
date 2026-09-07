@@ -171,8 +171,8 @@ PanelWindow {
         id: shaderService
     }
 
-    WayclickPackService {
-        id: wayclickPackService
+    WayclickService {
+        id: wayclickService
     }
 
     ClipboardService {
@@ -318,7 +318,7 @@ PanelWindow {
             controlCenter: controlCenterItem
             serviceManager: serviceManagerItem
             shaderService: shaderService
-            wayclickPackService: wayclickPackService
+            wayclickService: wayclickService
             widgetsService: root.widgetsService
         }
 

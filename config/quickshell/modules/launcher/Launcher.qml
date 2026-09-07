@@ -20,7 +20,7 @@ Item {
     property var controlCenter: null
     property var serviceManager: null
     property var shaderService: null
-    property var wayclickPackService: null
+    property var wayclickService: null
     property var widgetsService: null
 
     readonly property int itemH: 56
@@ -54,10 +54,10 @@ Item {
         return f === "" ? allShaders : allShaders.filter(s => shaderService.displayName(s).toLowerCase().indexOf(f) !== -1);
     }
 
-    readonly property var allPacks: wayclickPackService ? wayclickPackService.packs : []
+    readonly property var allPacks: wayclickService ? wayclickService.packs : []
     readonly property var packItems: {
         var f = commandArg.trim().toLowerCase();
-        return f === "" ? allPacks : allPacks.filter(p => wayclickPackService.displayName(p).toLowerCase().indexOf(f) !== -1);
+        return f === "" ? allPacks : allPacks.filter(p => wayclickService.displayName(p).toLowerCase().indexOf(f) !== -1);
     }
 
     readonly property var allWidgets: widgetsService ? widgetsService.widgets : []
@@ -314,7 +314,7 @@ Item {
             closeLauncher();
             return;
         case "sounds":
-            wayclickPackService.apply(list[index]);
+            wayclickService.apply(list[index]);
             closeLauncher();
             return;
         case "widgets":
@@ -509,9 +509,9 @@ Item {
             readonly property bool widgetEnabled: isWidget && root.widgetsService && modelData && modelData.id ? root.widgetsService.isEnabled(modelData.id) : false
 
             readonly property string rowIcon: isCommand ? (modelData && modelData.icon ? modelData.icon : "") : (isShader ? "" : (isSound ? "" : "widgets"))
-            readonly property string rowPrimary: isCommand ? (modelData && modelData.label ? modelData.label : "") : (isShader ? (root.shaderService && modelData ? root.shaderService.displayName(modelData) : "") : (isSound ? (root.wayclickPackService && modelData ? root.wayclickPackService.displayName(modelData) : "") : (modelData && modelData.label ? modelData.label : "")))
+            readonly property string rowPrimary: isCommand ? (modelData && modelData.label ? modelData.label : "") : (isShader ? (root.shaderService && modelData ? root.shaderService.displayName(modelData) : "") : (isSound ? (root.wayclickService && modelData ? root.wayclickService.displayName(modelData) : "") : (modelData && modelData.label ? modelData.label : "")))
             readonly property string rowSecondary: isCommand ? (modelData && modelData.desc ? modelData.desc : "") : (isShader ? (rowActive ? "Active" : (index === root.selected ? "Previewing" : "")) : "")
-            readonly property bool rowActive: isShader ? (root.shaderService && modelData ? modelData === root.shaderService.activeShader : false) : (isSound ? (root.wayclickPackService && modelData ? modelData === root.wayclickPackService.activePack : false) : widgetEnabled)
+            readonly property bool rowActive: isShader ? (root.shaderService && modelData ? modelData === root.shaderService.activeShader : false) : (isSound ? (root.wayclickService && modelData ? modelData === root.wayclickService.activePack : false) : widgetEnabled)
 
             width: ListView.view.width
             height: 56

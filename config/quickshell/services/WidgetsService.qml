@@ -36,6 +36,7 @@ Item {
             state.weatherEnabled = !state.weatherEnabled;
             break;
         }
+        stateFile.writeAdapter();
     }
 
     // A negative coordinate means "never dragged" — the widget falls back
@@ -84,13 +85,17 @@ Item {
             state.weatherY = y;
             break;
         }
+        stateFile.writeAdapter();
     }
 
+    // blockLoading forces the initial read to happen synchronously, so
+    // isEnabled()/hasPosition() etc. see the real saved state on the very
+    // first render instead of the declared defaults below flashing first.
     FileView {
         id: stateFile
         path: Quickshell.cachePath("desktop-widgets.json")
         watchChanges: false
-        onAdapterUpdated: writeAdapter()
+        blockLoading: true
 
         JsonAdapter {
             id: state

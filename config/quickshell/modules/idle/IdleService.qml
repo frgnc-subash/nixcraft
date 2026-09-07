@@ -1,3 +1,4 @@
+import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland._IdleNotify
 import QtQuick
@@ -9,10 +10,33 @@ Item {
     // When true, none of the idle stages below act on an idle transition —
     // the compositor's idle-notify timers keep running underneath, but
     // dim/lock/dpms/suspend are suppressed until this is turned off again.
-    property bool keepAwake: false
+    // This flag is the only thing enforcing that (no external inhibitor
+    // daemon involved), so it has to be persisted — otherwise a quickshell
+    // reload silently resumes idle timeouts the user meant to stay off.
+    // Purely a mirror of keepAwakeState.keepAwake (readonly, never assigned
+    // directly) so it can't fall out of sync with what's on disk — the
+    // same pattern services/BarLayoutService.qml uses for `vertical`.
+    readonly property bool keepAwake: keepAwakeState.keepAwake
+
+    // Written to explicitly (only from toggleKeepAwake()) rather than
+    // reactively on every adapter change — the latter also fires while the
+    // file is still loading, which was clobbering the just-loaded value
+    // back to default on a fair number of reloads.
+    FileView {
+        id: keepAwakeStateFile
+        path: Quickshell.cachePath("idle-keepawake.json")
+        watchChanges: false
+        blockLoading: true
+
+        JsonAdapter {
+            id: keepAwakeState
+            property bool keepAwake: false
+        }
+    }
 
     function toggleKeepAwake() {
-        root.keepAwake = !root.keepAwake;
+        keepAwakeState.keepAwake = !keepAwakeState.keepAwake;
+        keepAwakeStateFile.writeAdapter();
     }
 
     // Stage 1 (150s): dim the display.

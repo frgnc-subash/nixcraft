@@ -36,7 +36,10 @@ Item {
     property bool showBrightnessOsdOnRead: false
     property bool showMicOsdOnRead: false
     property bool dndEnabled: false
-    property bool hyprsunsetEnabled: false
+    // Purely a mirror of toggleState.hyprsunset (readonly, never assigned
+    // directly) so it can't fall out of sync with what's on disk — the
+    // same pattern services/BarLayoutService.qml uses for `vertical`.
+    readonly property bool hyprsunsetEnabled: toggleState.hyprsunset
     property string powerProfilePending: ""
     readonly property bool keepAwake: idleService ? idleService.keepAwake : false
 
@@ -50,6 +53,25 @@ Item {
 
     signal aboutToOpen
     signal aboutToClose
+
+    // hyprsunsetEnabled is otherwise pure in-memory UI state, so a
+    // quickshell reload used to forget it even though hyprsunset itself
+    // keeps running unaffected — this just resyncs the toggle's visual
+    // state, no need to re-issue the temperature command. Written to
+    // explicitly (only from toggleHyprsunset()) rather than reactively on
+    // every adapter change — the latter also fires while the file is still
+    // loading, which was clobbering the just-loaded value back to default.
+    FileView {
+        id: toggleStateFile
+        path: Quickshell.cachePath("control-center-toggles.json")
+        watchChanges: false
+        blockLoading: true
+
+        JsonAdapter {
+            id: toggleState
+            property bool hyprsunset: false
+        }
+    }
 
     function clampLevel(value) {
         return Math.max(minLevel, Math.min(1, value));
@@ -444,7 +466,8 @@ Item {
     }
 
     function toggleHyprsunset() {
-        hyprsunsetEnabled = !hyprsunsetEnabled;
+        toggleState.hyprsunset = !toggleState.hyprsunset;
+        toggleStateFile.writeAdapter();
         if (hyprsunsetEnabled) {
             hyprsunsetSet.exec(["hyprctl", "hyprsunset", "temperature", "2800"]);
         } else {

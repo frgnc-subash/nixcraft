@@ -14,6 +14,7 @@ Item {
 
     function setVertical(value) {
         state.vertical = value;
+        stateFile.writeAdapter();
         // Keeps Hyprland's workspace-slide direction (vertAni.lua vs
         // horizAni.lua) in sync with the bar's edge.
         applyOrientation.exec([Quickshell.env("HOME") + "/.config/quickshell/scripts/apply-bar-orientation.sh", value ? "vertical" : "horizontal"]);
@@ -23,11 +24,15 @@ Item {
         id: applyOrientation
     }
 
+    // blockLoading forces the initial read to happen synchronously, so the
+    // bar renders with its real saved edge immediately — without it, the
+    // bar briefly renders vertical (the declared default below) then snaps
+    // to the loaded value a moment later, which is the "wobble" on reload.
     FileView {
         id: stateFile
         path: Quickshell.cachePath("bar-layout.json")
         watchChanges: false
-        onAdapterUpdated: writeAdapter()
+        blockLoading: true
 
         JsonAdapter {
             id: state
